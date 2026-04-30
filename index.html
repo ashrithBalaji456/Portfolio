@@ -355,6 +355,35 @@
       </section>
     </main>
 
+    <button class="assistant-toggle magnetic" type="button" aria-expanded="false" aria-controls="portfolio-assistant">
+      <span class="assistant-toggle-mark" aria-hidden="true">AI</span>
+      <span>Ask AI</span>
+    </button>
+
+    <aside class="assistant-panel glass-depth" id="portfolio-assistant" aria-hidden="true">
+      <div class="assistant-head">
+        <div>
+          <span class="assistant-label">Portfolio Assistant</span>
+          <strong>Ask about Ashrith</strong>
+        </div>
+        <button class="assistant-close" type="button" aria-label="Close assistant">X</button>
+      </div>
+
+      <div class="assistant-messages" id="assistant-messages" aria-live="polite"></div>
+      <div class="assistant-suggestions" id="assistant-suggestions"></div>
+
+      <form class="assistant-form" id="assistant-form">
+        <input
+          id="assistant-input"
+          name="assistant-input"
+          type="text"
+          autocomplete="off"
+          placeholder="Ask about projects, skills, internship, paper..."
+        />
+        <button class="assistant-send" type="submit">Send</button>
+      </form>
+    </aside>
+
     <footer class="footer">
       <span>Ashrith Balaji Gudla</span>
       <span>Java - Spring Boot - Scalable backend systems</span>

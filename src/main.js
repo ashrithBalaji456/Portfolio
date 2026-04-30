@@ -254,6 +254,13 @@ const contactInfo = [
 ];
 
 const filters = ["All", "Backend", "Microservices", "AI", "Data", "Docker"];
+const assistantPrompts = [
+  "What roles is Ashrith looking for?",
+  "Tell me about the hospital project",
+  "Summarize the internship experience",
+  "What is the startup idea?",
+  "How can I contact Ashrith?",
+];
 
 function chipList(items) {
   return `<div class="chip-row">${items.map((item) => `<span class="chip">${item}</span>`).join("")}</div>`;
@@ -678,6 +685,153 @@ function setupTiltCards() {
   });
 }
 
+function setupAssistant() {
+  const toggle = document.querySelector(".assistant-toggle");
+  const panel = document.querySelector("#portfolio-assistant");
+  const closeButton = document.querySelector(".assistant-close");
+  const messageList = document.querySelector("#assistant-messages");
+  const suggestionList = document.querySelector("#assistant-suggestions");
+  const form = document.querySelector("#assistant-form");
+  const input = document.querySelector("#assistant-input");
+
+  if (!toggle || !panel || !messageList || !suggestionList || !form || !input) return;
+
+  const renderMessage = (role, text) => {
+    const wrapper = document.createElement("article");
+    wrapper.className = `assistant-message assistant-${role}`;
+
+    const title = document.createElement("strong");
+    title.textContent = role === "bot" ? "Portfolio AI" : "You";
+
+    const body = document.createElement("div");
+    text
+      .split("\n")
+      .filter(Boolean)
+      .forEach((line) => {
+        const paragraph = document.createElement("p");
+        paragraph.textContent = line;
+        body.appendChild(paragraph);
+      });
+
+    wrapper.append(title, body);
+    messageList.appendChild(wrapper);
+    messageList.scrollTop = messageList.scrollHeight;
+  };
+
+  const renderTyping = () => {
+    const typing = document.createElement("article");
+    typing.className = "assistant-message assistant-bot";
+    typing.dataset.typing = "true";
+    typing.innerHTML = `
+      <strong>Portfolio AI</strong>
+      <div class="assistant-typing" aria-label="Assistant is thinking">
+        <span></span><span></span><span></span>
+      </div>
+    `;
+    messageList.appendChild(typing);
+    messageList.scrollTop = messageList.scrollHeight;
+    return typing;
+  };
+
+  const setOpen = (open) => {
+    panel.classList.toggle("is-open", open);
+    panel.setAttribute("aria-hidden", String(!open));
+    toggle.setAttribute("aria-expanded", String(open));
+    if (open) {
+      window.setTimeout(() => input.focus(), 120);
+    }
+  };
+
+  const keywords = (value) => value.toLowerCase();
+  const assistantSummary =
+    "Ashrith is a backend-focused Java and Spring Boot developer with projects in microservices, AI-enabled APIs, data services, and system design.";
+
+  function buildAssistantReply(message) {
+    const text = keywords(message);
+    const projectMatch = projects.find((project) => {
+      const titleWords = keywords(project.title).replace(/[^a-z0-9 ]/g, "").split(" ");
+      return titleWords.some((word) => word.length > 3 && text.includes(word));
+    });
+
+    if (/(hello|hi|hey|good morning|good evening)/.test(text)) {
+      return `Hi, I can help with Ashrith's projects, skills, internship, publication, startup idea, or contact details.\n${assistantSummary}`;
+    }
+
+    if (/(role|looking|hire|open to|job)/.test(text)) {
+      return "Ashrith is looking for Backend Developer, Java Developer, and Software Developer roles.\nHe is especially aligned with API development, Spring Boot services, microservices, and backend system design.";
+    }
+
+    if (/(skill|stack|java|spring|database|tool|tech)/.test(text)) {
+      return "Core stack: Java, Spring Boot, Spring Cloud, REST APIs, MySQL, PostgreSQL, MongoDB, Redis, Docker, Git, Swagger, Postman, and Selenium.\nThe strongest positioning is backend engineering with Java and Spring Boot.";
+    }
+
+    if (projectMatch) {
+      return `${projectMatch.title} (${projectMatch.period})\n${projectMatch.description}\nKey points: ${projectMatch.highlights.slice(0, 3).join("; ")}.\nTech: ${projectMatch.tech.join(", ")}.`;
+    }
+
+    if (/(project|portfolio|work)/.test(text)) {
+      return "Highlighted backend projects include Hospital Management System, Fitness Tracker Microservices, Quiz Microservices, MoodFlix recommendation backend, Journal Management System, and MGNREGA Data Services.\nAsk me about a specific one like hospital, fitness, quiz, journal, or startup.";
+    }
+
+    if (/(experience|intern|ethara|llm)/.test(text)) {
+      return "Ashrith worked as an LLM Post Training Intern at Ethara AI from Jan 2026 to Apr 2026.\nThe work included data annotation, model evaluation, response quality improvement, dataset curation, and error analysis for better model reliability.";
+    }
+
+    if (/(education|college|school|gpa|certification|certification|oracle|wipro|salesforce)/.test(text)) {
+      return "Education: B.Tech in CSE (AI and ML) at Institute of Aeronautical Engineering, expected May 2026, GPA 7.99/10.\nCertifications include Agentforce Specialist, AI Foundations Associate, and Java Full Stack.";
+    }
+
+    if (/(paper|publication|research|fastag|society)/.test(text)) {
+      return "Ashrith published research on fraudulent FASTag transaction detection.\nThe paper is listed under Advanced Research Society for Science and Sociology and focuses on machine learning-based fraud identification using methods like Random Forest, Isolation Forest, and autoencoders.";
+    }
+
+    if (/(startup|impact|delivery|food|qr|job visibility)/.test(text)) {
+      return "The startup thought is Impact Bite Link.\nIt is a delivery-platform idea where customer occupation helps match 1-2 relevant verified resumes of unemployed youth to a food order using QR codes or in-app cards.\nThe goal is to create access and visibility rather than compete only on discounts or speed.";
+    }
+
+    if (/(contact|email|phone|linkedin|github|resume)/.test(text)) {
+      return "You can reach Ashrith at ashrithbalajigudla@gmail.com.\nLinkedIn: linkedin.com/in/ashrithgudla\nGitHub: github.com/Balu7884\nPhone: +91 9110701428.";
+    }
+
+    return `${assistantSummary}\nTry asking about the hospital project, internship, startup idea, publication, or contact details.`;
+  }
+
+  assistantPrompts.forEach((prompt) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "assistant-suggestion";
+    button.textContent = prompt;
+    button.addEventListener("click", () => {
+      input.value = prompt;
+      form.requestSubmit();
+    });
+    suggestionList.appendChild(button);
+  });
+
+  renderMessage(
+    "bot",
+    "Hi, I am Ashrith's portfolio assistant.\nAsk me about projects, backend skills, internship experience, the publication, the startup idea, or contact details."
+  );
+
+  toggle.addEventListener("click", () => setOpen(!panel.classList.contains("is-open")));
+  closeButton.addEventListener("click", () => setOpen(false));
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const message = input.value.trim();
+    if (!message) return;
+
+    renderMessage("user", message);
+    input.value = "";
+
+    const typing = renderTyping();
+    window.setTimeout(() => {
+      typing.remove();
+      renderMessage("bot", buildAssistantReply(message));
+    }, 520);
+  });
+}
+
 function setupCanvas() {
   const canvas = document.querySelector("#hero-canvas");
   const ctx = canvas.getContext("2d");
@@ -864,6 +1018,7 @@ function boot() {
   setupCursorAura();
   setupCounters();
   setupTiltCards();
+  setupAssistant();
   setupCanvas();
 }
 
