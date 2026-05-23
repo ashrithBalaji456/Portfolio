@@ -10,6 +10,25 @@ const skillCategories = [
 
 const projects = [
   {
+    title: "Tasker - AHT Productivity Tracking System",
+    period: "May 2026",
+    category: "Backend API",
+    tags: ["Backend", "Data", "Docker"],
+    description:
+      "Full-stack productivity tracking system built at Ethara.ai for AHT analytics, attendance, tasker workflows, and admin reporting.",
+    highlights: [
+      "Engineered JWT authentication with role-based access control and BCrypt password encryption",
+      "Built punch-in and punch-out attendance flows with automatic 7 PM punch-out and smart day classification",
+      "Designed AHT validation that auto-flags tasks exceeding target handle time by 50%",
+      "Developed admin project catalog management, tasker history tracking, feedback, and daily productivity reports",
+      "Implemented leave requests, re-punch recovery, and missing project request workflows",
+      "Deployed Spring Boot on Render, React/Vite on Vercel, and PostgreSQL with Docker",
+    ],
+    tech: ["Java", "Spring Boot", "Spring Security", "JWT", "PostgreSQL", "React", "Vite", "Docker", "Render", "Vercel"],
+    github: "https://lnkd.in/gwNQh9f8",
+    live: "https://lnkd.in/g4QSzmCK",
+  },
+  {
     title: "Hospital Management System - Backend",
     period: "2026",
     category: "Backend API",
@@ -770,7 +789,7 @@ function setupAssistant() {
     }
 
     if (/(project|portfolio|work)/.test(text)) {
-      return "Highlighted backend projects include Hospital Management System, Fitness Tracker Microservices, Quiz Microservices, MoodFlix recommendation backend, Journal Management System, and MGNREGA Data Services.\nAsk me about a specific one like hospital, fitness, quiz, journal, or startup.";
+      return "Highlighted backend projects include Tasker AHT Productivity Tracking System, Hospital Management System, Fitness Tracker Microservices, Quiz Microservices, MoodFlix recommendation backend, Journal Management System, and MGNREGA Data Services.\nAsk me about a specific one like tasker, hospital, fitness, quiz, journal, or startup.";
     }
 
     if (/(experience|intern|ethara|llm)/.test(text)) {
