@@ -392,10 +392,10 @@ canvas {
 .hero-content {
   position: relative;
   z-index: 2;
-  width: min(920px, 100%);
+  width: min(650px, calc(100% - 410px));
   align-self: center;
-  margin: 0 auto;
-  text-align: center;
+  margin: 0 auto 0 max(24px, calc((100vw - 1120px) / 2));
+  text-align: left;
 }
 
 .hero-content::before {
@@ -410,6 +410,67 @@ canvas {
   filter: blur(10px);
   opacity: 0.86;
   animation: breatheGlow 5.6s ease-in-out infinite;
+}
+
+.hero-portrait {
+  position: absolute;
+  top: clamp(128px, 17vh, 170px);
+  right: max(24px, calc((100vw - 1120px) / 2));
+  z-index: 2;
+  width: clamp(232px, 24vw, 318px);
+  aspect-ratio: 1;
+  margin: 0;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 8px;
+  background:
+    linear-gradient(140deg, rgba(89, 234, 210, 0.34), rgba(255, 120, 151, 0.24)),
+    rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 22px 72px rgba(0, 0, 0, 0.36),
+    0 0 48px rgba(89, 234, 210, 0.14),
+    inset 0 1px rgba(255, 255, 255, 0.32);
+  padding: 6px;
+  overflow: hidden;
+  transform: rotate(1.5deg);
+  animation: portraitFloat 6.4s ease-in-out infinite;
+}
+
+.hero-portrait::before,
+.hero-portrait::after {
+  position: absolute;
+  content: "";
+  pointer-events: none;
+}
+
+.hero-portrait::before {
+  inset: -38%;
+  background: linear-gradient(115deg, transparent 34%, rgba(255, 255, 255, 0.34) 48%, transparent 62%);
+  opacity: 0.55;
+  transform: translateX(-70%) rotate(8deg);
+  animation: portraitSweep 5.8s ease-in-out infinite;
+}
+
+.hero-portrait::after {
+  inset: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 6px;
+  box-shadow: inset 0 0 38px rgba(0, 0, 0, 0.2);
+}
+
+.hero-portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  object-fit: cover;
+  object-position: 50% 24%;
+  transform: scale(1.01);
+  transition: transform 420ms ease, filter 420ms ease;
+}
+
+.hero-portrait:hover img {
+  filter: saturate(1.08) contrast(1.04);
+  transform: scale(1.06);
 }
 
 .eyebrow {
@@ -463,7 +524,7 @@ h1 {
 
 .hero-lede {
   max-width: 760px;
-  margin: 24px auto 0;
+  margin: 24px 0 0;
   color: var(--muted-strong);
   font-size: 1.3rem;
   line-height: 1.7;
@@ -474,7 +535,7 @@ h1 {
 .hero-socials {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .hero-actions {
@@ -606,7 +667,7 @@ h1 {
 .hero-console {
   position: absolute;
   right: max(28px, calc((100vw - 1120px) / 2));
-  bottom: 172px;
+  bottom: 122px;
   z-index: 3;
   width: min(290px, calc(100% - 32px));
   text-align: left;
@@ -1605,6 +1666,10 @@ h1 {
 
 .contact-card {
   min-height: 150px;
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .contact-card .contact-icon {
@@ -1619,17 +1684,35 @@ h1 {
   color: var(--aqua);
 }
 
-.contact-card a {
+.contact-card strong {
   display: block;
   margin-top: 8px;
   color: var(--muted-strong);
   font-size: 0.9rem;
+  font-weight: 620;
   overflow-wrap: anywhere;
   transition: color 170ms ease;
 }
 
-.contact-card a:hover {
+.contact-card:hover strong {
   color: var(--aqua);
+}
+
+.contact-arrow {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 15px;
+  height: 15px;
+  color: var(--muted);
+  opacity: 0.72;
+  transition: color 170ms ease, opacity 170ms ease, transform 170ms ease;
+}
+
+.contact-card:hover .contact-arrow {
+  color: var(--aqua);
+  opacity: 1;
+  transform: translate(2px, -2px);
 }
 
 .contact-cta {
@@ -1996,6 +2079,32 @@ h1 {
   }
 }
 
+@keyframes portraitFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(1.5deg);
+  }
+  50% {
+    transform: translate3d(0, -12px, 0) rotate(-1deg);
+  }
+}
+
+@keyframes portraitSweep {
+  0%,
+  58%,
+  100% {
+    opacity: 0;
+    transform: translateX(-78%) rotate(8deg);
+  }
+  72% {
+    opacity: 0.6;
+  }
+  86% {
+    opacity: 0;
+    transform: translateX(78%) rotate(8deg);
+  }
+}
+
 @keyframes accentTravel {
   0%,
   100% {
@@ -2047,6 +2156,14 @@ h1 {
 @media (max-width: 1040px) {
   h1 {
     font-size: 3.75rem;
+  }
+
+  .hero-content {
+    width: min(560px, calc(100% - 320px));
+  }
+
+  .hero-portrait {
+    width: clamp(210px, 25vw, 260px);
   }
 
   .hero-console {
@@ -2105,6 +2222,31 @@ h1 {
   .hero {
     min-height: 90svh;
     padding: 112px 16px 34px;
+  }
+
+  .hero-content {
+    width: min(720px, 100%);
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .hero-portrait {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: min(270px, 72vw);
+    margin: 28px auto 0;
+    transform: rotate(1deg);
+  }
+
+  .hero-lede {
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .hero-actions,
+  .hero-socials {
+    justify-content: center;
   }
 
   h1 {

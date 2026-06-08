@@ -1,5 +1,3 @@
-import "./styles.css";
-
 const skillCategories = [
   { title: "Languages", icon: "{ }", skills: ["Java"] },
   { title: "Backend and Frameworks", icon: "API", skills: ["Spring Boot", "Spring Cloud", "REST APIs"] },
@@ -30,7 +28,7 @@ const projects = [
   },
   {
     title: "Hospital Management System - Backend",
-    period: "2026",
+    period: "Apr 2026",
     category: "Backend API",
     tags: ["Backend", "Data", "Docker"],
     description: "Scalable Spring Boot backend for hospital operations, covering patients, doctors, appointments, and billing workflows.",
@@ -44,22 +42,6 @@ const projects = [
     tech: ["Spring Boot", "REST APIs", "JPA", "Hibernate", "Docker", "MVC", "CORS"],
     github: "https://github.com/ashrithBalaji456/Hospital-Backend",
     live: "https://hospital-frontend-aj7d0jqh4-srinus-projects-85b0e5b9.vercel.app/",
-  },
-  {
-    title: "Quiz Application - Microservices",
-    period: "2025",
-    category: "Microservices",
-    tags: ["Backend", "Microservices"],
-    description: "Scalable quiz platform designed with independent Spring Boot services and clear API boundaries.",
-    highlights: [
-      "Implemented independent Quiz and Question microservices with loose coupling",
-      "Integrated Eureka Service Discovery for dynamic service registration",
-      "Built an API Gateway for centralized routing and abstraction",
-      "Developed RESTful APIs with clear separation of concerns",
-    ],
-    tech: ["Java", "Spring Boot", "Spring Cloud", "Eureka", "API Gateway", "REST APIs"],
-    github: "https://github.com/ashrithBalaji456/Quiz-MicroServices",
-    live: null,
   },
   {
     title: "Fitness Tracker - Microservices",
@@ -93,6 +75,52 @@ const projects = [
     live: "https://movie-recommendation-frontend-zeta.vercel.app/",
   },
   {
+    title: "AI Email Reply Generator",
+    period: "Oct - Nov 2025",
+    category: "AI Backend",
+    tags: ["Backend", "AI"],
+    description: "Context-aware reply generation service powered by Google Gemini and Spring Boot.",
+    highlights: [
+      "Built resilient WebClient retry and timeout logic",
+      "Integrated Gemini API with secure environment-based routing",
+      "Configured CORS and API routing for stable client-server communication",
+    ],
+    tech: ["Spring Boot", "Google Gemini API", "REST API", "WebClient"],
+    github: "https://github.com/Balu7884/Email-Reply",
+    live: "https://email-reply-frontend.vercel.app/",
+  },
+  {
+    title: "Quiz Application - Microservices",
+    period: "Aug 2025 - Oct 2025",
+    category: "Microservices",
+    tags: ["Backend", "Microservices"],
+    description: "Scalable quiz platform designed with independent Spring Boot services and clear API boundaries.",
+    highlights: [
+      "Implemented independent Quiz and Question microservices with loose coupling",
+      "Integrated Eureka Service Discovery for dynamic service registration",
+      "Built an API Gateway for centralized routing and abstraction",
+      "Developed RESTful APIs with clear separation of concerns",
+    ],
+    tech: ["Java", "Spring Boot", "Spring Cloud", "Eureka", "API Gateway", "REST APIs"],
+    github: "https://github.com/ashrithBalaji456/Quiz-MicroServices",
+    live: null,
+  },
+  {
+    title: "MGNREGA Data Services",
+    period: "Jun - Jul 2025",
+    category: "Data Backend",
+    tags: ["Backend", "Data"],
+    description: "Data service layer for employment and expenditure trend analysis across India.",
+    highlights: [
+      "Added auto-geolocation and filters to improve rural user engagement by about 30%",
+      "Optimized Spring Boot services with PostgreSQL to reduce response time by 25%",
+      "Built data views for regional trend exploration and expenditure comparison",
+    ],
+    tech: ["Spring Boot", "PostgreSQL", "REST API", "Geolocation API"],
+    github: "https://github.com/Balu7884/MGNREGA",
+    live: null,
+  },
+  {
     title: "Journal Management System",
     period: "Jan - Mar 2025",
     category: "Backend",
@@ -120,36 +148,6 @@ const projects = [
     ],
     tech: ["Java", "Spring Boot", "REST API", "PostgreSQL", "Tomcat"],
     github: "https://github.com/Balu7884/Job-App",
-    live: null,
-  },
-  {
-    title: "AI Email Reply Generator",
-    period: "Oct - Nov 2025",
-    category: "AI Backend",
-    tags: ["Backend", "AI"],
-    description: "Context-aware reply generation service powered by Google Gemini and Spring Boot.",
-    highlights: [
-      "Built resilient WebClient retry and timeout logic",
-      "Integrated Gemini API with secure environment-based routing",
-      "Configured CORS and API routing for stable client-server communication",
-    ],
-    tech: ["Spring Boot", "Google Gemini API", "REST API", "WebClient"],
-    github: "https://github.com/Balu7884/Email-Reply",
-    live: "https://email-reply-frontend.vercel.app/",
-  },
-  {
-    title: "MGNREGA Data Services",
-    period: "Jun - Oct 2025",
-    category: "Data Backend",
-    tags: ["Backend", "Data"],
-    description: "Data service layer for employment and expenditure trend analysis across India.",
-    highlights: [
-      "Added auto-geolocation and filters to improve rural user engagement by about 30%",
-      "Optimized Spring Boot services with PostgreSQL to reduce response time by 25%",
-      "Built data views for regional trend exploration and expenditure comparison",
-    ],
-    tech: ["Spring Boot", "PostgreSQL", "REST API", "Geolocation API"],
-    github: "https://github.com/Balu7884/MGNREGA",
     live: null,
   },
 ];
@@ -261,14 +259,14 @@ const contactInfo = [
   {
     icon: "icon-linkedin",
     label: "LinkedIn",
-    value: "linkedin.com/in/ashrithgudla",
-    href: "https://www.linkedin.com/in/ashrithgudla/",
+    value: "linkedin.com/in/ashrith-balaji-gudla-5768302a8",
+    href: "https://www.linkedin.com/in/ashrith-balaji-gudla-5768302a8/",
   },
   {
     icon: "icon-github",
     label: "GitHub",
-    value: "github.com/Balu7884",
-    href: "https://github.com/Balu7884",
+    value: "github.com/ashrithBalaji456",
+    href: "https://github.com/ashrithBalaji456",
   },
 ];
 
@@ -476,15 +474,18 @@ function renderProof() {
 function renderContacts() {
   const grid = document.querySelector("#contact-grid");
   grid.innerHTML = contactInfo
-    .map(
-      (contact, index) => `
-        <article class="contact-card reveal-item" style="--delay:${index * 70}ms">
+    .map((contact, index) => {
+      const isExternal = contact.href.startsWith("http");
+
+      return `
+        <a class="contact-card reveal-item" href="${contact.href}" ${externalAttrs(contact.href)} style="--delay:${index * 70}ms" aria-label="Open ${contact.label}">
           <div class="contact-icon">${iconSpan(contact.icon, contact.iconText)}</div>
           <span>${contact.label}</span>
-          <a href="${contact.href}" ${externalAttrs(contact.href)}>${contact.value}</a>
-        </article>
+          <strong>${contact.value}</strong>
+          ${isExternal ? '<span class="contact-arrow icon icon-external" aria-hidden="true"></span>' : ""}
+        </a>
       `
-    )
+    })
     .join("");
 }
 
@@ -809,7 +810,7 @@ function setupAssistant() {
     }
 
     if (/(contact|email|phone|linkedin|github|resume)/.test(text)) {
-      return "You can reach Ashrith at ashrithbalajigudla@gmail.com.\nLinkedIn: linkedin.com/in/ashrithgudla\nGitHub: github.com/Balu7884\nPhone: +91 9110701428.";
+      return "You can reach Ashrith at ashrithbalajigudla@gmail.com.\nLinkedIn: linkedin.com/in/ashrith-balaji-gudla-5768302a8\nGitHub: github.com/ashrithBalaji456\nPhone: +91 9110701428.";
     }
 
     return `${assistantSummary}\nTry asking about the hospital project, internship, startup idea, publication, or contact details.`;
