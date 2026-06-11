@@ -396,6 +396,7 @@ canvas {
   align-self: center;
   margin: 0 auto 0 max(24px, calc((100vw - 1120px) / 2));
   text-align: left;
+  animation: heroTextIn 720ms ease both;
 }
 
 .hero-content::before {
@@ -432,7 +433,7 @@ canvas {
   padding: 6px;
   overflow: hidden;
   transform: rotate(1.5deg);
-  animation: portraitFloat 6.4s ease-in-out infinite;
+  animation: portraitIn 760ms ease both, portraitFloat 6.4s ease-in-out 760ms infinite;
 }
 
 .hero-portrait::before,
@@ -662,15 +663,7 @@ h1 {
   gap: 10px;
   align-self: end;
   margin: 42px auto 0;
-}
-
-.hero-console {
-  position: absolute;
-  right: max(28px, calc((100vw - 1120px) / 2));
-  bottom: 122px;
-  z-index: 3;
-  width: min(290px, calc(100% - 32px));
-  text-align: left;
+  animation: heroStatsIn 780ms ease 140ms both;
 }
 
 .glass-depth {
@@ -683,73 +676,6 @@ h1 {
   box-shadow: var(--shadow), inset 0 1px rgba(255, 255, 255, 0.18);
   backdrop-filter: blur(24px) saturate(160%);
   overflow: hidden;
-}
-
-.console-bar {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 12px 13px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.11);
-  background: rgba(255, 255, 255, 0.045);
-}
-
-.console-bar span {
-  width: 9px;
-  height: 9px;
-  border-radius: 999px;
-  background: var(--rose);
-}
-
-.console-bar span:nth-child(2) {
-  background: var(--amber);
-}
-
-.console-bar span:nth-child(3) {
-  background: var(--green);
-}
-
-.console-bar strong {
-  margin-left: auto;
-  color: var(--muted-strong);
-  font-family: SFMono-Regular, Consolas, monospace;
-  font-size: 0.72rem;
-}
-
-.console-body {
-  display: grid;
-  gap: 9px;
-  padding: 14px;
-}
-
-.console-body p {
-  margin: 0;
-  color: var(--muted-strong);
-  font-family: SFMono-Regular, Consolas, monospace;
-  font-size: 0.76rem;
-}
-
-.console-body p span {
-  display: inline-flex;
-  width: 28px;
-  color: var(--aqua);
-}
-
-.console-meter {
-  height: 7px;
-  margin-top: 4px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  overflow: hidden;
-}
-
-.console-meter i {
-  display: block;
-  width: var(--meter);
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, var(--aqua), var(--blue), var(--rose));
-  animation: meterPulse 2.8s ease-in-out infinite;
 }
 
 .tech-marquee {
@@ -2079,6 +2005,39 @@ h1 {
   }
 }
 
+@keyframes heroTextIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroStatsIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes portraitIn {
+  from {
+    opacity: 0;
+    transform: translate3d(24px, 16px, 0) rotate(1.5deg) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(1.5deg) scale(1);
+  }
+}
+
 @keyframes portraitFloat {
   0%,
   100% {
@@ -2164,14 +2123,6 @@ h1 {
 
   .hero-portrait {
     width: clamp(210px, 25vw, 260px);
-  }
-
-  .hero-console {
-    position: relative;
-    right: auto;
-    bottom: auto;
-    width: min(520px, 100%);
-    margin: 26px auto 0;
   }
 
   .skills-grid,

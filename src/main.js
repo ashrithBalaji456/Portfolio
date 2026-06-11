@@ -678,7 +678,7 @@ function setupTiltCards() {
   if (!window.matchMedia("(pointer: fine)").matches) return;
 
   const cards = document.querySelectorAll(
-    ".skill-card, .project-card, .startup-card, .startup-step, .impact-card, .timeline-card, .education-card, .stack-card, .publication-card, .profile-card, .contact-card, .hero-console"
+    ".skill-card, .project-card, .startup-card, .startup-step, .impact-card, .timeline-card, .education-card, .stack-card, .publication-card, .profile-card, .contact-card"
   );
 
   cards.forEach((card) => {
