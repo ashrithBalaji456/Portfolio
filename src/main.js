@@ -8,6 +8,42 @@ const skillCategories = [
 
 const projects = [
   {
+    title: "Nexus Subscription Center",
+    period: "July 2026",
+    category: "Backend API",
+    tags: ["Backend", "Data"],
+    description: "Built a Subscription Management Platform to track recurring subscriptions, renewal dates, pricing, billing cycles, and subscription status.",
+    highlights: [
+      "Developed RESTful APIs using Spring Boot with a layered Controller–Service–Repository architecture",
+      "Implemented complete subscription lifecycle management, including creation, updates, renewals, cancellation, soft deletion, and permanent deletion",
+      "Added dashboard analytics to track active subscriptions, upcoming renewals, expired subscriptions, and monthly and yearly spending",
+      "Implemented client-specific data isolation using anonymous client identification and request-level context handling",
+      "Added searching, filtering, sorting, and pagination to efficiently manage and explore subscription records"
+    ],
+    tech: ["Java 17", "Spring Boot", "Spring Data JPA", "Hibernate", "PostgreSQL", "React.js", "Maven"],
+    github: "https://github.com/ashrithBalaji456/Nexus_Subscription_Center_Backend",
+    live: null,
+  },
+  {
+    title: "Referral Hub - Automated Job Outreach",
+    period: "July 2026",
+    category: "Backend API",
+    tags: ["Backend", "Data", "Docker"],
+    description:
+      "Full-stack job outreach and referral platform automating personalized email campaigns, managing HR contacts, templates, and resumes.",
+    highlights: [
+      "Designed RESTful APIs for contacts, templates, resume uploads, campaign config, and email history tracking",
+      "Integrated Spring Mail and Gmail SMTP to generate personalized MIME emails with resume attachments",
+      "Implemented automated campaign execution with Spring Scheduler cron expressions and timezone-aware scheduling",
+      "Designed a PostgreSQL data model with Spring Data JPA and Hibernate to manage relationships and history",
+      "Implemented recipient eligibility checks, duplicate-send prevention, cooldown rules, and batch processing",
+      "Structured with layered architecture (Controller, Service, Repository, DTO) and centralized logging (SLF4J)"
+    ],
+    tech: ["Java", "Spring Boot", "JPA", "Hibernate", "PostgreSQL", "React", "Maven", "SLF4J", "SMTP", "Postman", "Git"],
+    github: "https://github.com/ashrithBalaji456/Referal_Hub_Backend",
+    live: null,
+  },
+  {
     title: "Tasker - AHT Productivity Tracking System",
     period: "May 2026",
     category: "Backend API",
@@ -44,19 +80,38 @@ const projects = [
     live: "https://hospital-frontend-aj7d0jqh4-srinus-projects-85b0e5b9.vercel.app/",
   },
   {
-    title: "Fitness Tracker - Microservices",
+    title: "Service Manager",
+    period: "Mar 2026",
+    category: "Backend API",
+    tags: ["Backend", "Data"],
+    description: "Vehicle Service Management System to manage vehicles, service records, mileage, and maintenance schedules.",
+    highlights: [
+      "Developed RESTful APIs using Spring Boot with a layered Controller–Service–Repository architecture",
+      "Implemented automatic service-status classification (Overdue, Due by Mileage, Due This Week, OK)",
+      "Added date-based and mileage-based maintenance tracking to identify vehicles requiring service",
+      "Implemented service history management, mileage updates, quick service completion, and dashboard analytics",
+      "Integrated PostgreSQL for persistent storage with optional H2 database support for local testing"
+    ],
+    tech: ["Java 17", "Spring Boot", "JPA", "Hibernate", "PostgreSQL", "H2", "Maven"],
+    github: "https://github.com/ashrithBalaji456/Service_Manage_Backend",
+    live: null,
+  },
+  {
+    title: "PulseFit - Microservices Fitness Platform",
     period: "Jan 2026",
     category: "Microservices",
     tags: ["Backend", "Microservices", "AI", "Data"],
-    description: "Cloud-native fitness tracking backend using Spring Boot microservices, Kafka, MongoDB, and Keycloak.",
+    description: "Built a microservices-based fitness tracking platform designed to manage user activity, workout progress, analytics, and AI-driven insights through independent services.",
     highlights: [
-      "Designed event-driven architecture for AI-based workout recommendations",
-      "Implemented OAuth2 PKCE authentication with JWT",
-      "Developed scalable backend with service discovery and async messaging",
-      "Exposed secure service APIs for analytics and recommendation workflows",
+      "Implemented a secure authentication and authorization flow using Keycloak, OAuth2, PKCE, and JWT for protected access across the system",
+      "Designed an API Gateway + Eureka service discovery architecture to route requests cleanly and support independently deployable services",
+      "Developed event-driven communication using Apache Kafka so activity events could be published asynchronously and processed by downstream consumers",
+      "Used polyglot persistence with PostgreSQL for relational data and MongoDB for flexible activity documents based on service needs",
+      "Followed a monorepo microservices structure to keep all services in one repository while maintaining clear domain separation",
+      "Added Docker-based deployment support and designed the system for scalability, loose coupling, and independent service evolution"
     ],
-    tech: ["Spring Boot", "Kafka", "MongoDB", "Keycloak", "OAuth2", "JWT"],
-    github: "https://github.com/ashrithBalaji456/PulseFit",
+    tech: ["Java 17", "Spring Boot", "Spring Cloud Gateway", "Eureka", "Keycloak", "OAuth2", "PKCE", "JWT", "Kafka", "PostgreSQL", "MongoDB", "Docker"],
+    github: "https://github.com/ashrithBalaji456/FitNess_Tracker_Microservices",
     live: null,
   },
   {
@@ -71,27 +126,12 @@ const projects = [
       "Used PostgreSQL persistence for recommendation history and service data",
     ],
     tech: ["Spring Boot", "PostgreSQL", "Google Gemini API", "REST API"],
-    github: "https://github.com/Balu7884/MovieRecommendation-Backed-1",
+    github: "https://github.com/ashrithBalaji456/MovieRecommendation-Backend",
     live: "https://movie-recommendation-frontend-zeta.vercel.app/",
   },
   {
-    title: "AI Email Reply Generator",
-    period: "Oct - Nov 2025",
-    category: "AI Backend",
-    tags: ["Backend", "AI"],
-    description: "Context-aware reply generation service powered by Google Gemini and Spring Boot.",
-    highlights: [
-      "Built resilient WebClient retry and timeout logic",
-      "Integrated Gemini API with secure environment-based routing",
-      "Configured CORS and API routing for stable client-server communication",
-    ],
-    tech: ["Spring Boot", "Google Gemini API", "REST API", "WebClient"],
-    github: "https://github.com/Balu7884/Email-Reply",
-    live: "https://email-reply-frontend.vercel.app/",
-  },
-  {
     title: "Quiz Application - Microservices",
-    period: "Aug 2025 - Oct 2025",
+    period: "Dec 2025",
     category: "Microservices",
     tags: ["Backend", "Microservices"],
     description: "Scalable quiz platform designed with independent Spring Boot services and clear API boundaries.",
@@ -106,49 +146,19 @@ const projects = [
     live: null,
   },
   {
-    title: "MGNREGA Data Services",
-    period: "Jun - Jul 2025",
-    category: "Data Backend",
-    tags: ["Backend", "Data"],
-    description: "Data service layer for employment and expenditure trend analysis across India.",
+    title: "AI Email Reply Generator",
+    period: "Nov 2025",
+    category: "AI Backend",
+    tags: ["Backend", "AI"],
+    description: "Context-aware reply generation service powered by Google Gemini and Spring Boot.",
     highlights: [
-      "Added auto-geolocation and filters to improve rural user engagement by about 30%",
-      "Optimized Spring Boot services with PostgreSQL to reduce response time by 25%",
-      "Built data views for regional trend exploration and expenditure comparison",
+      "Built resilient WebClient retry and timeout logic",
+      "Integrated Gemini API with secure environment-based routing",
+      "Configured CORS and API routing for stable client-server communication",
     ],
-    tech: ["Spring Boot", "PostgreSQL", "REST API", "Geolocation API"],
-    github: "https://github.com/Balu7884/MGNREGA",
-    live: null,
-  },
-  {
-    title: "Journal Management System",
-    period: "Jan - Mar 2025",
-    category: "Backend",
-    tags: ["Backend", "Data"],
-    description: "Secure journaling platform with JWT authentication, role-based access, caching, and API docs.",
-    highlights: [
-      "Used Redis caching to reduce API latency by about 20ms",
-      "Improved throughput by about 10% in core request paths",
-      "Published REST APIs with Swagger and deployed on Apache Tomcat",
-    ],
-    tech: ["Java", "Spring Boot", "JWT", "MongoDB", "Swagger", "Tomcat", "Redis"],
-    github: "https://github.com/Balu7884/Job-App",
-    live: null,
-  },
-  {
-    title: "Job Application Manager",
-    period: "Jun - Jul 2024",
-    category: "Backend API",
-    tags: ["Backend", "Data"],
-    description: "Backend service for tracking 1000+ job applications with filtering and persistent records.",
-    highlights: [
-      "Created Spring Boot REST APIs for application tracking and filtering",
-      "Improved application tracking flow by about 40%",
-      "Deployed on Tomcat with 99.8% uptime in a pilot run",
-    ],
-    tech: ["Java", "Spring Boot", "REST API", "PostgreSQL", "Tomcat"],
-    github: "https://github.com/Balu7884/Job-App",
-    live: null,
+    tech: ["Spring Boot", "Google Gemini API", "REST API", "WebClient"],
+    github: "https://github.com/ashrithBalaji456/email-reply-backend",
+    live: "https://email-reply-frontend.vercel.app/",
   },
 ];
 
@@ -173,8 +183,8 @@ const education = [
   {
     institution: "Institute of Aeronautical Engineering, Hyderabad",
     degree: "B.Tech in CSE (AI and ML)",
-    period: "Expected May 2026",
-    grade: "GPA: 7.99/10",
+    period: "Completed May 2026",
+    grade: "GPA: 7.92/10",
   },
   {
     institution: "Sri Chaithanya Junior College, Hyderabad",
@@ -790,7 +800,7 @@ function setupAssistant() {
     }
 
     if (/(project|portfolio|work)/.test(text)) {
-      return "Highlighted backend projects include Tasker AHT Productivity Tracking System, Hospital Management System, Fitness Tracker Microservices, Quiz Microservices, MoodFlix recommendation backend, Journal Management System, and MGNREGA Data Services.\nAsk me about a specific one like tasker, hospital, fitness, quiz, journal, or startup.";
+      return "Highlighted backend projects include Nexus Subscription Center, Referral Hub Automated Job Outreach, Tasker AHT Productivity Tracking System, Hospital Management System, Service Manager, Fitness Tracker Microservices, Quiz Microservices, and MoodFlix recommendation backend.\nAsk me about a specific one like nexus, referral hub, tasker, hospital, service manager, fitness, quiz, or startup.";
     }
 
     if (/(experience|intern|ethara|llm)/.test(text)) {
@@ -798,7 +808,7 @@ function setupAssistant() {
     }
 
     if (/(education|college|school|gpa|certification|certification|oracle|wipro|salesforce)/.test(text)) {
-      return "Education: B.Tech in CSE (AI and ML) at Institute of Aeronautical Engineering, expected May 2026, GPA 7.99/10.\nCertifications include Agentforce Specialist, AI Foundations Associate, and Java Full Stack.";
+      return "Education: B.Tech in CSE (AI and ML) at Institute of Aeronautical Engineering, completed May 2026, GPA 7.92/10.\nCertifications include Agentforce Specialist, AI Foundations Associate, and Java Full Stack.";
     }
 
     if (/(paper|publication|research|fastag|society)/.test(text)) {
@@ -1021,6 +1031,521 @@ function setupCanvas() {
   requestAnimationFrame(draw);
 }
 
+function setupTalkingPortrait() {
+  const container = document.querySelector(".portrait-container");
+  const img = document.querySelector("#portrait-img");
+  const video = document.querySelector("#portrait-video");
+  const controlBtn = document.querySelector("#portrait-control-btn");
+  const playIcon = controlBtn?.querySelector(".play-icon");
+  const pauseIcon = controlBtn?.querySelector(".pause-icon");
+  const badge = document.querySelector("#portrait-badge");
+  const visualizer = document.querySelector("#portrait-visualizer");
+  const subContainer = document.querySelector("#portrait-subtitles-container");
+  const subText = document.querySelector("#portrait-subtitles");
+
+  if (!controlBtn || !img) return;
+
+  const selfIntroText = "Hi, I'm Ashrith Balaji, a Java Developer from Hyderabad, India. I recently graduated with a B Tech in Computer Science and Engineering from the Institute of Aeronautical Engineering. I work with Java and Spring Boot to build backend systems and REST APIs. I'm now looking for a full-time Java developer role where I can work on real systems and keep growing.";
+
+  const audio = new Audio("./assets/self-intro.wav");
+  let subtitles = [];
+  let useVideo = false;
+  let useAudio = true;
+  let audioCtx = null;
+  let analyser = null;
+  let sourceNode = null;
+  let animationId = null;
+
+  // Web Speech API variables
+  let voices = [];
+  let isSpeakingSpeech = false;
+  let speechWords = [];
+  let activeWordIndex = -1;
+
+  // Load voices for Web Speech API
+  const loadVoices = () => {
+    if (typeof window === "undefined" || !window.speechSynthesis) return;
+    voices = window.speechSynthesis.getVoices();
+  };
+  if (typeof window !== "undefined" && window.speechSynthesis) {
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+    loadVoices();
+  }
+
+  // Get English male voice
+  const getMaleVoice = () => {
+    loadVoices();
+    const maleKeywords = ["male", "david", "mark", "george", "ravi", "google us english", "microsoft"];
+    for (const kw of maleKeywords) {
+      const found = voices.find(v => 
+        v.lang.startsWith("en") && 
+        v.name.toLowerCase().includes(kw) &&
+        (kw === "microsoft" ? (v.name.toLowerCase().includes("david") || v.name.toLowerCase().includes("mark")) : true)
+      );
+      if (found) return found;
+    }
+    const enVoice = voices.find(v => v.lang.startsWith("en"));
+    return enVoice || voices[0] || null;
+  };
+
+  // Load subtitles from JSON
+  fetch("./assets/self-intro.json")
+    .then((r) => r.json())
+    .then((data) => {
+      subtitles = data;
+    })
+    .catch((err) => {
+      console.warn("Could not load subtitles from JSON, using estimated timing fallback", err);
+      const words = selfIntroText.split(/\s+/);
+      const duration = 25.5; // Estimated duration for the text
+      const timePerWord = duration / words.length;
+      subtitles = words.map((word, index) => ({
+        word,
+        start: Math.round(index * timePerWord * 100) / 100,
+        end: Math.round((index + 1) * timePerWord * 100) / 100,
+      }));
+    });
+
+  // Check if video file actually exists and is playable
+  video.addEventListener("error", () => {
+    console.log("Video not found or failed to load. Trying audio fallback.");
+    useVideo = false;
+    video.style.display = "none";
+    img.style.display = "block";
+  });
+
+  video.addEventListener("canplaythrough", () => {
+    useVideo = true;
+  });
+
+  // Check if audio file fails to load
+  audio.addEventListener("error", () => {
+    console.log("Audio file failed to load. Falling back to browser SpeechSynthesis.");
+    useAudio = false;
+  });
+
+  // Force video load to trigger the error or canplaythrough event
+  video.load();
+
+  // Toggle playback
+  controlBtn.addEventListener("click", () => {
+    if (useVideo) {
+      if (video.paused) {
+        startPlayback(video);
+      } else {
+        pausePlayback(video);
+      }
+    } else if (useAudio) {
+      if (audioCtx && audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+      if (audio.paused) {
+        startPlayback(audio);
+      } else {
+        pausePlayback(audio);
+      }
+    } else {
+      // Browser SpeechSynthesis Mode (Level 3 Fallback)
+      if (isSpeakingSpeech) {
+        if (window.speechSynthesis.paused) {
+          window.speechSynthesis.resume();
+          controlBtn.classList.add("playing");
+          if (playIcon) playIcon.style.display = "none";
+          if (pauseIcon) pauseIcon.style.display = "inline";
+          if (visualizer) visualizer.classList.add("active");
+          renderVisualizer();
+          updateTTSSubtitlesLoop();
+        } else {
+          window.speechSynthesis.pause();
+          controlBtn.classList.remove("playing");
+          if (playIcon) playIcon.style.display = "inline";
+          if (pauseIcon) pauseIcon.style.display = "none";
+          if (animationId) cancelAnimationFrame(animationId);
+        }
+      } else {
+        speakWithTTS(selfIntroText);
+      }
+    }
+  });
+
+  function startPlayback(mediaElement) {
+    // 1. Cancel any active speech synthesis immediately
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+    isSpeakingSpeech = false;
+
+    // 2. Pause the other media elements
+    if (mediaElement === video && audio) {
+      audio.pause();
+      audio.currentTime = 0;
+    } else if (mediaElement === audio && video) {
+      video.pause();
+      video.currentTime = 0;
+    }
+
+    mediaElement.play()
+      .then(() => {
+        controlBtn.classList.add("playing");
+        if (playIcon) playIcon.style.display = "none";
+        if (pauseIcon) pauseIcon.style.display = "inline";
+        if (badge) badge.style.display = "none";
+        if (subContainer) subContainer.style.display = "block";
+
+        if (useVideo) {
+          img.style.opacity = "0";
+          video.style.display = "block";
+          video.style.opacity = "1";
+        }
+
+        // Initialize Audio Analysis
+        initAudioAnalysis(mediaElement);
+        
+        // Start Loops
+        if (visualizer) {
+          visualizer.classList.add("active");
+          renderVisualizer();
+        }
+        updateSubtitles(mediaElement);
+      })
+      .catch((err) => {
+        console.error("Playback failed, trying SpeechSynthesis fallback", err);
+        // Only trigger fallback if both elements are indeed paused
+        if (audio.paused && video.paused) {
+          useAudio = false;
+          speakWithTTS(selfIntroText);
+        }
+      });
+  }
+
+  function pausePlayback(mediaElement) {
+    mediaElement.pause();
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+    controlBtn.classList.remove("playing");
+    if (playIcon) playIcon.style.display = "inline";
+    if (pauseIcon) pauseIcon.style.display = "none";
+    
+    if (animationId) {
+      cancelAnimationFrame(animationId);
+    }
+  }
+
+  const onEnded = () => {
+    controlBtn.classList.remove("playing");
+    if (playIcon) playIcon.style.display = "inline";
+    if (pauseIcon) pauseIcon.style.display = "none";
+    if (badge) badge.style.display = "flex";
+    if (subContainer) subContainer.style.display = "none";
+    if (visualizer) visualizer.classList.remove("active");
+
+    if (useVideo) {
+      video.style.opacity = "0";
+      img.style.opacity = "1";
+      setTimeout(() => {
+        if (video.style.opacity === "0") {
+          video.style.display = "none";
+        }
+      }, 400);
+    }
+
+    if (animationId) {
+      cancelAnimationFrame(animationId);
+    }
+  };
+
+  audio.addEventListener("ended", onEnded);
+  video.addEventListener("ended", onEnded);
+  audio.addEventListener("pause", () => {
+    if (audio.ended) return;
+    pausePlayback(audio);
+  });
+  video.addEventListener("pause", () => {
+    if (video.ended) return;
+    pausePlayback(video);
+  });
+
+  // Web Speech API synthesis logic
+  function speakWithTTS(text) {
+    if (typeof window === "undefined" || !window.speechSynthesis) return;
+
+    // Pause all media elements
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
+    }
+    if (video) {
+      video.pause();
+      video.currentTime = 0;
+    }
+
+    window.speechSynthesis.cancel();
+    
+    const voice = getMaleVoice();
+    const utterance = new SpeechSynthesisUtterance(text);
+    if (voice) {
+      utterance.voice = voice;
+      // Adjust pitch/rate slightly for a younger 21-year-old male sounding voice if possible
+      utterance.rate = 1.03;
+      utterance.pitch = 1.02;
+    }
+    
+    speechWords = text.split(/\s+/);
+    activeWordIndex = -1;
+    renderTTSSubtitles();
+    
+    utterance.onboundary = (event) => {
+      if (event.name === "word") {
+        let charCount = 0;
+        for (let i = 0; i < speechWords.length; i++) {
+          const word = speechWords[i];
+          if (event.charIndex >= charCount && event.charIndex < charCount + word.length + 5) {
+            activeWordIndex = i;
+            highlightTTSWord(i);
+            break;
+          }
+          charCount += word.length + 1;
+        }
+      }
+    };
+
+    utterance.onstart = () => {
+      isSpeakingSpeech = true;
+      controlBtn.classList.add("playing");
+      if (playIcon) playIcon.style.display = "none";
+      if (pauseIcon) pauseIcon.style.display = "inline";
+      if (badge) badge.style.display = "none";
+      if (subContainer) subContainer.style.display = "block";
+      if (visualizer) {
+        visualizer.classList.add("active");
+        renderVisualizer();
+      }
+      updateTTSSubtitlesLoop();
+    };
+
+    utterance.onend = () => {
+      resetTTSState();
+    };
+
+    utterance.onerror = (err) => {
+      console.error("SpeechSynthesis error:", err);
+      resetTTSState();
+    };
+
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function renderTTSSubtitles() {
+    if (!subText) return;
+    subText.innerHTML = "";
+    speechWords.forEach((word) => {
+      const span = document.createElement("span");
+      span.textContent = word;
+      subText.appendChild(span);
+    });
+  }
+
+  function highlightTTSWord(index) {
+    if (!subText) return;
+    const spans = subText.querySelectorAll("span");
+    spans.forEach((span, i) => {
+      if (i === index) {
+        span.classList.add("active");
+        span.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "center"
+        });
+      } else {
+        span.classList.remove("active");
+      }
+    });
+  }
+
+  function updateTTSSubtitlesLoop() {
+    if (!isSpeakingSpeech || window.speechSynthesis.paused) return;
+    highlightTTSWord(activeWordIndex);
+    requestAnimationFrame(updateTTSSubtitlesLoop);
+  }
+
+  function resetTTSState() {
+    isSpeakingSpeech = false;
+    controlBtn.classList.remove("playing");
+    if (playIcon) playIcon.style.display = "inline";
+    if (pauseIcon) pauseIcon.style.display = "none";
+    if (badge) badge.style.display = "flex";
+    if (subContainer) subContainer.style.display = "none";
+    if (visualizer) visualizer.classList.remove("active");
+    window.speechSynthesis.cancel();
+  }
+
+  // Setup Web Audio API for real audio analysis
+  function initAudioAnalysis(mediaElement) {
+    if (audioCtx) return;
+
+    try {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AudioContextClass();
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 256;
+
+      sourceNode = audioCtx.createMediaElementSource(mediaElement);
+      sourceNode.connect(analyser);
+      analyser.connect(audioCtx.destination);
+    } catch (err) {
+      console.warn("Web Audio API not fully supported or routing failed", err);
+    }
+  }
+
+  // Render visualizer canvas
+  if (visualizer) {
+    const canvasCtx = visualizer.getContext("2d");
+    let dpr = window.devicePixelRatio || 1;
+
+    const resizeCanvas = () => {
+      dpr = window.devicePixelRatio || 1;
+      const rect = visualizer.getBoundingClientRect();
+      visualizer.width = rect.width * dpr;
+      visualizer.height = rect.height * dpr;
+      canvasCtx.scale(dpr, dpr);
+    };
+
+    window.addEventListener("resize", resizeCanvas);
+    setTimeout(resizeCanvas, 200);
+
+    const renderVisualizer = () => {
+      if (!visualizer.classList.contains("active")) return;
+
+      animationId = requestAnimationFrame(renderVisualizer);
+
+      const width = visualizer.width / dpr;
+      const height = visualizer.height / dpr;
+      canvasCtx.clearRect(0, 0, width, height);
+
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const baseRadius = Math.min(width, height) / 2 - 20;
+
+      let bufferLength = 128;
+      let dataArray = new Uint8Array(bufferLength);
+
+      if (analyser) {
+        bufferLength = analyser.frequencyBinCount;
+        dataArray = new Uint8Array(bufferLength);
+        analyser.getByteFrequencyData(dataArray);
+      } else {
+        // Procedural speech visualizer animation for browser TTS fallback
+        if (isSpeakingSpeech && !window.speechSynthesis.paused) {
+          const time = Date.now() * 0.005;
+          for (let i = 0; i < bufferLength; i++) {
+            const base = Math.sin(time + i * 0.1) * 60 + 80;
+            const noise = Math.random() * 25;
+            const formant = Math.sin(time * 0.3 + i * 0.05) * 35;
+            const rollOff = Math.max(0, 1 - i / bufferLength);
+            dataArray[i] = Math.max(0, (base + noise + formant) * rollOff);
+          }
+        } else {
+          dataArray.fill(0);
+        }
+      }
+
+      let sum = 0;
+      for (let i = 0; i < bufferLength; i++) {
+        sum += dataArray[i];
+      }
+      const average = sum / bufferLength;
+      const pulseFactor = average / 255;
+
+      // Draw ambient pulse glow behind the portrait
+      canvasCtx.save();
+      canvasCtx.beginPath();
+      canvasCtx.arc(centerX, centerY, baseRadius + pulseFactor * 32, 0, Math.PI * 2);
+      const pulseGrad = canvasCtx.createRadialGradient(
+        centerX, centerY, baseRadius,
+        centerX, centerY, baseRadius + 10 + pulseFactor * 40
+      );
+      pulseGrad.addColorStop(0, "rgba(89, 234, 210, 0.45)");
+      pulseGrad.addColorStop(0.3, "rgba(138, 180, 255, 0.22)");
+      pulseGrad.addColorStop(1, "rgba(255, 120, 151, 0)");
+      canvasCtx.fillStyle = pulseGrad;
+      canvasCtx.fill();
+      canvasCtx.restore();
+
+      // Draw frequency bar lines
+      const numBars = 72;
+      canvasCtx.save();
+      canvasCtx.lineWidth = 2.5;
+      
+      for (let i = 0; i < numBars; i++) {
+        const dataIndex = Math.floor((i / numBars) * bufferLength);
+        const frequencyVal = dataArray[dataIndex];
+        const barHeight = (frequencyVal / 255) * 36;
+
+        const angle = (i / numBars) * Math.PI * 2;
+        const xStart = centerX + Math.cos(angle) * baseRadius;
+        const yStart = centerY + Math.sin(angle) * baseRadius;
+        const xEnd = centerX + Math.cos(angle) * (baseRadius + barHeight);
+        const yEnd = centerY + Math.sin(angle) * (baseRadius + barHeight);
+
+        const grad = canvasCtx.createLinearGradient(xStart, yStart, xEnd, yEnd);
+        grad.addColorStop(0, "#59ead2");
+        grad.addColorStop(0.5, "#8ab4ff");
+        grad.addColorStop(1, "rgba(255, 120, 151, 0.1)");
+
+        canvasCtx.strokeStyle = grad;
+        canvasCtx.beginPath();
+        canvasCtx.moveTo(xStart, yStart);
+        canvasCtx.lineTo(xEnd, yEnd);
+        canvasCtx.stroke();
+      }
+      canvasCtx.restore();
+    };
+  }
+
+  // Update subtitles for audio/video file
+  function updateSubtitles(mediaElement) {
+    if (!subText || !subContainer) return;
+    if (mediaElement.paused || mediaElement.ended) return;
+
+    const currentTime = mediaElement.currentTime;
+
+    if (subText.children.length === 0 && subtitles.length > 0) {
+      subText.innerHTML = "";
+      subtitles.forEach((item) => {
+        const span = document.createElement("span");
+        span.textContent = item.word;
+        span.dataset.start = item.start;
+        span.dataset.end = item.end;
+        subText.appendChild(span);
+      });
+    }
+
+    const spans = subText.querySelectorAll("span");
+    spans.forEach((span) => {
+      const start = parseFloat(span.dataset.start);
+      const end = parseFloat(span.dataset.end);
+
+      if (currentTime >= start && currentTime <= end) {
+        span.classList.add("active");
+        span.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "center"
+        });
+      } else {
+        span.classList.remove("active");
+      }
+    });
+
+    if (!mediaElement.paused && !mediaElement.ended) {
+      requestAnimationFrame(() => updateSubtitles(mediaElement));
+    }
+  }
+}
+
 function boot() {
   renderSkills();
   renderFilters();
@@ -1040,6 +1565,7 @@ function boot() {
   setupTiltCards();
   setupAssistant();
   setupCanvas();
+  setupTalkingPortrait();
 }
 
 document.addEventListener("DOMContentLoaded", boot);

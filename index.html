@@ -42,7 +42,7 @@
         <a href="#skills">Skills</a>
         <a href="#projects">Projects</a>
         <a href="#startup">Startup</a>
-        <a href="#experience">Experience</a>
+        <a href="#experience">Internship</a>
         <a href="#contact">Contact</a>
       </nav>
     </header>
@@ -90,8 +90,25 @@
           </div>
         </div>
 
-        <figure class="hero-portrait" aria-label="Portrait of Ashrith Balaji Gudla">
-          <img src="./assets/ashrith-balaji-profile.png" alt="Ashrith Balaji Gudla" />
+        <figure class="hero-portrait" id="hero-portrait" aria-label="Portrait of Ashrith Balaji Gudla">
+          <div class="portrait-container">
+            <img src="./assets/ashrith-balaji-profile.png" alt="Ashrith Balaji Gudla" class="portrait-img" id="portrait-img" />
+            <video src="./assets/ashrith-talking.mp4" class="portrait-video" id="portrait-video" playsinline loop style="display: none;"></video>
+            
+            <button class="portrait-control-btn" id="portrait-control-btn" aria-label="Play self introduction">
+              <span class="btn-icon play-icon">▶</span>
+              <span class="btn-icon pause-icon" style="display: none;">❚❚</span>
+            </button>
+            
+            <div class="portrait-badge" id="portrait-badge">
+              <span class="badge-dot"></span>
+              <span class="badge-text">Listen to AI intro</span>
+            </div>
+          </div>
+          <canvas class="portrait-visualizer" id="portrait-visualizer"></canvas>
+          <div class="portrait-subtitles-container" id="portrait-subtitles-container" style="display: none;">
+            <div class="portrait-subtitles" id="portrait-subtitles"></div>
+          </div>
         </figure>
 
         <div class="hero-signals">
@@ -278,7 +295,7 @@
 
       <section class="section" id="experience">
         <div class="section-heading" data-reveal>
-          <p class="eyebrow">Experience</p>
+          <p class="eyebrow">Internship</p>
           <h2>Applied AI evaluation and backend engineering practice.</h2>
         </div>
         <div class="timeline" id="experience-list"></div>
