@@ -1045,9 +1045,9 @@ function setupTalkingPortrait() {
 
   if (!controlBtn || !img) return;
 
-  const selfIntroText = "Hi, I'm Ashrith Balaji, a Java Developer from Hyderabad, India. I recently graduated with a B Tech in Computer Science and Engineering from the Institute of Aeronautical Engineering. I work with Java and Spring Boot to build backend systems and REST APIs. I'm now looking for a full-time Java developer role where I can work on real systems and keep growing.";
+  const selfIntroText = "Hi, I'm Ashrith Balaji, a Java Developer from Hyderabad, India. I recently graduated with a B Tech in Computer Science and Engineering from the Institute of Aeronautical Engineering. I work with Java and Spring Boot to build backend systems and REST APIs. I'm now looking for a full-time Java developer role where I can work on real systems and keep growing. Thank you.";
 
-  const audio = new Audio("./assets/self-intro.wav");
+  const audio = new Audio("./assets/self-intro.mp3");
   let subtitles = [];
   let useVideo = false;
   let useAudio = true;

@@ -27,9 +27,8 @@ async def amain():
     with open(txt_path, "r", encoding="utf-8") as f:
         text = f.read().strip()
 
-    # Voice: en-US-AndrewNeural (natural English male voice)
-    # Alternate options: en-IN-PrabhatNeural (Indian English male)
-    voice = "en-US-AndrewNeural"
+    # Voice: en-IN-PrabhatNeural (Indian English male voice)
+    voice = "en-IN-PrabhatNeural"
     print(f"Generating voiceover using voice: {voice}...")
     
     communicate = edge_tts.Communicate(text, voice)
