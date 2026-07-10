@@ -359,11 +359,250 @@ function renderProjects(activeFilter = "All") {
               <span class="icon icon-github" aria-hidden="true"></span> Code
             </a>
             ${liveLink}
+            <button class="button button-ghost project-audio-btn magnetic" data-index="${index}" aria-label="Listen to project details">
+              <span class="audio-btn-icon" style="display:inline-flex; align-items:center; margin-right:4px;">
+                <svg class="speaker-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+              </span>
+              <span class="audio-btn-text">Listen</span>
+            </button>
           </div>
         </article>
       `;
     })
     .join("");
+}
+
+function setupProjectAudio() {
+  const container = document.querySelector("#projects-grid");
+  
+  window.resetProjectAudioButtons = function() {
+    // Reset projects buttons
+    document.querySelectorAll(".project-audio-btn").forEach(btn => {
+      btn.classList.remove("playing");
+      const textSpan = btn.querySelector(".audio-btn-text");
+      if (textSpan) textSpan.textContent = "Listen";
+      const iconSpan = btn.querySelector(".audio-btn-icon");
+      if (iconSpan) {
+        iconSpan.innerHTML = `
+          <svg class="speaker-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+        `;
+      }
+    });
+
+    // Reset startup thought button
+    const startupBtn = document.querySelector(".startup-audio-btn");
+    if (startupBtn) {
+      startupBtn.classList.remove("playing");
+      const sText = startupBtn.querySelector(".audio-btn-text");
+      if (sText) sText.textContent = "Listen";
+      const sIcon = startupBtn.querySelector(".audio-btn-icon");
+      if (sIcon) {
+        sIcon.innerHTML = `
+          <svg class="speaker-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+        `;
+      }
+    }
+  };
+
+  window.stopAllSpeech = function() {
+    if (typeof window !== "undefined") {
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+      if (window.portraitAudio) {
+        window.portraitAudio.pause();
+      }
+      const video = document.querySelector("#portrait-video");
+      if (video) {
+        video.pause();
+      }
+      window.resetProjectAudioButtons();
+      
+      const portraitBtn = document.querySelector("#portrait-control-btn");
+      if (portraitBtn) {
+        portraitBtn.classList.remove("playing");
+        const playIcon = portraitBtn.querySelector(".play-icon");
+        const pauseIcon = portraitBtn.querySelector(".pause-icon");
+        if (playIcon) playIcon.style.display = "inline";
+        if (pauseIcon) pauseIcon.style.display = "none";
+      }
+    }
+  };
+
+  const getActiveIndianVoice = (voices) => {
+    const enInVoices = voices.filter(v => v.lang.toLowerCase().replace("_", "-").startsWith("en-in") || v.name.toLowerCase().includes("india"));
+    let selectedVoice = enInVoices.find(v => v.name.toLowerCase().includes("ravi") || v.name.toLowerCase().includes("prabhat") || v.name.toLowerCase().includes("male")) || enInVoices[0];
+    
+    if (!selectedVoice) {
+      const maleKeywords = ["male", "david", "mark", "george", "google us english", "microsoft"];
+      for (const kw of maleKeywords) {
+        const found = voices.find(v => 
+          v.lang.startsWith("en") && 
+          v.name.toLowerCase().includes(kw) &&
+          (kw === "microsoft" ? (v.name.toLowerCase().includes("david") || v.name.toLowerCase().includes("mark")) : true)
+        );
+        if (found) {
+          selectedVoice = found;
+          break;
+        }
+      }
+    }
+    return selectedVoice || voices.find(v => v.lang.startsWith("en")) || voices[0] || null;
+  };
+
+  if (container) {
+    container.addEventListener("click", (e) => {
+      const btn = e.target.closest(".project-audio-btn");
+      if (!btn) return;
+
+      const index = parseInt(btn.dataset.index);
+      const project = projects[index];
+      if (!project) return;
+
+      if (btn.classList.contains("playing")) {
+        window.stopAllSpeech();
+        return;
+      }
+
+      window.stopAllSpeech();
+
+      btn.classList.add("playing");
+      const textSpan = btn.querySelector(".audio-btn-text");
+      if (textSpan) textSpan.textContent = "Stop";
+      
+      const iconSpan = btn.querySelector(".audio-btn-icon");
+      if (iconSpan) {
+        iconSpan.innerHTML = `
+          <svg class="speaker-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+          </svg>
+        `;
+      }
+
+      const speechText = `Project ${project.title}. ${project.description} Key points: ${project.highlights.join(". ")}.`;
+
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        const utterance = new SpeechSynthesisUtterance(speechText);
+        
+        if (typeof window.speechSynthesis.getVoices === "function") {
+          const voices = window.speechSynthesis.getVoices();
+          const voice = getActiveIndianVoice(voices);
+          if (voice) {
+            utterance.voice = voice;
+            utterance.rate = 1.03;
+            utterance.pitch = 1.02;
+          }
+        }
+
+        utterance.onend = () => {
+          btn.classList.remove("playing");
+          if (textSpan) textSpan.textContent = "Listen";
+          if (iconSpan) {
+            iconSpan.innerHTML = `
+              <svg class="speaker-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+              </svg>
+            `;
+          }
+        };
+
+        utterance.onerror = () => {
+          btn.classList.remove("playing");
+          if (textSpan) textSpan.textContent = "Listen";
+          if (iconSpan) {
+            iconSpan.innerHTML = `
+              <svg class="speaker-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+              </svg>
+            `;
+          }
+        };
+
+        window.speechSynthesis.speak(utterance);
+      }
+    });
+  }
+
+  // Startup thought audio click handler
+  const startupBtn = document.querySelector(".startup-audio-btn");
+  if (startupBtn) {
+    startupBtn.addEventListener("click", () => {
+      if (startupBtn.classList.contains("playing")) {
+        window.stopAllSpeech();
+        return;
+      }
+
+      window.stopAllSpeech();
+
+      startupBtn.classList.add("playing");
+      const textSpan = startupBtn.querySelector(".audio-btn-text");
+      if (textSpan) textSpan.textContent = "Stop";
+      
+      const iconSpan = startupBtn.querySelector(".audio-btn-icon");
+      if (iconSpan) {
+        iconSpan.innerHTML = `
+          <svg class="speaker-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+          </svg>
+        `;
+      }
+
+      const speechText = "Startup thought: What if delivery apps could create jobs? Impact Bite Link. Placing the right resume in front of the right person. A social-impact delivery platform idea that uses everyday food orders to improve access and visibility for unemployed, skilled youth. The platform asks users for their occupation during login, then intelligently matches one to two relevant and verified candidate resumes to an order through QR codes or in-app cards. The goal is not to replace job portals, but to bypass noise with targeted visibility.";
+
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        const utterance = new SpeechSynthesisUtterance(speechText);
+        
+        if (typeof window.speechSynthesis.getVoices === "function") {
+          const voices = window.speechSynthesis.getVoices();
+          const voice = getActiveIndianVoice(voices);
+          if (voice) {
+            utterance.voice = voice;
+            utterance.rate = 1.03;
+            utterance.pitch = 1.02;
+          }
+        }
+
+        utterance.onend = () => {
+          startupBtn.classList.remove("playing");
+          if (textSpan) textSpan.textContent = "Listen";
+          if (iconSpan) {
+            iconSpan.innerHTML = `
+              <svg class="speaker-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+              </svg>
+            `;
+          }
+        };
+
+        utterance.onerror = () => {
+          startupBtn.classList.remove("playing");
+          if (textSpan) textSpan.textContent = "Listen";
+          if (iconSpan) {
+            iconSpan.innerHTML = `
+              <svg class="speaker-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+              </svg>
+            `;
+          }
+        };
+
+        window.speechSynthesis.speak(utterance);
+      }
+    });
+  }
 }
 
 function renderExperience() {
@@ -1048,6 +1287,7 @@ function setupTalkingPortrait() {
   const selfIntroText = "Hi, I'm Ashrith Balaji, a Java Developer from Hyderabad, India. I recently graduated with a B Tech in Computer Science and Engineering from the Institute of Aeronautical Engineering. I work with Java and Spring Boot to build backend systems and REST APIs. I'm now looking for a full-time Java developer role where I can work on real systems and keep growing. Thank you.";
 
   const audio = new Audio("./assets/self-intro.mp3");
+  window.portraitAudio = audio;
   let subtitles = [];
   let useVideo = false;
   let useAudio = true;
@@ -1176,6 +1416,9 @@ function setupTalkingPortrait() {
       window.speechSynthesis.cancel();
     }
     isSpeakingSpeech = false;
+    if (window.resetProjectAudioButtons) {
+      window.resetProjectAudioButtons();
+    }
 
     // 2. Pause the other media elements
     if (mediaElement === video && audio) {
@@ -1225,6 +1468,9 @@ function setupTalkingPortrait() {
     if (typeof window !== "undefined" && window.speechSynthesis) {
       window.speechSynthesis.cancel();
     }
+    if (window.resetProjectAudioButtons) {
+      window.resetProjectAudioButtons();
+    }
     controlBtn.classList.remove("playing");
     if (playIcon) playIcon.style.display = "inline";
     if (pauseIcon) pauseIcon.style.display = "none";
@@ -1268,9 +1514,12 @@ function setupTalkingPortrait() {
     pausePlayback(video);
   });
 
-  // Web Speech API synthesis logic
   function speakWithTTS(text) {
     if (typeof window === "undefined" || !window.speechSynthesis) return;
+
+    if (window.resetProjectAudioButtons) {
+      window.resetProjectAudioButtons();
+    }
 
     // Pause all media elements
     if (audio) {
@@ -1566,6 +1815,7 @@ function boot() {
   setupAssistant();
   setupCanvas();
   setupTalkingPortrait();
+  setupProjectAudio();
 }
 
 document.addEventListener("DOMContentLoaded", boot);
