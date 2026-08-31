@@ -1,3 +1,5 @@
+import { initLaunchIntro } from "./launchIntro.js";
+
 const skillCategories = [
   { title: "Languages", icon: "{ }", skills: ["Java"] },
   { title: "Backend and Frameworks", icon: "API", skills: ["Spring Boot", "Spring Cloud", "REST APIs"] },
@@ -1816,6 +1818,7 @@ function boot() {
   setupCanvas();
   setupTalkingPortrait();
   setupProjectAudio();
+  initLaunchIntro();
 }
 
 document.addEventListener("DOMContentLoaded", boot);

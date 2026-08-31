@@ -11,6 +11,59 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <!-- ROCKET LAUNCH OPENING ANIMATION OVERLAY -->
+    <div id="launch-overlay" class="launch-overlay launch-active" aria-label="Portfolio Rocket Launch Intro">
+      <canvas id="launch-canvas" class="launch-canvas"></canvas>
+
+      <div class="launch-top-controls">
+        <button id="launch-audio-toggle" class="launch-control-btn" type="button" aria-label="Toggle Launch Audio">
+          <span class="audio-icon">🔊</span>
+        </button>
+        <button id="launch-skip-btn" class="launch-control-btn launch-skip-btn" type="button" aria-label="Skip Launch Intro">
+          Skip Launch ✕
+        </button>
+      </div>
+
+      <div class="launch-hud">
+        <div class="launch-hud-ring">
+          <div class="hud-digit" id="launch-countdown-num">7</div>
+        </div>
+        <div class="launch-hud-status">
+          <span class="hud-status-badge">MISSION CONTROL</span>
+          <p id="launch-status-text" class="hud-status-text">INITIATING LAUNCH SEQUENCE...</p>
+          <small class="launch-tap-hint">🔊 Click anywhere to enable launch sound & thrusters</small>
+        </div>
+      </div>
+
+      <div id="launch-rocket-container" class="launch-rocket-container rocket-prelaunch">
+        <div class="rocket-wrapper">
+          <!-- Sleek Rocket Graphic with Profile Capsule -->
+          <div class="rocket-body">
+            <div class="rocket-nose"></div>
+            <div class="rocket-window-capsule">
+              <img src="./assets/ashrith-balaji-profile.png" alt="Ashrith Balaji Gudla" class="rocket-profile-avatar" />
+            </div>
+            <div class="rocket-details">
+              <span class="rocket-brand-tag">AB-PORTFOLIO</span>
+            </div>
+            <div class="rocket-fin rocket-fin-left"></div>
+            <div class="rocket-fin rocket-fin-right"></div>
+          </div>
+          <!-- Thrusters & Fire Effect -->
+          <div class="rocket-thrusters">
+            <div class="flame-core"></div>
+            <div class="flame-outer"></div>
+          </div>
+        </div>
+
+        <div class="launch-profile-card">
+          <span class="launch-profile-subtitle">WELCOME TO THE PORTFOLIO OF</span>
+          <h2 class="launch-profile-title">Ashrith Balaji Gudla</h2>
+          <p class="launch-profile-role">Java • Spring Boot • Microservices • AI Backends</p>
+        </div>
+      </div>
+    </div>
+
     <div class="scroll-progress" aria-hidden="true"></div>
     <div class="cursor-aura" aria-hidden="true"></div>
 
@@ -44,6 +97,7 @@
         <a href="#startup">Startup</a>
         <a href="#experience">Internship</a>
         <a href="#contact">Contact</a>
+        <button class="nav-launch-btn trigger-rocket-launch magnetic" type="button" aria-label="Replay Rocket Launch">🚀 Launch</button>
       </nav>
     </header>
 
@@ -66,6 +120,9 @@
               Get in touch
             </a>
             <a class="button button-ghost magnetic" href="#projects">View projects</a>
+            <button class="button button-soft trigger-rocket-launch magnetic" type="button" style="border-color: rgba(255, 211, 107, 0.4); color: var(--amber);">
+              🚀 Replay Launch
+            </button>
             <a
               class="button button-soft magnetic"
               href="/assets/AshrithBalaji_BackendDeveloper_Resume.pdf"
