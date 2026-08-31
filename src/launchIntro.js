@@ -156,27 +156,29 @@ export class LaunchIntroController {
       const gain = this.audioCtx.createGain();
       osc.type = type;
       osc.frequency.setValueAtTime(freq, time);
-      gain.gain.setValueAtTime(0.35, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+      gain.gain.setValueAtTime(0.5, time);
+      gain.gain.linearRampToValueAtTime(0.001, time + duration);
 
       osc.connect(gain);
       gain.connect(this.audioCtx.destination);
       osc.start(time);
       osc.stop(time + duration);
 
-      // Harmony tone for cyber HUD feel
+      // Cyber Harmony chime
       const osc2 = this.audioCtx.createOscillator();
       const gain2 = this.audioCtx.createGain();
       osc2.type = "triangle";
       osc2.frequency.setValueAtTime(freq * 1.5, time);
-      gain2.gain.setValueAtTime(0.18, time);
-      gain2.gain.exponentialRampToValueAtTime(0.001, time + duration);
+      gain2.gain.setValueAtTime(0.25, time);
+      gain2.gain.linearRampToValueAtTime(0.001, time + duration);
 
       osc2.connect(gain2);
       gain2.connect(this.audioCtx.destination);
       osc2.start(time);
       osc2.stop(time + duration);
-    } catch (e) {}
+    } catch (e) {
+      console.warn("playBeep error:", e);
+    }
   }
 
   playEngineRumble(duration = 1.0) {
@@ -193,22 +195,24 @@ export class LaunchIntroController {
       const osc = this.audioCtx.createOscillator();
       const gain = this.audioCtx.createGain();
       osc.type = "sawtooth";
-      osc.frequency.setValueAtTime(50, time);
-      osc.frequency.exponentialRampToValueAtTime(90, time + duration);
+      osc.frequency.setValueAtTime(60, time);
+      osc.frequency.linearRampToValueAtTime(110, time + duration);
 
-      gain.gain.setValueAtTime(0.25, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+      gain.gain.setValueAtTime(0.4, time);
+      gain.gain.linearRampToValueAtTime(0.001, time + duration);
 
       const filter = this.audioCtx.createBiquadFilter();
       filter.type = "lowpass";
-      filter.frequency.setValueAtTime(140, time);
+      filter.frequency.setValueAtTime(180, time);
 
       osc.connect(filter);
       filter.connect(gain);
       gain.connect(this.audioCtx.destination);
       osc.start(time);
       osc.stop(time + duration);
-    } catch (e) {}
+    } catch (e) {
+      console.warn("playEngineRumble error:", e);
+    }
   }
 
   playIgnitionRoar(duration = 4.0) {
@@ -227,7 +231,7 @@ export class LaunchIntroController {
       const data = buffer.getChannelData(0);
 
       for (let i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * 0.5;
+        data[i] = (Math.random() * 2 - 1) * 0.6;
       }
 
       const noise = this.audioCtx.createBufferSource();
@@ -235,14 +239,14 @@ export class LaunchIntroController {
 
       const filter = this.audioCtx.createBiquadFilter();
       filter.type = "lowpass";
-      filter.frequency.setValueAtTime(120, time);
-      filter.frequency.exponentialRampToValueAtTime(1400, time + 0.6);
-      filter.frequency.exponentialRampToValueAtTime(160, time + duration);
+      filter.frequency.setValueAtTime(150, time);
+      filter.frequency.linearRampToValueAtTime(1200, time + 0.6);
+      filter.frequency.linearRampToValueAtTime(150, time + duration);
 
       const gain = this.audioCtx.createGain();
-      gain.gain.setValueAtTime(0.05, time);
-      gain.gain.linearRampToValueAtTime(0.65, time + 0.4);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+      gain.gain.setValueAtTime(0.1, time);
+      gain.gain.linearRampToValueAtTime(0.8, time + 0.3);
+      gain.gain.linearRampToValueAtTime(0.001, time + duration);
 
       noise.connect(filter);
       filter.connect(gain);
@@ -253,17 +257,19 @@ export class LaunchIntroController {
       const subOsc = this.audioCtx.createOscillator();
       const subGain = this.audioCtx.createGain();
       subOsc.type = "sine";
-      subOsc.frequency.setValueAtTime(150, time);
-      subOsc.frequency.exponentialRampToValueAtTime(35, time + 1.5);
+      subOsc.frequency.setValueAtTime(140, time);
+      subOsc.frequency.linearRampToValueAtTime(40, time + 1.5);
 
-      subGain.gain.setValueAtTime(0.85, time);
-      subGain.gain.exponentialRampToValueAtTime(0.001, time + 2.5);
+      subGain.gain.setValueAtTime(0.9, time);
+      subGain.gain.linearRampToValueAtTime(0.001, time + 2.5);
 
       subOsc.connect(subGain);
       subGain.connect(this.audioCtx.destination);
       subOsc.start(time);
       subOsc.stop(time + 2.5);
-    } catch (e) {}
+    } catch (e) {
+      console.warn("playIgnitionRoar error:", e);
+    }
   }
 
   triggerHaptic(pattern) {
