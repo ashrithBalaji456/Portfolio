@@ -2690,17 +2690,27 @@ h1 {
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
 }
 
-.launch-tap-hint {
-  margin-top: 4px;
-  padding: 3px 10px;
+.launch-start-sound-btn {
+  margin-top: 6px;
+  padding: 6px 16px;
   border-radius: 999px;
-  background: rgba(255, 211, 107, 0.15);
-  border: 1px solid rgba(255, 211, 107, 0.3);
-  color: var(--amber);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.03em;
+  background: rgba(89, 234, 210, 0.15);
+  border: 1px solid rgba(89, 234, 210, 0.4);
+  color: var(--aqua);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(89, 234, 210, 0.3);
+  backdrop-filter: blur(8px);
   animation: digitPulse 1.2s ease-in-out infinite alternate;
+  transition: all 0.2s ease;
+}
+
+.launch-start-sound-btn:hover {
+  background: rgba(89, 234, 210, 0.3);
+  border-color: var(--aqua);
+  transform: scale(1.05);
 }
 
 /* Realistic 3D Space Rocket & Profile Capsule */

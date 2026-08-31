@@ -66,7 +66,20 @@ export class LaunchIntroController {
       if (this.audioCtx && this.audioCtx.state === "suspended") {
         this.audioCtx.resume();
       }
+      const soundBtn = document.querySelector("#launch-start-sound-btn");
+      if (soundBtn) {
+        soundBtn.style.display = "none";
+      }
     };
+
+    const startBtn = document.querySelector("#launch-start-sound-btn");
+    if (startBtn) {
+      startBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        unlockAudio();
+        this.playBeep(880, 0.25);
+      });
+    }
 
     window.addEventListener("touchstart", unlockAudio, { passive: true });
     window.addEventListener("touchend", unlockAudio, { passive: true });
