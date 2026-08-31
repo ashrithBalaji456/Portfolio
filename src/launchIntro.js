@@ -68,6 +68,8 @@ export class LaunchIntroController {
       }
     };
 
+    window.addEventListener("touchstart", unlockAudio, { passive: true });
+    window.addEventListener("touchend", unlockAudio, { passive: true });
     window.addEventListener("pointerdown", unlockAudio);
     window.addEventListener("click", unlockAudio);
     window.addEventListener("keydown", unlockAudio);
@@ -269,7 +271,11 @@ export class LaunchIntroController {
   setRumble(level) {
     this.screenRumbleLevel = level;
 
-    const targets = [document.body, this.overlay, document.querySelector("#launch-rocket-container"), document.querySelector(".launch-hud")].filter(Boolean);
+    const targets = [
+      document.querySelector(".launch-hud"),
+      document.querySelector("#launch-rocket-container"),
+      document.querySelector(".launch-profile-card")
+    ].filter(Boolean);
 
     targets.forEach((el) => {
       el.classList.remove("rumble-light", "rumble-heavy", "rumble-extreme");

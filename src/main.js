@@ -43,7 +43,7 @@ const projects = [
     ],
     tech: ["Java", "Spring Boot", "JPA", "Hibernate", "PostgreSQL", "React", "Maven", "SLF4J", "SMTP", "Postman", "Git"],
     github: "https://github.com/ashrithBalaji456/Referal_Hub_Backend",
-    live: null,
+    live: "https://referal-hub-frontend.vercel.app/",
   },
   {
     title: "Tasker - AHT Productivity Tracking System",
