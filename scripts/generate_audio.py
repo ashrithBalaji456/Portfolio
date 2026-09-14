@@ -35,21 +35,44 @@ async def amain():
     
     subtitles = []
     audio_data = bytearray()
+    sentences = []
     
-    # We use communicate.stream() to get both audio data and word boundary timestamps
+    # We use communicate.stream() to get both audio data and boundary timestamps
     async for chunk in communicate.stream():
         if chunk["type"] == "audio":
             audio_data.extend(chunk["data"])
         elif chunk["type"] == "WordBoundary":
-            # offset and duration are in 100-nanosecond units (10^-7 seconds)
             start_sec = chunk["offset"] / 10000000.0
             duration_sec = chunk["duration"] / 10000000.0
-            end_sec = start_sec + duration_sec
             subtitles.append({
                 "word": chunk["text"],
                 "start": round(start_sec, 3),
-                "end": round(end_sec, 3)
+                "end": round(start_sec + duration_sec, 3)
             })
+        elif chunk["type"] == "SentenceBoundary":
+            start_sec = chunk["offset"] / 10000000.0
+            duration_sec = chunk["duration"] / 10000000.0
+            sentences.append({
+                "text": chunk["text"],
+                "start": start_sec,
+                "duration": duration_sec
+            })
+
+    # If WordBoundary wasn't yielded by the API, derive words from sentences
+    if not subtitles and sentences:
+        for s in sentences:
+            words = s["text"].split()
+            if not words:
+                continue
+            word_dur = s["duration"] / len(words)
+            for i, w in enumerate(words):
+                w_start = s["start"] + i * word_dur
+                w_end = w_start + word_dur
+                subtitles.append({
+                    "word": w,
+                    "start": round(w_start, 3),
+                    "end": round(w_end, 3)
+                })
 
     # Save audio
     with open(mp3_path, "wb") as f:

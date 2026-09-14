@@ -1407,49 +1407,153 @@ function setupTalkingPortrait() {
   // Force video load to trigger the error or canplaythrough event
   video.load();
 
+  const isPlaying = () => controlBtn.classList.contains("playing");
+
   // Toggle playback
   controlBtn.addEventListener("click", () => {
-    if (useVideo) {
-      if (video.paused) {
-        startPlayback(video);
-      } else {
-        pausePlayback(video);
-      }
+    if (isPlaying()) {
+      pauseAllPlayback();
+      return;
+    }
+
+    if (useVideo && useAudio) {
+      startSyncPlayback();
+    } else if (useVideo) {
+      startVideoOnlyPlayback();
     } else if (useAudio) {
-      if (audioCtx && audioCtx.state === "suspended") {
-        audioCtx.resume();
-      }
-      if (audio.paused) {
-        startPlayback(audio);
-      } else {
-        pausePlayback(audio);
-      }
+      startAudioOnlyPlayback();
     } else {
-      // Browser SpeechSynthesis Mode (Level 3 Fallback)
-      if (isSpeakingSpeech) {
-        if (window.speechSynthesis.paused) {
-          window.speechSynthesis.resume();
-          controlBtn.classList.add("playing");
-          if (playIcon) playIcon.style.display = "none";
-          if (pauseIcon) pauseIcon.style.display = "inline";
-          if (visualizer) visualizer.classList.add("active");
-          renderVisualizer();
-          updateTTSSubtitlesLoop();
-        } else {
-          window.speechSynthesis.pause();
-          controlBtn.classList.remove("playing");
-          if (playIcon) playIcon.style.display = "inline";
-          if (pauseIcon) pauseIcon.style.display = "none";
-          if (animationId) cancelAnimationFrame(animationId);
-        }
-      } else {
-        speakWithTTS(selfIntroText);
-      }
+      speakWithTTS(selfIntroText);
     }
   });
 
-  function startPlayback(mediaElement) {
-    // 1. Cancel any active speech synthesis immediately
+  // Also allow any .trigger-video-intro buttons to play the video intro
+  document.querySelectorAll(".trigger-video-intro").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const portraitEl = document.querySelector("#hero-portrait");
+      if (portraitEl) {
+        portraitEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      if (!isPlaying()) {
+        controlBtn.click();
+      }
+    });
+  });
+
+  function startSyncPlayback() {
+    cancelAllOtherAudio();
+    if (audioCtx && audioCtx.state === "suspended") {
+      audioCtx.resume();
+    }
+
+    video.muted = true;
+    video.loop = true;
+    video.currentTime = 0;
+    audio.currentTime = 0;
+
+    const playVideoPromise = video.play();
+    const playAudioPromise = audio.play();
+
+    Promise.all([playVideoPromise, playAudioPromise])
+      .then(() => {
+        setPlayingUI(true);
+        img.style.opacity = "0";
+        video.style.display = "block";
+        video.style.opacity = "1";
+
+        initAudioAnalysis(audio);
+        if (visualizer) {
+          visualizer.classList.add("active");
+          renderVisualizer();
+        }
+        updateSubtitles(audio);
+      })
+      .catch((err) => {
+        console.warn("Sync playback failed, attempting audio-only playback", err);
+        startAudioOnlyPlayback();
+      });
+  }
+
+  function startVideoOnlyPlayback() {
+    cancelAllOtherAudio();
+    video.muted = false;
+    video.loop = false;
+    video.currentTime = 0;
+
+    video.play()
+      .then(() => {
+        setPlayingUI(true);
+        img.style.opacity = "0";
+        video.style.display = "block";
+        video.style.opacity = "1";
+
+        initAudioAnalysis(video);
+        if (visualizer) {
+          visualizer.classList.add("active");
+          renderVisualizer();
+        }
+        updateSubtitles(video);
+      })
+      .catch((err) => {
+        console.warn("Video-only playback failed", err);
+        if (useAudio) startAudioOnlyPlayback();
+      });
+  }
+
+  function startAudioOnlyPlayback() {
+    cancelAllOtherAudio();
+    if (audioCtx && audioCtx.state === "suspended") {
+      audioCtx.resume();
+    }
+    audio.currentTime = 0;
+
+    audio.play()
+      .then(() => {
+        setPlayingUI(true);
+        initAudioAnalysis(audio);
+        if (visualizer) {
+          visualizer.classList.add("active");
+          renderVisualizer();
+        }
+        updateSubtitles(audio);
+      })
+      .catch((err) => {
+        console.warn("Audio playback failed, falling back to browser SpeechSynthesis", err);
+        useAudio = false;
+        speakWithTTS(selfIntroText);
+      });
+  }
+
+  function pauseAllPlayback() {
+    if (video) video.pause();
+    if (audio) audio.pause();
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+    setPlayingUI(false);
+    if (animationId) {
+      cancelAnimationFrame(animationId);
+    }
+  }
+
+  function setPlayingUI(playing) {
+    if (playing) {
+      controlBtn.classList.add("playing");
+      if (playIcon) playIcon.style.display = "none";
+      if (pauseIcon) pauseIcon.style.display = "inline";
+      if (badge) badge.style.display = "none";
+      if (subContainer) subContainer.style.display = "block";
+    } else {
+      controlBtn.classList.remove("playing");
+      if (playIcon) playIcon.style.display = "inline";
+      if (pauseIcon) pauseIcon.style.display = "none";
+      if (badge) badge.style.display = "flex";
+      if (subContainer) subContainer.style.display = "none";
+      if (visualizer) visualizer.classList.remove("active");
+    }
+  }
+
+  function cancelAllOtherAudio() {
     if (typeof window !== "undefined" && window.speechSynthesis) {
       window.speechSynthesis.cancel();
     }
@@ -1457,74 +1561,10 @@ function setupTalkingPortrait() {
     if (window.resetProjectAudioButtons) {
       window.resetProjectAudioButtons();
     }
-
-    // 2. Pause the other media elements
-    if (mediaElement === video && audio) {
-      audio.pause();
-      audio.currentTime = 0;
-    } else if (mediaElement === audio && video) {
-      video.pause();
-      video.currentTime = 0;
-    }
-
-    mediaElement.play()
-      .then(() => {
-        controlBtn.classList.add("playing");
-        if (playIcon) playIcon.style.display = "none";
-        if (pauseIcon) pauseIcon.style.display = "inline";
-        if (badge) badge.style.display = "none";
-        if (subContainer) subContainer.style.display = "block";
-
-        if (useVideo) {
-          img.style.opacity = "0";
-          video.style.display = "block";
-          video.style.opacity = "1";
-        }
-
-        // Initialize Audio Analysis
-        initAudioAnalysis(mediaElement);
-        
-        // Start Loops
-        if (visualizer) {
-          visualizer.classList.add("active");
-          renderVisualizer();
-        }
-        updateSubtitles(mediaElement);
-      })
-      .catch((err) => {
-        console.error("Playback failed, trying SpeechSynthesis fallback", err);
-        // Only trigger fallback if both elements are indeed paused
-        if (audio.paused && video.paused) {
-          useAudio = false;
-          speakWithTTS(selfIntroText);
-        }
-      });
-  }
-
-  function pausePlayback(mediaElement) {
-    mediaElement.pause();
-    if (typeof window !== "undefined" && window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-    }
-    if (window.resetProjectAudioButtons) {
-      window.resetProjectAudioButtons();
-    }
-    controlBtn.classList.remove("playing");
-    if (playIcon) playIcon.style.display = "inline";
-    if (pauseIcon) pauseIcon.style.display = "none";
-    
-    if (animationId) {
-      cancelAnimationFrame(animationId);
-    }
   }
 
   const onEnded = () => {
-    controlBtn.classList.remove("playing");
-    if (playIcon) playIcon.style.display = "inline";
-    if (pauseIcon) pauseIcon.style.display = "none";
-    if (badge) badge.style.display = "flex";
-    if (subContainer) subContainer.style.display = "none";
-    if (visualizer) visualizer.classList.remove("active");
+    pauseAllPlayback();
 
     if (useVideo) {
       video.style.opacity = "0";
@@ -1535,21 +1575,17 @@ function setupTalkingPortrait() {
         }
       }, 400);
     }
-
-    if (animationId) {
-      cancelAnimationFrame(animationId);
-    }
   };
 
   audio.addEventListener("ended", onEnded);
   video.addEventListener("ended", onEnded);
   audio.addEventListener("pause", () => {
     if (audio.ended) return;
-    pausePlayback(audio);
+    pauseAllPlayback();
   });
   video.addEventListener("pause", () => {
     if (video.ended) return;
-    pausePlayback(video);
+    pauseAllPlayback();
   });
 
   function speakWithTTS(text) {

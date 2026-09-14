@@ -1,1 +1,317 @@
-[]
+[
+  {
+    "word": "Hi,",
+    "start": 0.1,
+    "end": 0.689
+  },
+  {
+    "word": "I'm",
+    "start": 0.689,
+    "end": 1.277
+  },
+  {
+    "word": "Ashrith",
+    "start": 1.278,
+    "end": 1.866
+  },
+  {
+    "word": "Balaji,",
+    "start": 1.866,
+    "end": 2.455
+  },
+  {
+    "word": "a",
+    "start": 2.455,
+    "end": 3.044
+  },
+  {
+    "word": "Java",
+    "start": 3.044,
+    "end": 3.633
+  },
+  {
+    "word": "Developer",
+    "start": 3.632,
+    "end": 4.221
+  },
+  {
+    "word": "from",
+    "start": 4.221,
+    "end": 4.81
+  },
+  {
+    "word": "Hyderabad,",
+    "start": 4.81,
+    "end": 5.399
+  },
+  {
+    "word": "India.",
+    "start": 5.399,
+    "end": 5.987
+  },
+  {
+    "word": "I",
+    "start": 5.938,
+    "end": 6.417
+  },
+  {
+    "word": "recently",
+    "start": 6.417,
+    "end": 6.896
+  },
+  {
+    "word": "graduated",
+    "start": 6.896,
+    "end": 7.375
+  },
+  {
+    "word": "with",
+    "start": 7.375,
+    "end": 7.854
+  },
+  {
+    "word": "a",
+    "start": 7.854,
+    "end": 8.333
+  },
+  {
+    "word": "B",
+    "start": 8.333,
+    "end": 8.812
+  },
+  {
+    "word": "Tech",
+    "start": 8.812,
+    "end": 9.292
+  },
+  {
+    "word": "in",
+    "start": 9.292,
+    "end": 9.771
+  },
+  {
+    "word": "Computer",
+    "start": 9.771,
+    "end": 10.25
+  },
+  {
+    "word": "Science",
+    "start": 10.25,
+    "end": 10.729
+  },
+  {
+    "word": "and",
+    "start": 10.729,
+    "end": 11.208
+  },
+  {
+    "word": "Engineering",
+    "start": 11.208,
+    "end": 11.688
+  },
+  {
+    "word": "from",
+    "start": 11.688,
+    "end": 12.167
+  },
+  {
+    "word": "the",
+    "start": 12.167,
+    "end": 12.646
+  },
+  {
+    "word": "Institute",
+    "start": 12.646,
+    "end": 13.125
+  },
+  {
+    "word": "of",
+    "start": 13.125,
+    "end": 13.604
+  },
+  {
+    "word": "Aeronautical",
+    "start": 13.604,
+    "end": 14.083
+  },
+  {
+    "word": "Engineering.",
+    "start": 14.083,
+    "end": 14.562
+  },
+  {
+    "word": "I",
+    "start": 14.562,
+    "end": 15.023
+  },
+  {
+    "word": "work",
+    "start": 15.023,
+    "end": 15.484
+  },
+  {
+    "word": "with",
+    "start": 15.484,
+    "end": 15.945
+  },
+  {
+    "word": "Java",
+    "start": 15.945,
+    "end": 16.405
+  },
+  {
+    "word": "and",
+    "start": 16.405,
+    "end": 16.866
+  },
+  {
+    "word": "Spring",
+    "start": 16.866,
+    "end": 17.327
+  },
+  {
+    "word": "Boot",
+    "start": 17.327,
+    "end": 17.787
+  },
+  {
+    "word": "to",
+    "start": 17.788,
+    "end": 18.248
+  },
+  {
+    "word": "build",
+    "start": 18.248,
+    "end": 18.709
+  },
+  {
+    "word": "backend",
+    "start": 18.709,
+    "end": 19.17
+  },
+  {
+    "word": "systems",
+    "start": 19.17,
+    "end": 19.63
+  },
+  {
+    "word": "and",
+    "start": 19.63,
+    "end": 20.091
+  },
+  {
+    "word": "REST",
+    "start": 20.091,
+    "end": 20.552
+  },
+  {
+    "word": "APIs.",
+    "start": 20.552,
+    "end": 21.012
+  },
+  {
+    "word": "I'm",
+    "start": 21.012,
+    "end": 21.422
+  },
+  {
+    "word": "now",
+    "start": 21.422,
+    "end": 21.831
+  },
+  {
+    "word": "looking",
+    "start": 21.831,
+    "end": 22.24
+  },
+  {
+    "word": "for",
+    "start": 22.24,
+    "end": 22.649
+  },
+  {
+    "word": "a",
+    "start": 22.649,
+    "end": 23.059
+  },
+  {
+    "word": "full-time",
+    "start": 23.059,
+    "end": 23.468
+  },
+  {
+    "word": "Java",
+    "start": 23.468,
+    "end": 23.877
+  },
+  {
+    "word": "developer",
+    "start": 23.877,
+    "end": 24.286
+  },
+  {
+    "word": "role",
+    "start": 24.286,
+    "end": 24.695
+  },
+  {
+    "word": "where",
+    "start": 24.695,
+    "end": 25.105
+  },
+  {
+    "word": "I",
+    "start": 25.105,
+    "end": 25.514
+  },
+  {
+    "word": "can",
+    "start": 25.514,
+    "end": 25.923
+  },
+  {
+    "word": "work",
+    "start": 25.923,
+    "end": 26.332
+  },
+  {
+    "word": "on",
+    "start": 26.332,
+    "end": 26.741
+  },
+  {
+    "word": "real",
+    "start": 26.741,
+    "end": 27.151
+  },
+  {
+    "word": "systems",
+    "start": 27.151,
+    "end": 27.56
+  },
+  {
+    "word": "and",
+    "start": 27.56,
+    "end": 27.969
+  },
+  {
+    "word": "keep",
+    "start": 27.969,
+    "end": 28.378
+  },
+  {
+    "word": "growing.",
+    "start": 28.378,
+    "end": 28.787
+  },
+  {
+    "word": "Thank",
+    "start": 28.788,
+    "end": 29.5
+  },
+  {
+    "word": "you.",
+    "start": 29.5,
+    "end": 30.212
+  }
+]
