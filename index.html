@@ -9,6 +9,14 @@
     />
     <title>Ashrith Balaji Gudla - Backend Engineer</title>
     <link rel="stylesheet" href="./styles.css" />
+    <script>
+      (function () {
+        const savedTheme = localStorage.getItem("theme");
+        const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+        const theme = savedTheme ? savedTheme : (prefersLight ? "light" : "dark");
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script>
   </head>
   <body>
     <!-- ROCKET LAUNCH OPENING ANIMATION OVERLAY -->
@@ -94,10 +102,29 @@
         </span>
       </a>
 
-      <button class="nav-toggle magnetic" type="button" aria-expanded="false" aria-controls="primary-navigation">
-        <span></span>
-        <span></span>
-      </button>
+      <div class="topbar-actions">
+        <button id="theme-toggle" class="theme-toggle magnetic" type="button" aria-label="Toggle light or dark theme" title="Toggle Light/Dark Theme">
+          <span class="theme-toggle-track">
+            <span class="theme-toggle-thumb">
+              <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="4.5"></circle>
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+              </svg>
+              <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                <circle cx="16.5" cy="8.5" r="0.8" fill="currentColor" stroke="none"></circle>
+                <circle cx="12.5" cy="5.5" r="0.6" fill="currentColor" stroke="none"></circle>
+              </svg>
+            </span>
+          </span>
+          <span class="theme-toggle-tooltip" aria-hidden="true">Toggle Theme</span>
+        </button>
+
+        <button class="nav-toggle magnetic" type="button" aria-expanded="false" aria-controls="primary-navigation">
+          <span></span>
+          <span></span>
+        </button>
+      </div>
 
       <nav class="nav-links" id="primary-navigation" aria-label="Primary navigation">
         <a href="#about">About</a>

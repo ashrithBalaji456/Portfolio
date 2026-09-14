@@ -1105,15 +1105,16 @@ function setupAssistant() {
 
 function setupCanvas() {
   const canvas = document.querySelector("#hero-canvas");
+  if (!canvas) return;
   const ctx = canvas.getContext("2d");
   const nodes = [
-    { label: "API Gateway", x: 0.18, y: 0.28, color: "#59ead2" },
-    { label: "Auth", x: 0.42, y: 0.2, color: "#ffd36b" },
-    { label: "Spring Boot", x: 0.62, y: 0.34, color: "#9cf6a5" },
-    { label: "Kafka", x: 0.82, y: 0.22, color: "#ff7897" },
-    { label: "PostgreSQL", x: 0.72, y: 0.68, color: "#8ab4ff" },
-    { label: "LLM Eval", x: 0.34, y: 0.68, color: "#ffd36b" },
-    { label: "API Client", x: 0.13, y: 0.63, color: "#ff7897" },
+    { label: "API Gateway", x: 0.18, y: 0.28, color: "#59ead2", lightColor: "#0284c7" },
+    { label: "Auth", x: 0.42, y: 0.2, color: "#ffd36b", lightColor: "#d97706" },
+    { label: "Spring Boot", x: 0.62, y: 0.34, color: "#9cf6a5", lightColor: "#059669" },
+    { label: "Kafka", x: 0.82, y: 0.22, color: "#ff7897", lightColor: "#e11d48" },
+    { label: "PostgreSQL", x: 0.72, y: 0.68, color: "#8ab4ff", lightColor: "#4f46e5" },
+    { label: "LLM Eval", x: 0.34, y: 0.68, color: "#ffd36b", lightColor: "#d97706" },
+    { label: "API Client", x: 0.13, y: 0.63, color: "#ff7897", lightColor: "#e11d48" },
   ];
   const links = [
     [0, 1],
@@ -1156,32 +1157,54 @@ function setupCanvas() {
     };
   }
 
-  function drawNode(node, time, index) {
+  function drawNode(node, time, index, isLight) {
     const point = nodePoint(node);
     const pulse = Math.sin(time * 0.0024 + index) * 0.5 + 0.5;
     const w = node.label.length * 7 + 36;
     const h = 38;
+    const nodeColor = isLight ? node.lightColor : node.color;
 
     ctx.save();
     ctx.translate(point.x, point.y + Math.sin(time * 0.0016 + index) * 8);
-    ctx.shadowColor = node.color;
-    ctx.shadowBlur = 12 + pulse * 22;
-    ctx.strokeStyle = `${node.color}88`;
-    ctx.fillStyle = "rgba(255,255,255,0.075)";
-    ctx.lineWidth = 1;
-    roundRect(ctx, -w / 2, -h / 2, w, h, 8);
-    ctx.fill();
-    ctx.stroke();
-    ctx.shadowBlur = 0;
-    ctx.fillStyle = node.color;
-    ctx.font = "700 12px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(node.label, 0, 1);
+
+    if (isLight) {
+      ctx.shadowColor = "rgba(79, 70, 229, 0.2)";
+      ctx.shadowBlur = 10 + pulse * 14;
+      ctx.strokeStyle = `${nodeColor}cc`;
+      ctx.fillStyle = "rgba(255, 255, 255, 0.94)";
+      ctx.lineWidth = 1.5;
+      roundRect(ctx, -w / 2, -h / 2, w, h, 8);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "760 12px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(node.label, 0, 1);
+    } else {
+      ctx.shadowColor = node.color;
+      ctx.shadowBlur = 12 + pulse * 22;
+      ctx.strokeStyle = `${node.color}88`;
+      ctx.fillStyle = "rgba(255,255,255,0.075)";
+      ctx.lineWidth = 1;
+      roundRect(ctx, -w / 2, -h / 2, w, h, 8);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = node.color;
+      ctx.font = "700 12px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(node.label, 0, 1);
+    }
+
     ctx.restore();
   }
 
-  function drawLinks(time) {
+  function drawLinks(time, isLight) {
     ctx.save();
     links.forEach(([fromIndex, toIndex], index) => {
       const from = nodePoint(nodes[fromIndex]);
@@ -1189,28 +1212,29 @@ function setupCanvas() {
       const progress = (time * 0.00024 + index * 0.17) % 1;
       const packetX = from.x + (to.x - from.x) * progress;
       const packetY = from.y + (to.y - from.y) * progress;
+      const targetColor = isLight ? nodes[toIndex].lightColor : nodes[toIndex].color;
 
-      ctx.strokeStyle = "rgba(255,255,255,0.12)";
-      ctx.lineWidth = 1;
+      ctx.strokeStyle = isLight ? "rgba(15, 23, 42, 0.12)" : "rgba(255, 255, 255, 0.12)";
+      ctx.lineWidth = isLight ? 1.2 : 1;
       ctx.beginPath();
       ctx.moveTo(from.x, from.y);
       ctx.lineTo(to.x, to.y);
       ctx.stroke();
 
-      ctx.fillStyle = nodes[toIndex].color;
-      ctx.shadowColor = nodes[toIndex].color;
-      ctx.shadowBlur = 16;
+      ctx.fillStyle = targetColor;
+      ctx.shadowColor = targetColor;
+      ctx.shadowBlur = isLight ? 10 : 16;
       ctx.beginPath();
-      ctx.arc(packetX, packetY, 3, 0, Math.PI * 2);
+      ctx.arc(packetX, packetY, isLight ? 3.5 : 3, 0, Math.PI * 2);
       ctx.fill();
       ctx.shadowBlur = 0;
     });
     ctx.restore();
   }
 
-  function drawCodeRain(time) {
+  function drawCodeRain(time, isLight) {
     ctx.save();
-    ctx.globalAlpha = 0.42;
+    ctx.globalAlpha = isLight ? 0.32 : 0.42;
     ctx.font = "600 12px SFMono-Regular, Consolas, monospace";
     ctx.textBaseline = "top";
     for (let column = 0; column < 9; column += 1) {
@@ -1219,7 +1243,11 @@ function setupCanvas() {
       for (let row = 0; row < 5; row += 1) {
         const y = (offset + row * 96) % (height + 130) - 100;
         const text = codeRows[(column + row) % codeRows.length];
-        ctx.fillStyle = row % 2 ? "rgba(89,234,210,0.34)" : "rgba(255,255,255,0.18)";
+        if (isLight) {
+          ctx.fillStyle = row % 2 ? "rgba(79, 70, 229, 0.4)" : "rgba(2, 132, 199, 0.35)";
+        } else {
+          ctx.fillStyle = row % 2 ? "rgba(89,234,210,0.34)" : "rgba(255,255,255,0.18)";
+        }
         ctx.fillText(text, x, y);
       }
     }
@@ -1228,18 +1256,26 @@ function setupCanvas() {
 
   function draw(time) {
     ctx.clearRect(0, 0, width, height);
+    const isLight = document.documentElement.getAttribute("data-theme") === "light";
 
     const gradient = ctx.createLinearGradient(0, 0, width, height);
-    gradient.addColorStop(0, "rgba(89,234,210,0.08)");
-    gradient.addColorStop(0.38, "rgba(138,180,255,0.04)");
-    gradient.addColorStop(0.66, "rgba(255,120,151,0.06)");
-    gradient.addColorStop(1, "rgba(255,211,107,0.045)");
+    if (isLight) {
+      gradient.addColorStop(0, "rgba(2, 132, 199, 0.06)");
+      gradient.addColorStop(0.38, "rgba(79, 70, 229, 0.04)");
+      gradient.addColorStop(0.66, "rgba(225, 29, 72, 0.04)");
+      gradient.addColorStop(1, "rgba(217, 119, 6, 0.03)");
+    } else {
+      gradient.addColorStop(0, "rgba(89,234,210,0.08)");
+      gradient.addColorStop(0.38, "rgba(138,180,255,0.04)");
+      gradient.addColorStop(0.66, "rgba(255,120,151,0.06)");
+      gradient.addColorStop(1, "rgba(255,211,107,0.045)");
+    }
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, width, height);
 
-    drawCodeRain(time);
-    drawLinks(time);
-    nodes.forEach((node, index) => drawNode(node, time, index));
+    drawCodeRain(time, isLight);
+    drawLinks(time, isLight);
+    nodes.forEach((node, index) => drawNode(node, time, index, isLight));
 
     requestAnimationFrame(draw);
   }
@@ -1797,7 +1833,144 @@ function setupTalkingPortrait() {
   }
 }
 
+function setupThemeToggle() {
+  const toggleBtn = document.querySelector("#theme-toggle");
+  if (!toggleBtn) return;
+
+  // Synthesized audio feedback (crystalline celestial chime for light, deep space tone for dark)
+  function playThemeChime(theme) {
+    try {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) return;
+      const ctx = new AudioContextClass();
+      if (ctx.state === "suspended") {
+        ctx.resume();
+      }
+
+      const now = ctx.currentTime;
+      if (theme === "light") {
+        const freqs = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6 crystalline shimmer
+        freqs.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.value = freq;
+
+          gain.gain.setValueAtTime(0, now + idx * 0.05);
+          gain.gain.linearRampToValueAtTime(0.09, now + idx * 0.05 + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.05 + 0.35);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + idx * 0.05);
+          osc.stop(now + idx * 0.05 + 0.38);
+        });
+      } else {
+        const freqs = [440, 329.63, 220]; // A4, E4, A3 warm space resonance
+        freqs.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "triangle";
+          osc.frequency.value = freq;
+
+          gain.gain.setValueAtTime(0, now + idx * 0.07);
+          gain.gain.linearRampToValueAtTime(0.12, now + idx * 0.07 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.07 + 0.45);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + idx * 0.07);
+          osc.stop(now + idx * 0.07 + 0.48);
+        });
+      }
+    } catch {
+      // Audio playback fails silently if restricted
+    }
+  }
+
+  // Toast notification
+  function showThemeToast(message, icon) {
+    let toast = document.querySelector("#theme-toast");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "theme-toast";
+      toast.className = "theme-toast";
+      document.body.appendChild(toast);
+    }
+    toast.innerHTML = `<span class="theme-toast-icon">${icon}</span><span>${message}</span>`;
+    toast.classList.add("show");
+    if (toast.hideTimer) clearTimeout(toast.hideTimer);
+    toast.hideTimer = setTimeout(() => {
+      toast.classList.remove("show");
+    }, 2400);
+  }
+
+  function syncAriaState(theme) {
+    const isLight = theme === "light";
+    toggleBtn.setAttribute("aria-label", `Switch to ${isLight ? "dark" : "light"} theme`);
+    toggleBtn.setAttribute("aria-pressed", isLight ? "true" : "false");
+    toggleBtn.setAttribute("title", isLight ? "Switch to Deep Cosmos Theme" : "Switch to Luminous Light Theme");
+  }
+
+  function applyTheme(newTheme) {
+    document.documentElement.setAttribute("data-theme", newTheme);
+    localStorage.setItem("theme", newTheme);
+    syncAriaState(newTheme);
+    window.dispatchEvent(new CustomEvent("themechange", { detail: { theme: newTheme } }));
+  }
+
+  // Initial aria sync
+  const currentTheme = document.documentElement.getAttribute("data-theme") || "dark";
+  syncAriaState(currentTheme);
+
+  toggleBtn.addEventListener("click", (event) => {
+    const active = document.documentElement.getAttribute("data-theme") || "dark";
+    const next = active === "light" ? "dark" : "light";
+
+    playThemeChime(next);
+    showThemeToast(
+      next === "light" ? "Luminous Light Theme Activated" : "Deep Cosmos Theme Activated",
+      next === "light" ? "☀️" : "🌙"
+    );
+
+    // Circular Expand Wave Transition if supported
+    if (document.startViewTransition) {
+      const rect = toggleBtn.getBoundingClientRect();
+      const x = event.clientX || (rect.left + rect.width / 2);
+      const y = event.clientY || (rect.top + rect.height / 2);
+      const endRadius = Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y)
+      );
+
+      const transition = document.startViewTransition(() => {
+        applyTheme(next);
+      });
+
+      transition.ready.then(() => {
+        const clipPath = [
+          `circle(0px at ${x}px ${y}px)`,
+          `circle(${endRadius}px at ${x}px ${y}px)`
+        ];
+        document.documentElement.animate(
+          {
+            clipPath: clipPath
+          },
+          {
+            duration: 480,
+            easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+            pseudoElement: "::view-transition-new(root)"
+          }
+        );
+      });
+    } else {
+      applyTheme(next);
+    }
+  });
+}
+
 function boot() {
+  setupThemeToggle();
   renderSkills();
   renderFilters();
   renderProjects();
