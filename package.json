@@ -9,6 +9,7 @@
     "preview": "vite preview --host 127.0.0.1"
   },
   "devDependencies": {
+    "sharp": "^0.35.4",
     "vite": "^5.4.11"
   },
   "dependencies": {
