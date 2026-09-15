@@ -91,6 +91,7 @@ export class LaunchIntroController {
     this.stars = [];
     this.tailStars = [];
     this.comets = [];
+    this.cometBlasts = [];
     this.nextTailStarTime = Date.now() + 800; // First tail star in 0.8s
     this.nextCometTime = Date.now() + 1800; // First grand comet in 1.8s
     const starCount = Math.floor((window.innerWidth * window.innerHeight) / 2200);
@@ -166,8 +167,8 @@ export class LaunchIntroController {
 
     let startX, startY, angle, curveDir;
 
-    // In mobile / desktop mode on mobile (or ~65% of comets on PC), comets dive directly into Earth!
-    if (isPortrait || Math.random() < 0.65) {
+    // In mobile / desktop mode on mobile (or ~80% of comets on PC), comets dive directly into Earth!
+    if (isPortrait || Math.random() < 0.8) {
       startX = fromLeft
         ? Math.random() * (this.canvas.width * 0.35) - 60
         : this.canvas.width * (0.65 + Math.random() * 0.35) + 60;
@@ -231,7 +232,257 @@ export class LaunchIntroController {
       twinklePhase: Math.random() * Math.PI * 2,
       twinkleSpeed: Math.random() * 0.08 + 0.06, // Rapid, lively twinkling rate
       reachedEarth: false,
+      hasBlasted: false,
     });
+  }
+
+  // Realistic Earth Atmospheric Impact Blast (Superbolide detonation, shockwaves & upward plasma ejecta)
+  spawnCometBlast(impactX, impactY, theme, impactAngle) {
+    // 1. Subtle camera shockwave vibration
+    if (this.overlay) {
+      this.overlay.classList.remove("rumble-light");
+      void this.overlay.offsetWidth; // Trigger reflow
+      this.overlay.classList.add("rumble-light");
+      setTimeout(() => {
+        if (this.overlay) this.overlay.classList.remove("rumble-light");
+      }, 240);
+    }
+
+    // 2. Play deep atmospheric impact boom
+    this.playCometImpactBoom();
+
+    // 3. Supersonic Atmospheric Shockwave Rings (Elliptical compression wavefronts)
+    const shockwaves = [
+      {
+        r: 10,
+        maxR: Math.random() * 40 + 175,
+        speed: 9.5,
+        width: 4.8,
+        alpha: 0.95,
+        decay: 0.024,
+        color: "#ffffff",
+      },
+      {
+        r: 6,
+        maxR: Math.random() * 30 + 130,
+        speed: 6.2,
+        width: 3.2,
+        alpha: 0.85,
+        decay: 0.028,
+        color: theme.innerComa || "#38bdf8",
+      },
+      {
+        r: 2,
+        maxR: Math.random() * 20 + 85,
+        speed: 4.0,
+        width: 2.2,
+        alpha: 0.65,
+        decay: 0.035,
+        color: "rgba(254, 240, 138, 0.9)",
+      },
+    ];
+
+    // 4. Hyper-velocity Plasma Ejecta & Atmospheric Fire Spalls
+    const ejecta = [];
+    const ejectaCount = 32 + Math.floor(Math.random() * 12);
+    for (let i = 0; i < ejectaCount; i++) {
+      // Ejecta fountains upward and outward into space from Earth's curved atmosphere
+      const fanAngle = -Math.PI * 0.5 + (Math.random() - 0.5) * (Math.PI * 0.88);
+      const speed = Math.random() * 8.5 + 4.2;
+      const pColor = Math.random() > 0.4 ? "#ffffff" : (Math.random() > 0.5 ? theme.innerComa : "#fef08a");
+
+      ejecta.push({
+        x: impactX,
+        y: impactY,
+        vx: Math.cos(fanAngle) * speed,
+        vy: Math.sin(fanAngle) * speed - Math.random() * 2.2,
+        drag: Math.random() * 0.03 + 0.925,
+        gravity: 0.085,
+        size: Math.random() * 2.4 + 1.8,
+        alpha: 1.0,
+        decay: Math.random() * 0.022 + 0.018,
+        color: pColor,
+        trail: [],
+      });
+    }
+
+    this.cometBlasts.push({
+      x: impactX,
+      y: impactY,
+      theme,
+      life: 1.0,
+      decay: 0.026,
+      shockwaves,
+      ejecta,
+      fireballRadius: 18,
+      maxFireballRadius: 135,
+      glowRadius: 210,
+    });
+  }
+
+  playCometImpactBoom() {
+    if (this.isMuted) return;
+    this.initAudio();
+    if (!this.audioCtx) return;
+    if (this.audioCtx.state === "suspended") {
+      this.audioCtx.resume();
+    }
+    try {
+      const now = this.audioCtx.currentTime;
+      // 1. Deep sub-bass cosmic rumble
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(85, now);
+      osc.frequency.exponentialRampToValueAtTime(26, now + 0.58);
+
+      gain.gain.setValueAtTime(0.42, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.62);
+
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.65);
+
+      // 2. Punchy atmospheric shockwave pop
+      const punch = this.audioCtx.createOscillator();
+      const punchGain = this.audioCtx.createGain();
+      punch.type = "triangle";
+      punch.frequency.setValueAtTime(140, now);
+      punch.frequency.exponentialRampToValueAtTime(45, now + 0.18);
+      punchGain.gain.setValueAtTime(0.25, now);
+      punchGain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+      punch.connect(punchGain);
+      punchGain.connect(this.audioCtx.destination);
+      punch.start(now);
+      punch.stop(now + 0.22);
+    } catch (e) {}
+  }
+
+  renderCometBlasts() {
+    if (!this.cometBlasts || this.cometBlasts.length === 0) return;
+    const bCtx = this.bubbleCtx || this.ctx;
+
+    for (let bIdx = this.cometBlasts.length - 1; bIdx >= 0; bIdx--) {
+      const blast = this.cometBlasts[bIdx];
+
+      // 1. Diffuse Space Horizon Illumination (Rendered on main canvas behind Earth)
+      if (this.ctx && blast.life > 0.05) {
+        const bgGlowR = blast.glowRadius * (1.1 - blast.life * 0.15);
+        const bgGrad = this.ctx.createRadialGradient(blast.x, blast.y, 0, blast.x, blast.y, bgGlowR);
+        bgGrad.addColorStop(0, `rgba(255, 255, 255, ${blast.life * 0.85})`);
+        bgGrad.addColorStop(0.25, blast.theme.innerComa || "#38bdf8");
+        bgGrad.addColorStop(0.65, `rgba(56, 189, 248, ${blast.life * 0.25})`);
+        bgGrad.addColorStop(1, "transparent");
+
+        this.ctx.save();
+        this.ctx.fillStyle = bgGrad;
+        this.ctx.beginPath();
+        this.ctx.ellipse(blast.x, blast.y, bgGlowR * 1.5, bgGlowR * 0.7, 0, 0, Math.PI * 2);
+        this.ctx.fill();
+        this.ctx.restore();
+      }
+
+      // 2. Foreground Blast on Bubble Canvas (Renders directly over Earth horizon!)
+      if (bCtx) {
+        // A. Atmospheric Fireball Core (Expanding incandescent superbolide explosion)
+        const currentR = blast.fireballRadius + (1 - blast.life) * (blast.maxFireballRadius - blast.fireballRadius);
+        const fireballGrad = bCtx.createRadialGradient(blast.x, blast.y, 0, blast.x, blast.y, currentR);
+        fireballGrad.addColorStop(0, `rgba(255, 255, 255, ${Math.min(1.0, blast.life * 1.2)})`);
+        fireballGrad.addColorStop(0.2, blast.theme.innerComa || "#38bdf8");
+        fireballGrad.addColorStop(0.5, "rgba(254, 240, 138, 0.6)");
+        fireballGrad.addColorStop(0.75, "rgba(56, 189, 248, 0.22)");
+        fireballGrad.addColorStop(1, "transparent");
+
+        bCtx.save();
+        bCtx.fillStyle = fireballGrad;
+        bCtx.beginPath();
+        bCtx.ellipse(blast.x, blast.y, currentR * 1.3, currentR * 0.72, 0, 0, Math.PI * 2);
+        bCtx.fill();
+        bCtx.restore();
+
+        // B. Earth Atmospheric Corona Glow (Lighting up Earth's curved crest)
+        const coronaR = blast.glowRadius * 0.85;
+        const coronaGrad = bCtx.createRadialGradient(blast.x, blast.y + 12, 0, blast.x, blast.y + 12, coronaR);
+        coronaGrad.addColorStop(0, `rgba(186, 230, 253, ${blast.life * 0.75})`);
+        coronaGrad.addColorStop(0.4, `rgba(56, 189, 248, ${blast.life * 0.35})`);
+        coronaGrad.addColorStop(1, "transparent");
+
+        bCtx.save();
+        bCtx.fillStyle = coronaGrad;
+        bCtx.beginPath();
+        bCtx.ellipse(blast.x, blast.y + 12, coronaR * 1.8, coronaR * 0.55, 0, 0, Math.PI * 2);
+        bCtx.fill();
+        bCtx.restore();
+
+        // C. Supersonic Elliptical Shockwave Rings
+        blast.shockwaves.forEach((sw) => {
+          if (sw.alpha > 0.01) {
+            sw.r += sw.speed;
+            sw.speed *= 0.945; // Decelerate as it pushes through dense atmosphere
+            sw.alpha -= sw.decay;
+
+            bCtx.save();
+            bCtx.globalAlpha = Math.max(0, sw.alpha);
+            bCtx.strokeStyle = sw.color;
+            bCtx.lineWidth = sw.width * Math.max(0.35, sw.alpha);
+            bCtx.beginPath();
+            // Elliptical shape perfectly matches orbital curvature of Earth
+            bCtx.ellipse(blast.x, blast.y, sw.r * 1.4, sw.r * 0.62, 0, 0, Math.PI * 2);
+            bCtx.stroke();
+            bCtx.restore();
+          }
+        });
+
+        // D. High-velocity Plasma Ejecta Particles with Fire Filaments
+        for (let pIdx = blast.ejecta.length - 1; pIdx >= 0; pIdx--) {
+          const p = blast.ejecta[pIdx];
+          p.trail.unshift({ x: p.x, y: p.y });
+          if (p.trail.length > 5) p.trail.pop();
+
+          p.vx *= p.drag;
+          p.vy *= p.drag;
+          p.vy += p.gravity;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.alpha -= p.decay;
+
+          if (p.alpha <= 0 || p.y >= this.canvas.height + 20) {
+            blast.ejecta.splice(pIdx, 1);
+            continue;
+          }
+
+          bCtx.save();
+          bCtx.globalAlpha = Math.max(0, p.alpha);
+
+          // Incandescent trailing streak
+          if (p.trail.length > 1) {
+            bCtx.strokeStyle = p.color;
+            bCtx.lineWidth = p.size * 0.8;
+            bCtx.lineCap = "round";
+            bCtx.beginPath();
+            bCtx.moveTo(p.x, p.y);
+            bCtx.lineTo(p.trail[p.trail.length - 1].x, p.trail[p.trail.length - 1].y);
+            bCtx.stroke();
+          }
+
+          // Sparkling ejecta head
+          bCtx.fillStyle = "#ffffff";
+          bCtx.beginPath();
+          bCtx.arc(p.x, p.y, p.size * 0.65, 0, Math.PI * 2);
+          bCtx.fill();
+          bCtx.restore();
+        }
+      }
+
+      // E. Age and prune blast
+      blast.life -= blast.decay;
+      const activeShock = blast.shockwaves.some((s) => s.alpha > 0.01);
+      if (blast.life <= 0 && blast.ejecta.length === 0 && !activeShock) {
+        this.cometBlasts.splice(bIdx, 1);
+      }
+    }
   }
 
   bindEvents() {
@@ -884,13 +1135,14 @@ export class LaunchIntroController {
       }
 
       const margin = 200;
-      const earthAtmosphereY = this.canvas.height - 130;
+      const earthAtmosphereY = this.canvas.height - 115;
       const isTouchingEarth = c.y >= earthAtmosphereY;
 
-      if (isTouchingEarth) {
+      if (isTouchingEarth && !c.hasBlasted) {
+        c.hasBlasted = true;
         c.reachedEarth = true;
-        // Atmospheric ablation: comet flares up and rapidly burns into Earth's blue atmosphere
-        c.alpha -= 0.038;
+        this.spawnCometBlast(c.x, c.y, c.theme, c.angle);
+        c.alpha = 0; // Detonates into the atmospheric blast!
       }
 
       const isPastBoundary = c.x < -margin || c.x > this.canvas.width + margin || c.y > this.canvas.height + 80 || (c.reachedEarth && c.alpha <= 0);
@@ -898,7 +1150,7 @@ export class LaunchIntroController {
         c.alpha -= 0.015;
       }
 
-      if (c.alpha <= 0 && isPastBoundary) {
+      if (c.alpha <= 0 && (isPastBoundary || c.hasBlasted)) {
         this.comets.splice(i, 1);
         continue;
       }
@@ -1047,6 +1299,9 @@ export class LaunchIntroController {
         this.ctx.restore();
       }
     }
+
+    // C. Render Realistic Comet Atmospheric Impact Blasts (Superbolide detonation, shockwaves & plasma ejecta)
+    this.renderCometBlasts();
 
     // 2. Render Bubbles (Screen-filling iridescent 3D bubbles from click burst)
     for (let i = this.bubbles.length - 1; i >= 0; i--) {
@@ -1237,6 +1492,7 @@ export class LaunchIntroController {
     this.particles = [];
     this.tailStars = [];
     this.comets = [];
+    this.cometBlasts = [];
     this.nextTailStarTime = Date.now() + 800;
     this.nextCometTime = Date.now() + 1800;
     if (this.bubbleCtx && this.bubbleCanvas) {
