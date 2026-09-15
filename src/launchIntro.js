@@ -174,9 +174,9 @@ export class LaunchIntroController {
         : this.canvas.width * (0.65 + Math.random() * 0.35) + 60;
       startY = Math.random() * (this.canvas.height * 0.18) - 60;
 
-      // Target Earth horizon situated at the bottom
-      const targetX = this.canvas.width * (0.28 + Math.random() * 0.44);
-      const targetY = this.canvas.height + 40;
+      // Target Earth surface situated at the bottom
+      const targetX = this.canvas.width * (0.24 + Math.random() * 0.52);
+      const targetY = this.getEarthSurfaceY(targetX);
 
       angle = Math.atan2(targetY - startY, targetX - startX);
       curveDir = fromLeft ? -1 : 1;
@@ -236,7 +236,18 @@ export class LaunchIntroController {
     });
   }
 
-  // Realistic Earth Atmospheric Impact Blast (Superbolide detonation, shockwaves & upward plasma ejecta)
+  // Dynamic Earth Surface line (parabolic curvature of the globe at the bottom)
+  getEarthSurfaceY(x) {
+    if (!this.canvas) return window.innerHeight - 35;
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+    // Parabolic curvature of Earth horizon image: crest is ~35px above bottom at center
+    const normX = (x - w * 0.5) / (w * 0.5);
+    const curveDrop = Math.min(30, Math.pow(normX, 2) * 26);
+    return h - 35 + curveDrop;
+  }
+
+  // Realistic Small-to-Medium Fire Blast on Earth's Surface
   spawnCometBlast(impactX, impactY, theme, impactAngle) {
     // 1. Subtle camera shockwave vibration
     if (this.overlay) {
@@ -245,78 +256,70 @@ export class LaunchIntroController {
       this.overlay.classList.add("rumble-light");
       setTimeout(() => {
         if (this.overlay) this.overlay.classList.remove("rumble-light");
-      }, 240);
+      }, 180);
     }
 
-    // 2. Play deep atmospheric impact boom
+    // 2. Play punchy impact sound
     this.playCometImpactBoom();
 
-    // 3. Supersonic Atmospheric Shockwave Rings (Elliptical compression wavefronts)
+    // 3. Fiery Surface Shockwave Ring (Skimming flatly along Earth's curvature)
     const shockwaves = [
       {
-        r: 10,
-        maxR: Math.random() * 40 + 175,
-        speed: 9.5,
-        width: 4.8,
+        r: 4,
+        maxR: Math.random() * 10 + 40, // Small-to-medium: 40px - 50px max
+        speed: 4.6,
+        width: 3.0,
         alpha: 0.95,
-        decay: 0.024,
-        color: "#ffffff",
-      },
-      {
-        r: 6,
-        maxR: Math.random() * 30 + 130,
-        speed: 6.2,
-        width: 3.2,
-        alpha: 0.85,
-        decay: 0.028,
-        color: theme.innerComa || "#38bdf8",
+        decay: 0.038,
+        color: "#ffa726", // Blazing golden orange
       },
       {
         r: 2,
-        maxR: Math.random() * 20 + 85,
-        speed: 4.0,
-        width: 2.2,
-        alpha: 0.65,
-        decay: 0.035,
-        color: "rgba(254, 240, 138, 0.9)",
+        maxR: Math.random() * 8 + 26,
+        speed: 3.0,
+        width: 2.0,
+        alpha: 0.85,
+        decay: 0.046,
+        color: "#ffffff",
       },
     ];
 
-    // 4. Hyper-velocity Plasma Ejecta & Atmospheric Fire Spalls
-    const ejecta = [];
-    const ejectaCount = 32 + Math.floor(Math.random() * 12);
-    for (let i = 0; i < ejectaCount; i++) {
-      // Ejecta fountains upward and outward into space from Earth's curved atmosphere
-      const fanAngle = -Math.PI * 0.5 + (Math.random() - 0.5) * (Math.PI * 0.88);
-      const speed = Math.random() * 8.5 + 4.2;
-      const pColor = Math.random() > 0.4 ? "#ffffff" : (Math.random() > 0.5 ? theme.innerComa : "#fef08a");
+    // 4. Burning Fire Embers & Sparks (Bursting upward like volcanic sparks)
+    const fireEmbers = [];
+    const emberCount = 18 + Math.floor(Math.random() * 6);
+    const fireColors = ["#ffffff", "#fff066", "#ffa726", "#ff5722", "#ef4444"];
 
-      ejecta.push({
-        x: impactX,
-        y: impactY,
+    for (let i = 0; i < emberCount; i++) {
+      // Fan upward into the atmosphere from Earth's crust
+      const fanAngle = -Math.PI * 0.5 + (Math.random() - 0.5) * (Math.PI * 0.72);
+      const speed = Math.random() * 4.8 + 2.2;
+      const pColor = fireColors[Math.floor(Math.random() * fireColors.length)];
+
+      fireEmbers.push({
+        x: impactX + (Math.random() - 0.5) * 8,
+        y: impactY - Math.random() * 3,
         vx: Math.cos(fanAngle) * speed,
-        vy: Math.sin(fanAngle) * speed - Math.random() * 2.2,
-        drag: Math.random() * 0.03 + 0.925,
-        gravity: 0.085,
-        size: Math.random() * 2.4 + 1.8,
+        vy: Math.sin(fanAngle) * speed - Math.random() * 1.4,
+        drag: 0.938,
+        gravity: 0.11,
+        size: Math.random() * 1.8 + 1.2,
         alpha: 1.0,
-        decay: Math.random() * 0.022 + 0.018,
+        decay: Math.random() * 0.026 + 0.022,
         color: pColor,
         trail: [],
       });
     }
 
+    // 5. Fire blast object
     this.cometBlasts.push({
       x: impactX,
       y: impactY,
-      theme,
-      life: 1.0,
-      decay: 0.026,
+      progress: 0,
+      maxRadius: Math.random() * 8 + 36, // Small to medium: 36px - 44px
+      fireEmbers,
       shockwaves,
-      ejecta,
-      fireballRadius: 18,
-      maxFireballRadius: 135,
-      glowRadius: 210,
+      life: 1.0,
+      decay: 0.03, // Smooth ~33 frames (~0.55s) transition
     });
   }
 
@@ -329,157 +332,152 @@ export class LaunchIntroController {
     }
     try {
       const now = this.audioCtx.currentTime;
-      // 1. Deep sub-bass cosmic rumble
+      // 1. Punchy low-end atmospheric impact thump
       const osc = this.audioCtx.createOscillator();
       const gain = this.audioCtx.createGain();
 
       osc.type = "sine";
-      osc.frequency.setValueAtTime(85, now);
-      osc.frequency.exponentialRampToValueAtTime(26, now + 0.58);
+      osc.frequency.setValueAtTime(110, now);
+      osc.frequency.exponentialRampToValueAtTime(28, now + 0.45);
 
-      gain.gain.setValueAtTime(0.42, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.62);
+      gain.gain.setValueAtTime(0.38, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
 
       osc.connect(gain);
       gain.connect(this.audioCtx.destination);
       osc.start(now);
-      osc.stop(now + 0.65);
+      osc.stop(now + 0.52);
 
-      // 2. Punchy atmospheric shockwave pop
+      // 2. High-energy spark crackle
       const punch = this.audioCtx.createOscillator();
       const punchGain = this.audioCtx.createGain();
       punch.type = "triangle";
-      punch.frequency.setValueAtTime(140, now);
-      punch.frequency.exponentialRampToValueAtTime(45, now + 0.18);
-      punchGain.gain.setValueAtTime(0.25, now);
-      punchGain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+      punch.frequency.setValueAtTime(160, now);
+      punch.frequency.exponentialRampToValueAtTime(40, now + 0.14);
+      punchGain.gain.setValueAtTime(0.22, now);
+      punchGain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
       punch.connect(punchGain);
       punchGain.connect(this.audioCtx.destination);
       punch.start(now);
-      punch.stop(now + 0.22);
+      punch.stop(now + 0.18);
     } catch (e) {}
   }
 
   renderCometBlasts() {
     if (!this.cometBlasts || this.cometBlasts.length === 0) return;
     const bCtx = this.bubbleCtx || this.ctx;
+    if (!bCtx) return;
 
     for (let bIdx = this.cometBlasts.length - 1; bIdx >= 0; bIdx--) {
       const blast = this.cometBlasts[bIdx];
+      blast.progress = Math.min(1.0, blast.progress + 0.075); // Quick bloom, smooth dissolve
 
-      // 1. Diffuse Space Horizon Illumination (Rendered on main canvas behind Earth)
-      if (this.ctx && blast.life > 0.05) {
-        const bgGlowR = blast.glowRadius * (1.1 - blast.life * 0.15);
-        const bgGrad = this.ctx.createRadialGradient(blast.x, blast.y, 0, blast.x, blast.y, bgGlowR);
-        bgGrad.addColorStop(0, `rgba(255, 255, 255, ${blast.life * 0.85})`);
-        bgGrad.addColorStop(0.25, blast.theme.innerComa || "#38bdf8");
-        bgGrad.addColorStop(0.65, `rgba(56, 189, 248, ${blast.life * 0.25})`);
-        bgGrad.addColorStop(1, "transparent");
+      // Smooth quarter-sine wave expansion
+      const currentRadius = blast.maxRadius * Math.sin(blast.progress * Math.PI * 0.5);
+      const alpha = Math.max(0, blast.life);
 
-        this.ctx.save();
-        this.ctx.fillStyle = bgGrad;
-        this.ctx.beginPath();
-        this.ctx.ellipse(blast.x, blast.y, bgGlowR * 1.5, bgGlowR * 0.7, 0, 0, Math.PI * 2);
-        this.ctx.fill();
-        this.ctx.restore();
-      }
+      bCtx.save();
 
-      // 2. Foreground Blast on Bubble Canvas (Renders directly over Earth horizon!)
-      if (bCtx) {
-        // A. Atmospheric Fireball Core (Expanding incandescent superbolide explosion)
-        const currentR = blast.fireballRadius + (1 - blast.life) * (blast.maxFireballRadius - blast.fireballRadius);
-        const fireballGrad = bCtx.createRadialGradient(blast.x, blast.y, 0, blast.x, blast.y, currentR);
-        fireballGrad.addColorStop(0, `rgba(255, 255, 255, ${Math.min(1.0, blast.life * 1.2)})`);
-        fireballGrad.addColorStop(0.2, blast.theme.innerComa || "#38bdf8");
-        fireballGrad.addColorStop(0.5, "rgba(254, 240, 138, 0.6)");
-        fireballGrad.addColorStop(0.75, "rgba(56, 189, 248, 0.22)");
-        fireballGrad.addColorStop(1, "transparent");
+      // A. Surface Scorching & Ambient Ground Glow (Lighting up Earth's terrain/clouds)
+      const groundGlowR = currentRadius * 1.5;
+      const groundGrad = bCtx.createRadialGradient(blast.x, blast.y, 0, blast.x, blast.y, groundGlowR);
+      groundGrad.addColorStop(0, `rgba(255, 180, 60, ${alpha * 0.75})`);
+      groundGrad.addColorStop(0.45, `rgba(255, 90, 10, ${alpha * 0.35})`);
+      groundGrad.addColorStop(1, "transparent");
 
-        bCtx.save();
-        bCtx.fillStyle = fireballGrad;
-        bCtx.beginPath();
-        bCtx.ellipse(blast.x, blast.y, currentR * 1.3, currentR * 0.72, 0, 0, Math.PI * 2);
-        bCtx.fill();
-        bCtx.restore();
+      bCtx.fillStyle = groundGrad;
+      bCtx.beginPath();
+      // Elliptical ground glow hugging the curved Earth horizon
+      bCtx.ellipse(blast.x, blast.y, groundGlowR * 1.45, groundGlowR * 0.5, 0, 0, Math.PI * 2);
+      bCtx.fill();
 
-        // B. Earth Atmospheric Corona Glow (Lighting up Earth's curved crest)
-        const coronaR = blast.glowRadius * 0.85;
-        const coronaGrad = bCtx.createRadialGradient(blast.x, blast.y + 12, 0, blast.x, blast.y + 12, coronaR);
-        coronaGrad.addColorStop(0, `rgba(186, 230, 253, ${blast.life * 0.75})`);
-        coronaGrad.addColorStop(0.4, `rgba(56, 189, 248, ${blast.life * 0.35})`);
-        coronaGrad.addColorStop(1, "transparent");
+      // B. Expanding Fireball Dome (Rising upward from Earth's crust)
+      const domeOffsetY = -currentRadius * 0.35;
+      const fireGrad = bCtx.createRadialGradient(
+        blast.x,
+        blast.y + domeOffsetY,
+        0,
+        blast.x,
+        blast.y + domeOffsetY,
+        currentRadius
+      );
+      // Incandescent core -> bright golden fire -> blazing flame red -> dissipate
+      fireGrad.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
+      fireGrad.addColorStop(0.22, `rgba(255, 235, 90, ${alpha * 0.95})`);
+      fireGrad.addColorStop(0.52, `rgba(255, 110, 15, ${alpha * 0.88})`);
+      fireGrad.addColorStop(0.82, `rgba(225, 40, 20, ${alpha * 0.55})`);
+      fireGrad.addColorStop(1, "transparent");
 
-        bCtx.save();
-        bCtx.fillStyle = coronaGrad;
-        bCtx.beginPath();
-        bCtx.ellipse(blast.x, blast.y + 12, coronaR * 1.8, coronaR * 0.55, 0, 0, Math.PI * 2);
-        bCtx.fill();
-        bCtx.restore();
+      bCtx.fillStyle = fireGrad;
+      bCtx.beginPath();
+      bCtx.ellipse(blast.x, blast.y + domeOffsetY, currentRadius * 1.15, currentRadius * 0.9, 0, 0, Math.PI * 2);
+      bCtx.fill();
 
-        // C. Supersonic Elliptical Shockwave Rings
-        blast.shockwaves.forEach((sw) => {
-          if (sw.alpha > 0.01) {
-            sw.r += sw.speed;
-            sw.speed *= 0.945; // Decelerate as it pushes through dense atmosphere
-            sw.alpha -= sw.decay;
-
-            bCtx.save();
-            bCtx.globalAlpha = Math.max(0, sw.alpha);
-            bCtx.strokeStyle = sw.color;
-            bCtx.lineWidth = sw.width * Math.max(0.35, sw.alpha);
-            bCtx.beginPath();
-            // Elliptical shape perfectly matches orbital curvature of Earth
-            bCtx.ellipse(blast.x, blast.y, sw.r * 1.4, sw.r * 0.62, 0, 0, Math.PI * 2);
-            bCtx.stroke();
-            bCtx.restore();
-          }
-        });
-
-        // D. High-velocity Plasma Ejecta Particles with Fire Filaments
-        for (let pIdx = blast.ejecta.length - 1; pIdx >= 0; pIdx--) {
-          const p = blast.ejecta[pIdx];
-          p.trail.unshift({ x: p.x, y: p.y });
-          if (p.trail.length > 5) p.trail.pop();
-
-          p.vx *= p.drag;
-          p.vy *= p.drag;
-          p.vy += p.gravity;
-          p.x += p.vx;
-          p.y += p.vy;
-          p.alpha -= p.decay;
-
-          if (p.alpha <= 0 || p.y >= this.canvas.height + 20) {
-            blast.ejecta.splice(pIdx, 1);
-            continue;
-          }
+      // C. Surface Fiery Shockwave Ring (Flat elliptical expansion along Earth surface)
+      blast.shockwaves.forEach((sw) => {
+        if (sw.alpha > 0.01) {
+          sw.r += sw.speed;
+          sw.speed *= 0.93;
+          sw.alpha -= sw.decay;
 
           bCtx.save();
-          bCtx.globalAlpha = Math.max(0, p.alpha);
-
-          // Incandescent trailing streak
-          if (p.trail.length > 1) {
-            bCtx.strokeStyle = p.color;
-            bCtx.lineWidth = p.size * 0.8;
-            bCtx.lineCap = "round";
-            bCtx.beginPath();
-            bCtx.moveTo(p.x, p.y);
-            bCtx.lineTo(p.trail[p.trail.length - 1].x, p.trail[p.trail.length - 1].y);
-            bCtx.stroke();
-          }
-
-          // Sparkling ejecta head
-          bCtx.fillStyle = "#ffffff";
+          bCtx.globalAlpha = Math.max(0, sw.alpha);
+          bCtx.strokeStyle = sw.color;
+          bCtx.lineWidth = sw.width * Math.max(0.3, sw.alpha);
           bCtx.beginPath();
-          bCtx.arc(p.x, p.y, p.size * 0.65, 0, Math.PI * 2);
-          bCtx.fill();
+          // Hugs surface curvature flatly
+          bCtx.ellipse(blast.x, blast.y, sw.r * 1.4, sw.r * 0.42, 0, 0, Math.PI * 2);
+          bCtx.stroke();
           bCtx.restore();
         }
+      });
+
+      // D. Burning Embers & Fire Sparks (Flying upward like fireworks from crater)
+      for (let pIdx = blast.fireEmbers.length - 1; pIdx >= 0; pIdx--) {
+        const p = blast.fireEmbers[pIdx];
+        p.trail.unshift({ x: p.x, y: p.y });
+        if (p.trail.length > 4) p.trail.pop();
+
+        p.vx *= p.drag;
+        p.vy *= p.drag;
+        p.vy += p.gravity;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= p.decay;
+
+        if (p.alpha <= 0 || p.y >= this.canvas.height + 10) {
+          blast.fireEmbers.splice(pIdx, 1);
+          continue;
+        }
+
+        bCtx.save();
+        bCtx.globalAlpha = Math.max(0, p.alpha);
+
+        // Fire ember streak
+        if (p.trail.length > 1) {
+          bCtx.strokeStyle = p.color;
+          bCtx.lineWidth = p.size * 0.75;
+          bCtx.lineCap = "round";
+          bCtx.beginPath();
+          bCtx.moveTo(p.x, p.y);
+          bCtx.lineTo(p.trail[p.trail.length - 1].x, p.trail[p.trail.length - 1].y);
+          bCtx.stroke();
+        }
+
+        // Glowing ember head
+        bCtx.fillStyle = "#ffffff";
+        bCtx.beginPath();
+        bCtx.arc(p.x, p.y, p.size * 0.6, 0, Math.PI * 2);
+        bCtx.fill();
+        bCtx.restore();
       }
 
-      // E. Age and prune blast
+      bCtx.restore();
+
+      // E. Smooth life decay
       blast.life -= blast.decay;
       const activeShock = blast.shockwaves.some((s) => s.alpha > 0.01);
-      if (blast.life <= 0 && blast.ejecta.length === 0 && !activeShock) {
+      if (blast.life <= 0 && blast.fireEmbers.length === 0 && !activeShock) {
         this.cometBlasts.splice(bIdx, 1);
       }
     }
@@ -1135,17 +1133,18 @@ export class LaunchIntroController {
       }
 
       const margin = 200;
-      const earthAtmosphereY = this.canvas.height - 115;
-      const isTouchingEarth = c.y >= earthAtmosphereY;
+      const surfaceY = this.getEarthSurfaceY(c.x);
+      const isTouchingEarth = c.y >= surfaceY;
 
       if (isTouchingEarth && !c.hasBlasted) {
         c.hasBlasted = true;
         c.reachedEarth = true;
-        this.spawnCometBlast(c.x, c.y, c.theme, c.angle);
-        c.alpha = 0; // Detonates into the atmospheric blast!
+        // Impact occurs directly on Earth's surface!
+        this.spawnCometBlast(c.x, surfaceY, c.theme, c.angle);
+        c.alpha = 0; // Seamless transition: nucleus detonates directly into the surface fire blast!
       }
 
-      const isPastBoundary = c.x < -margin || c.x > this.canvas.width + margin || c.y > this.canvas.height + 80 || (c.reachedEarth && c.alpha <= 0);
+      const isPastBoundary = c.x < -margin || c.x > this.canvas.width + margin || c.y > this.canvas.height + 40 || (c.reachedEarth && c.alpha <= 0);
       if (isPastBoundary && !isTouchingEarth) {
         c.alpha -= 0.015;
       }
@@ -1158,24 +1157,6 @@ export class LaunchIntroController {
       if (c.alpha > 0) {
         this.ctx.save();
         this.ctx.globalAlpha = c.alpha;
-
-        // Earth Atmospheric Entry Ionization Flare (when plunging into Earth's blue horizon)
-        if (c.y >= earthAtmosphereY - 80) {
-          const entryBloom = Math.min(85, (c.y - (earthAtmosphereY - 80)) * 0.9 + 25);
-          const bloomGrad = this.ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, entryBloom);
-          bloomGrad.addColorStop(0, "rgba(255, 255, 255, 0.9)");
-          bloomGrad.addColorStop(0.3, c.theme.innerComa);
-          bloomGrad.addColorStop(0.65, "rgba(56, 189, 248, 0.35)");
-          bloomGrad.addColorStop(1, "transparent");
-
-          this.ctx.save();
-          this.ctx.globalAlpha = c.alpha * 0.85;
-          this.ctx.fillStyle = bloomGrad;
-          this.ctx.beginPath();
-          this.ctx.arc(c.x, c.y, entryBloom, 0, Math.PI * 2);
-          this.ctx.fill();
-          this.ctx.restore();
-        }
 
         const ux = Math.cos(c.angle);
         const uy = Math.sin(c.angle);
