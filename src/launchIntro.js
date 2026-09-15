@@ -547,6 +547,11 @@ export class LaunchIntroController {
         rocketEl.className = "launch-rocket-container rocket-launching";
       }
 
+      const earthEl = document.querySelector("#launch-earth-horizon");
+      if (earthEl) {
+        earthEl.classList.add("earth-liftoff-active");
+      }
+
       this.spawnIgnitionBurst();
     }, 7000);
     this.timers.push(goTimer);
@@ -816,6 +821,11 @@ export class LaunchIntroController {
     if (this.rocketContainer) {
       this.rocketContainer.style.display = "none";
       this.rocketContainer.className = "launch-rocket-container rocket-prelaunch";
+    }
+
+    const earthEl = document.querySelector("#launch-earth-horizon");
+    if (earthEl) {
+      earthEl.classList.remove("earth-liftoff-active");
     }
 
     document.body.style.overflow = "hidden";
