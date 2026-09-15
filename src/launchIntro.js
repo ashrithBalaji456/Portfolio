@@ -155,8 +155,7 @@ export class LaunchIntroController {
       angle,
       theme,
       life: 1.0,
-      decay: Math.random() * 0.012 + 0.014,
-      sparks: [],
+      decay: Math.random() * 0.014 + 0.016,
     });
   }
 
@@ -231,7 +230,6 @@ export class LaunchIntroController {
       fadeIn: true,
       twinklePhase: Math.random() * Math.PI * 2,
       twinkleSpeed: Math.random() * 0.08 + 0.06, // Rapid, lively twinkling rate
-      trailStars: [],
       reachedEarth: false,
     });
   }
@@ -817,47 +815,16 @@ export class LaunchIntroController {
       this.nextCometTime = now + Math.random() * 3000 + 8000; // Regular interval every ~8-11s
     }
 
-    // A. Render Tail Stars (Swift meteors with glowing trailing streaks & sparkling embers)
+    // A. Render Tail Stars (Swift meteors with clean glowing trailing streaks)
     for (let i = this.tailStars.length - 1; i >= 0; i--) {
       const ts = this.tailStars[i];
       ts.x += Math.cos(ts.angle) * ts.speed;
       ts.y += Math.sin(ts.angle) * ts.speed;
       ts.life -= ts.decay;
 
-      // Spawn micro sparkling embers in wake
-      if (Math.random() < 0.45 && ts.life > 0.15) {
-        ts.sparks.push({
-          x: ts.x - Math.cos(ts.angle) * (Math.random() * 30),
-          y: ts.y - Math.sin(ts.angle) * (Math.random() * 30),
-          vx: (Math.random() - 0.5) * 0.7,
-          vy: (Math.random() - 0.5) * 0.7,
-          life: 1.0,
-          decay: Math.random() * 0.04 + 0.03,
-          color: ts.theme.glow,
-          size: Math.random() * 1.5 + 0.7,
-        });
-      }
-
-      // Draw embers
-      for (let s = ts.sparks.length - 1; s >= 0; s--) {
-        const sp = ts.sparks[s];
-        sp.x += sp.vx;
-        sp.y += sp.vy;
-        sp.life -= sp.decay;
-        if (sp.life <= 0) {
-          ts.sparks.splice(s, 1);
-          continue;
-        }
-        this.ctx.save();
-        this.ctx.globalAlpha = sp.life * Math.max(0, ts.life) * 0.85;
-        this.ctx.fillStyle = sp.color;
-        this.ctx.beginPath();
-        this.ctx.arc(sp.x, sp.y, sp.size, 0, Math.PI * 2);
-        this.ctx.fill();
-        this.ctx.restore();
-      }
-
-      if (ts.life <= 0 && ts.sparks.length === 0) {
+      // Disappear cleanly once it enters Earth atmosphere or reaches bottom
+      const pastBottom = ts.y >= this.canvas.height - 40;
+      if (ts.life <= 0 || pastBottom || ts.x < -120 || ts.x > this.canvas.width + 120) {
         this.tailStars.splice(i, 1);
         continue;
       }
@@ -931,65 +898,7 @@ export class LaunchIntroController {
         c.alpha -= 0.015;
       }
 
-      // 1. Trail Stars: Spawn and animate glittering, twinkling stars along the comet's wake
-      if (c.alpha > 0.15 && Math.random() < 0.65) {
-        const tDist = Math.random() * (c.tailLen * 0.8) + 15;
-        const tOffset = (Math.random() - 0.5) * (14 + tDist * 0.08);
-        const normAngle = c.angle + Math.PI / 2;
-        c.trailStars.push({
-          x: c.x - Math.cos(c.angle) * tDist + Math.cos(normAngle) * tOffset,
-          y: c.y - Math.sin(c.angle) * tDist + Math.sin(normAngle) * tOffset,
-          vx: (Math.random() - 0.5) * 0.4,
-          vy: (Math.random() - 0.5) * 0.4,
-          size: Math.random() * 1.6 + 1.0,
-          twinklePhase: Math.random() * Math.PI * 2,
-          twinkleSpeed: Math.random() * 0.09 + 0.05,
-          color: Math.random() > 0.35 ? "#ffffff" : c.theme.innerComa,
-          life: 1.0,
-          decay: Math.random() * 0.012 + 0.008,
-          hasCross: Math.random() < 0.35,
-        });
-      }
-
-      // Draw all trailing twinkling stars
-      for (let s = c.trailStars.length - 1; s >= 0; s--) {
-        const ts = c.trailStars[s];
-        ts.x += ts.vx;
-        ts.y += ts.vy;
-        ts.life -= ts.decay;
-        ts.twinklePhase += ts.twinkleSpeed;
-
-        if (ts.life <= 0) {
-          c.trailStars.splice(s, 1);
-          continue;
-        }
-
-        const sTwinkle = Math.max(0.12, Math.min(1.0, Math.sin(ts.twinklePhase) * 0.45 + 0.55));
-        const finalAlpha = ts.life * c.alpha * sTwinkle;
-
-        this.ctx.save();
-        this.ctx.globalAlpha = finalAlpha;
-        this.ctx.fillStyle = ts.color;
-        this.ctx.beginPath();
-        this.ctx.arc(ts.x, ts.y, ts.size, 0, Math.PI * 2);
-        this.ctx.fill();
-
-        // Delicate sparkling diffraction glints on trailing stars
-        if (ts.hasCross && sTwinkle > 0.68) {
-          const spLen = ts.size * 2.6 * ((sTwinkle - 0.68) / 0.32);
-          this.ctx.strokeStyle = ts.color;
-          this.ctx.lineWidth = 0.65;
-          this.ctx.beginPath();
-          this.ctx.moveTo(ts.x - spLen, ts.y);
-          this.ctx.lineTo(ts.x + spLen, ts.y);
-          this.ctx.moveTo(ts.x, ts.y - spLen);
-          this.ctx.lineTo(ts.x, ts.y + spLen);
-          this.ctx.stroke();
-        }
-        this.ctx.restore();
-      }
-
-      if (c.alpha <= 0 && isPastBoundary && c.trailStars.length === 0) {
+      if (c.alpha <= 0 && isPastBoundary) {
         this.comets.splice(i, 1);
         continue;
       }
