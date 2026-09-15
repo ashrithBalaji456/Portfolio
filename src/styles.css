@@ -3538,90 +3538,34 @@ h1 {
 .launch-earth-horizon {
   position: absolute;
   bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  height: clamp(140px, 19vh, 220px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: clamp(1200px, 105vw, 1920px);
   pointer-events: none;
-  z-index: 4;
-  overflow: hidden;
+  z-index: 3;
+  mix-blend-mode: screen;
   display: flex;
   justify-content: center;
   align-items: flex-end;
   transition: transform 3.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
 }
 
-.launch-earth-horizon.earth-liftoff-active {
-  transform: translateY(45px) scale(0.97);
-}
-
 .earth-horizon-img {
-  position: absolute;
-  bottom: -40px;
-  left: 50%;
-  transform: translateX(-50%);
   width: 100%;
-  min-width: 1280px;
-  max-width: 2200px;
-  height: clamp(260px, 36vh, 420px);
-  object-fit: cover;
-  object-position: center 48%;
-  mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 65%, rgba(0, 0, 0, 0.9) 82%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 65%, rgba(0, 0, 0, 0.9) 82%, transparent 100%);
-  filter: saturate(1.2) brightness(1.05) contrast(1.05);
-}
-
-.earth-atmosphere-corona {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 90px;
-  background: linear-gradient(180deg, rgba(56, 189, 248, 0.45) 0%, rgba(14, 165, 233, 0.18) 45%, transparent 100%);
-  filter: blur(12px);
+  height: auto;
+  display: block;
   pointer-events: none;
-  transition: all 1.2s ease;
+  user-select: none;
+  transform: translateY(48%);
+  filter: brightness(1.06) contrast(1.08) saturate(1.18);
+  /* Organic elliptical mask: smoothly feather all edges into the canvas starfield with zero straight lines */
+  mask-image: radial-gradient(ellipse 80% 55% at 50% 60%, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0.85) 65%, transparent 92%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 55% at 50% 60%, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0.85) 65%, transparent 92%);
+  transition: transform 3.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.launch-earth-horizon.earth-liftoff-active .earth-atmosphere-corona {
-  background: linear-gradient(180deg, rgba(249, 115, 22, 0.7) 0%, rgba(56, 189, 248, 0.35) 50%, transparent 100%);
-  filter: blur(18px);
-}
-
-.earth-spaceport-pad {
-  position: absolute;
-  top: 4px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 120px;
-  width: 200px;
-  z-index: 5;
-}
-
-.spaceport-beacon {
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-}
-
-.spaceport-beacon-l {
-  background: #22c55e;
-  box-shadow: 0 0 12px #22c55e;
-  animation: beaconBlink 1.2s ease-in-out infinite;
-}
-
-.spaceport-beacon-r {
-  background: #ef4444;
-  box-shadow: 0 0 12px #ef4444;
-  animation: beaconBlink 1.2s ease-in-out infinite 0.6s;
-}
-
-@keyframes beaconBlink {
-  0%, 100% { opacity: 0.3; transform: scale(0.85); }
-  50% { opacity: 1; transform: scale(1.3); }
+.launch-earth-horizon.earth-liftoff-active .earth-horizon-img {
+  transform: translateY(54%) scale(0.98);
 }
 
 /* Nav Launch Replay Button */
