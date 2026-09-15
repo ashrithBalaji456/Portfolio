@@ -196,6 +196,9 @@ export class LaunchIntroController {
       alpha: 0.0,
       maxAlpha: Math.random() * 0.12 + 0.88,
       fadeIn: true,
+      twinklePhase: Math.random() * Math.PI * 2,
+      twinkleSpeed: Math.random() * 0.08 + 0.06, // Rapid, lively twinkling rate
+      trailStars: [],
     });
   }
 
@@ -885,7 +888,65 @@ export class LaunchIntroController {
         c.alpha -= 0.015;
       }
 
-      if (c.alpha <= 0 && isPastBoundary) {
+      // 1. Trail Stars: Spawn and animate glittering, twinkling stars along the comet's wake
+      if (c.alpha > 0.15 && Math.random() < 0.65) {
+        const tDist = Math.random() * (c.tailLen * 0.8) + 15;
+        const tOffset = (Math.random() - 0.5) * (14 + tDist * 0.08);
+        const normAngle = c.angle + Math.PI / 2;
+        c.trailStars.push({
+          x: c.x - Math.cos(c.angle) * tDist + Math.cos(normAngle) * tOffset,
+          y: c.y - Math.sin(c.angle) * tDist + Math.sin(normAngle) * tOffset,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          size: Math.random() * 1.6 + 1.0,
+          twinklePhase: Math.random() * Math.PI * 2,
+          twinkleSpeed: Math.random() * 0.09 + 0.05,
+          color: Math.random() > 0.35 ? "#ffffff" : c.theme.innerComa,
+          life: 1.0,
+          decay: Math.random() * 0.012 + 0.008,
+          hasCross: Math.random() < 0.35,
+        });
+      }
+
+      // Draw all trailing twinkling stars
+      for (let s = c.trailStars.length - 1; s >= 0; s--) {
+        const ts = c.trailStars[s];
+        ts.x += ts.vx;
+        ts.y += ts.vy;
+        ts.life -= ts.decay;
+        ts.twinklePhase += ts.twinkleSpeed;
+
+        if (ts.life <= 0) {
+          c.trailStars.splice(s, 1);
+          continue;
+        }
+
+        const sTwinkle = Math.max(0.12, Math.min(1.0, Math.sin(ts.twinklePhase) * 0.45 + 0.55));
+        const finalAlpha = ts.life * c.alpha * sTwinkle;
+
+        this.ctx.save();
+        this.ctx.globalAlpha = finalAlpha;
+        this.ctx.fillStyle = ts.color;
+        this.ctx.beginPath();
+        this.ctx.arc(ts.x, ts.y, ts.size, 0, Math.PI * 2);
+        this.ctx.fill();
+
+        // Delicate sparkling diffraction glints on trailing stars
+        if (ts.hasCross && sTwinkle > 0.68) {
+          const spLen = ts.size * 2.6 * ((sTwinkle - 0.68) / 0.32);
+          this.ctx.strokeStyle = ts.color;
+          this.ctx.lineWidth = 0.65;
+          this.ctx.beginPath();
+          this.ctx.moveTo(ts.x - spLen, ts.y);
+          this.ctx.lineTo(ts.x + spLen, ts.y);
+          this.ctx.moveTo(ts.x, ts.y - spLen);
+          this.ctx.lineTo(ts.x, ts.y + spLen);
+          this.ctx.stroke();
+        }
+        this.ctx.restore();
+      }
+
+      if (c.alpha <= 0 && isPastBoundary && c.trailStars.length === 0) {
         this.comets.splice(i, 1);
         continue;
       }
@@ -971,22 +1032,46 @@ export class LaunchIntroController {
         this.ctx.fill();
         this.ctx.restore();
 
-        // 4. Starlike Nucleus (Brilliant core spark with diffraction glint)
+        // 4. Brilliant Twinkling Starlight Nucleus (Dynamic scintillation & diamond glints)
+        c.twinklePhase += c.twinkleSpeed;
+        const headTwinkle = Math.sin(c.twinklePhase) * 0.32 + 0.68; // Smooth scintillation between 0.36 and 1.0
+        const rotAngle = c.twinklePhase * 0.25; // Gentle celestial sparkle rotation
+
         this.ctx.save();
+        this.ctx.translate(c.x, c.y);
+        this.ctx.rotate(rotAngle);
+
+        // Radiant starlight core
         this.ctx.fillStyle = "#ffffff";
         this.ctx.beginPath();
-        this.ctx.arc(c.x, c.y, c.nucleusRadius * 0.7, 0, Math.PI * 2);
+        this.ctx.arc(0, 0, c.nucleusRadius * 0.75 * headTwinkle, 0, Math.PI * 2);
         this.ctx.fill();
 
-        const glintLen = c.nucleusRadius * 2.8;
-        this.ctx.strokeStyle = "rgba(255, 255, 255, 0.95)";
-        this.ctx.lineWidth = 0.85;
+        // Dynamic 8-point diamond diffraction starburst (fading to fine needle points)
+        const primarySpike = (c.nucleusRadius * 3.8 + 4) * headTwinkle;
+        const secondarySpike = primarySpike * 0.52;
+
+        const rayGrad = this.ctx.createRadialGradient(0, 0, 0, 0, 0, primarySpike);
+        rayGrad.addColorStop(0, "rgba(255, 255, 255, 0.98)");
+        rayGrad.addColorStop(0.25, c.theme.innerComa);
+        rayGrad.addColorStop(0.7, "rgba(255, 255, 255, 0.15)");
+        rayGrad.addColorStop(1, "transparent");
+
+        this.ctx.strokeStyle = rayGrad;
+        this.ctx.lineWidth = 1.1;
         this.ctx.beginPath();
-        this.ctx.moveTo(c.x - glintLen, c.y);
-        this.ctx.lineTo(c.x + glintLen, c.y);
-        this.ctx.moveTo(c.x, c.y - glintLen);
-        this.ctx.lineTo(c.x, c.y + glintLen);
+        // Primary cross
+        this.ctx.moveTo(-primarySpike, 0);
+        this.ctx.lineTo(primarySpike, 0);
+        this.ctx.moveTo(0, -primarySpike);
+        this.ctx.lineTo(0, primarySpike);
+        // Diagonal rays
+        this.ctx.moveTo(-secondarySpike, -secondarySpike);
+        this.ctx.lineTo(secondarySpike, secondarySpike);
+        this.ctx.moveTo(-secondarySpike, secondarySpike);
+        this.ctx.lineTo(secondarySpike, -secondarySpike);
         this.ctx.stroke();
+
         this.ctx.restore();
 
         this.ctx.restore();
