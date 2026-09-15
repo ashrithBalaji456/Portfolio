@@ -187,16 +187,15 @@ export class LaunchIntroController {
     this.comets.push({
       x: startX,
       y: startY,
-      speed: Math.random() * 1.8 + 3.8, // Graceful, stately comet cruise speed
+      speed: Math.random() * 1.5 + 3.2, // Graceful, majestic cosmic speed
       angle,
-      tailLen: Math.random() * 120 + 350, // Grand long dust and ion tail (350-470px)
-      tailWidth: Math.random() * 10 + 28, // Conical fan expansion
-      nucleusRadius: Math.random() * 1.2 + 4.0,
+      curveDir: fromLeft ? -1 : 1,
+      tailLen: Math.random() * 80 + 320,
+      nucleusRadius: Math.random() * 1.0 + 3.5,
       theme,
       alpha: 0.0,
-      maxAlpha: Math.random() * 0.15 + 0.85,
+      maxAlpha: Math.random() * 0.12 + 0.88,
       fadeIn: true,
-      dust: [],
     });
   }
 
@@ -886,42 +885,7 @@ export class LaunchIntroController {
         c.alpha -= 0.015;
       }
 
-      // Emit stardust along trailing wake
-      if (Math.random() < 0.55 && c.alpha > 0.1) {
-        const dustDist = Math.random() * (c.tailLen * 0.75) + 25;
-        const dustSpread = (Math.random() - 0.5) * (c.tailWidth * (dustDist / c.tailLen) * 1.5);
-        const normAngle = c.angle + Math.PI / 2;
-        c.dust.push({
-          x: c.x - Math.cos(c.angle) * dustDist + Math.cos(normAngle) * dustSpread,
-          y: c.y - Math.sin(c.angle) * dustDist + Math.sin(normAngle) * dustSpread,
-          vx: (Math.random() - 0.5) * 0.4,
-          vy: (Math.random() - 0.5) * 0.4,
-          size: Math.random() * 2.0 + 0.8,
-          alpha: 1.0,
-          decay: Math.random() * 0.014 + 0.01,
-          color: c.theme.dustColor,
-        });
-      }
-
-      for (let d = c.dust.length - 1; d >= 0; d--) {
-        const dp = c.dust[d];
-        dp.x += dp.vx;
-        dp.y += dp.vy;
-        dp.alpha -= dp.decay;
-        if (dp.alpha <= 0) {
-          c.dust.splice(d, 1);
-          continue;
-        }
-        this.ctx.save();
-        this.ctx.globalAlpha = dp.alpha * c.alpha * 0.7;
-        this.ctx.fillStyle = dp.color;
-        this.ctx.beginPath();
-        this.ctx.arc(dp.x, dp.y, dp.size, 0, Math.PI * 2);
-        this.ctx.fill();
-        this.ctx.restore();
-      }
-
-      if (c.alpha <= 0 && isPastBoundary && c.dust.length === 0) {
+      if (c.alpha <= 0 && isPastBoundary) {
         this.comets.splice(i, 1);
         continue;
       }
@@ -930,79 +894,100 @@ export class LaunchIntroController {
         this.ctx.save();
         this.ctx.globalAlpha = c.alpha;
 
-        const tailEndX = c.x - Math.cos(c.angle) * c.tailLen;
-        const tailEndY = c.y - Math.sin(c.angle) * c.tailLen;
-        const perpX = Math.cos(c.angle + Math.PI / 2);
-        const perpY = Math.sin(c.angle + Math.PI / 2);
+        const ux = Math.cos(c.angle);
+        const uy = Math.sin(c.angle);
+        const perpX = -uy;
+        const perpY = ux;
 
-        // 1. Broad Conical Dust Tail (Curving fan spreading behind comet)
-        const p1X = c.x + perpX * (c.nucleusRadius * 1.5);
-        const p1Y = c.y + perpY * (c.nucleusRadius * 1.5);
-        const p2X = tailEndX + perpX * (c.tailWidth * 1.4);
-        const p2Y = tailEndY + perpY * (c.tailWidth * 1.4);
-        const p3X = tailEndX - perpX * (c.tailWidth * 0.9);
-        const p3Y = tailEndY - perpY * (c.tailWidth * 0.9);
-        const p4X = c.x - perpX * (c.nucleusRadius * 1.5);
-        const p4Y = c.y - perpY * (c.nucleusRadius * 1.5);
+        // 1. Broad Ethereal Curved Dust Tail (Multi-pass continuous vapor puffs - NO hard polygon edges!)
+        const steps = 38;
+        for (let s = steps; s >= 1; s--) {
+          const t = s / steps;
+          const dist = t * c.tailLen;
+          // Natural solar wind parabolic curve
+          const curveOffset = Math.pow(t, 1.4) * 45 * c.curveDir;
+          const px = c.x - ux * dist + perpX * curveOffset;
+          const py = c.y - uy * dist + perpY * curveOffset;
 
-        const dustGrad = this.ctx.createLinearGradient(c.x, c.y, tailEndX, tailEndY);
-        dustGrad.addColorStop(0, c.theme.tailColor1 || c.theme.innerComa);
-        dustGrad.addColorStop(0.35, c.theme.dustTail);
-        dustGrad.addColorStop(0.8, "rgba(56, 189, 248, 0.08)");
-        dustGrad.addColorStop(1, "transparent");
+          // Billowing expansion from head to tail tip
+          const r = 4 + Math.pow(t, 0.85) * 36;
+          const pAlpha = (1 - t * 0.85) * c.alpha * 0.14;
 
-        this.ctx.fillStyle = dustGrad;
-        this.ctx.beginPath();
-        this.ctx.moveTo(p1X, p1Y);
-        this.ctx.lineTo(p2X, p2Y);
-        this.ctx.lineTo(p3X, p3Y);
-        this.ctx.lineTo(p4X, p4Y);
-        this.ctx.closePath();
-        this.ctx.fill();
+          const vaporGrad = this.ctx.createRadialGradient(px, py, 0, px, py, r);
+          vaporGrad.addColorStop(0, c.theme.tailColor1 || c.theme.innerComa);
+          vaporGrad.addColorStop(0.4, c.theme.dustTail);
+          vaporGrad.addColorStop(0.8, "rgba(56, 189, 248, 0.03)");
+          vaporGrad.addColorStop(1, "transparent");
 
-        // 2. Focused Ion Beam (Narrow bright ionized core)
-        const ionGrad = this.ctx.createLinearGradient(c.x, c.y, tailEndX, tailEndY);
-        ionGrad.addColorStop(0, "rgba(255, 255, 255, 0.95)");
-        ionGrad.addColorStop(0.25, c.theme.ionTail);
-        ionGrad.addColorStop(0.7, c.theme.dustTail);
-        ionGrad.addColorStop(1, "transparent");
+          this.ctx.save();
+          this.ctx.globalAlpha = pAlpha;
+          this.ctx.fillStyle = vaporGrad;
+          this.ctx.beginPath();
+          this.ctx.arc(px, py, r, 0, Math.PI * 2);
+          this.ctx.fill();
+          this.ctx.restore();
+        }
 
-        this.ctx.strokeStyle = ionGrad;
-        this.ctx.lineWidth = 3.2;
-        this.ctx.beginPath();
-        this.ctx.moveTo(c.x, c.y);
-        this.ctx.lineTo(tailEndX, tailEndY);
-        this.ctx.stroke();
+        // 2. Electric Ion Tail (Straight, delicate ionized gas filament)
+        const ionEndX = c.x - ux * (c.tailLen * 0.95);
+        const ionEndY = c.y - uy * (c.tailLen * 0.95);
 
-        // 3. Glowing Spherical Gas Coma Halo
-        const comaRadius = c.nucleusRadius * 4.8;
-        const comaGrad = this.ctx.createRadialGradient(c.x, c.y, c.nucleusRadius * 0.5, c.x, c.y, comaRadius);
-        comaGrad.addColorStop(0, c.theme.nucleus);
-        comaGrad.addColorStop(0.3, c.theme.innerComa);
-        comaGrad.addColorStop(0.75, c.theme.outerComa);
+        const ionPasses = [
+          { width: 12, color: "rgba(56, 189, 248, 0.08)" },
+          { width: 5.5, color: "rgba(125, 211, 252, 0.22)" },
+          { width: 2.0, color: "rgba(224, 242, 254, 0.65)" },
+        ];
+
+        for (const pass of ionPasses) {
+          const ionGrad = this.ctx.createLinearGradient(c.x, c.y, ionEndX, ionEndY);
+          ionGrad.addColorStop(0, pass.color);
+          ionGrad.addColorStop(0.7, pass.color.replace(/[\d.]+\)$/, "0.04)"));
+          ionGrad.addColorStop(1, "transparent");
+
+          this.ctx.save();
+          this.ctx.strokeStyle = ionGrad;
+          this.ctx.lineWidth = pass.width;
+          this.ctx.lineCap = "round";
+          this.ctx.beginPath();
+          this.ctx.moveTo(c.x, c.y);
+          this.ctx.lineTo(ionEndX, ionEndY);
+          this.ctx.stroke();
+          this.ctx.restore();
+        }
+
+        // 3. Incandescent Gas Coma Halo (Glowing misty aura around nucleus)
+        const comaRadius = c.nucleusRadius * 5.2;
+        const comaGrad = this.ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, comaRadius);
+        comaGrad.addColorStop(0, "rgba(255, 255, 255, 0.95)");
+        comaGrad.addColorStop(0.2, c.theme.innerComa);
+        comaGrad.addColorStop(0.55, c.theme.outerComa);
+        comaGrad.addColorStop(0.85, "rgba(56, 189, 248, 0.05)");
         comaGrad.addColorStop(1, "transparent");
 
+        this.ctx.save();
         this.ctx.fillStyle = comaGrad;
         this.ctx.beginPath();
         this.ctx.arc(c.x, c.y, comaRadius, 0, Math.PI * 2);
         this.ctx.fill();
+        this.ctx.restore();
 
-        // 4. Incandescent Nucleus Spark
+        // 4. Starlike Nucleus (Brilliant core spark with diffraction glint)
+        this.ctx.save();
         this.ctx.fillStyle = "#ffffff";
         this.ctx.beginPath();
-        this.ctx.arc(c.x, c.y, c.nucleusRadius, 0, Math.PI * 2);
+        this.ctx.arc(c.x, c.y, c.nucleusRadius * 0.7, 0, Math.PI * 2);
         this.ctx.fill();
 
-        // Specular glint
-        const cGlint = c.nucleusRadius * 2.5;
-        this.ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
-        this.ctx.lineWidth = 1;
+        const glintLen = c.nucleusRadius * 2.8;
+        this.ctx.strokeStyle = "rgba(255, 255, 255, 0.95)";
+        this.ctx.lineWidth = 0.85;
         this.ctx.beginPath();
-        this.ctx.moveTo(c.x - cGlint, c.y);
-        this.ctx.lineTo(c.x + cGlint, c.y);
-        this.ctx.moveTo(c.x, c.y - cGlint);
-        this.ctx.lineTo(c.x, c.y + cGlint);
+        this.ctx.moveTo(c.x - glintLen, c.y);
+        this.ctx.lineTo(c.x + glintLen, c.y);
+        this.ctx.moveTo(c.x, c.y - glintLen);
+        this.ctx.lineTo(c.x, c.y + glintLen);
         this.ctx.stroke();
+        this.ctx.restore();
 
         this.ctx.restore();
       }
