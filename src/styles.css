@@ -2971,7 +2971,7 @@ h1 {
 }
 
 /* ==========================================================================
-   COSMOS LAYER: ASTRONAUTS, PLANETS & SPACESHIPS
+   COSMOS LAYER: PHOTOREALISTIC ASTRONAUT, PLANETS & SPACESHIP
    ========================================================================== */
 .launch-cosmos-layer {
   position: absolute;
@@ -2990,59 +2990,56 @@ h1 {
   will-change: transform;
 }
 
-/* 1. Spacewalking Astronaut (Floating in zero gravity on left flank) */
-.cosmos-astronaut {
-  top: 32%;
-  left: 5%;
-  width: 115px;
-  animation: astronautFloat 9s ease-in-out infinite alternate;
-  filter: drop-shadow(0 0 18px rgba(56, 189, 248, 0.45));
+.cosmos-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  user-select: none;
 }
 
-.astronaut-svg {
-  width: 100%;
-  height: auto;
-  display: block;
+/* 1. Photorealistic Spacewalking Astronaut (Left Flank) */
+.cosmos-astronaut {
+  top: 25%;
+  left: 3.5%;
+  width: 180px;
+  height: 180px;
+  animation: astronautFloat 11s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 25px rgba(56, 189, 248, 0.4));
+}
+
+.astronaut-img {
+  mask-image: radial-gradient(circle at 50% 50%, black 65%, rgba(0, 0, 0, 0.7) 82%, transparent 97%);
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, black 65%, rgba(0, 0, 0, 0.7) 82%, transparent 97%);
 }
 
 @keyframes astronautFloat {
   0% {
-    transform: translate3d(0, 0, 0) rotate(-6deg);
+    transform: translate3d(0, 0, 0) rotate(-4deg);
   }
   50% {
-    transform: translate3d(12px, -18px, 0) rotate(3deg);
+    transform: translate3d(14px, -16px, 0) rotate(2deg);
   }
   100% {
-    transform: translate3d(-10px, -32px, 0) rotate(9deg);
+    transform: translate3d(-8px, -28px, 0) rotate(6deg);
   }
 }
 
-.astro-beacon-l {
-  animation: beaconFlash 1.6s ease-in-out infinite;
+/* 2. Photorealistic Saturn with Ring System (Upper Left) */
+.cosmos-planet-saturn {
+  top: 5%;
+  left: 4.5%;
+  width: 220px;
+  height: 140px;
+  animation: planetDrift 16s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 32px rgba(251, 191, 36, 0.3));
 }
 
-.astro-beacon-r {
-  animation: beaconFlash 1.6s ease-in-out infinite 0.8s;
-}
-
-@keyframes beaconFlash {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 1; }
-}
-
-/* 2. Distant Ringed Planet (Saturn / Cosmic Giant - Upper Left) */
-.cosmos-planet-ringed {
-  top: 9%;
-  left: 6%;
-  width: 155px;
-  animation: planetDrift 14s ease-in-out infinite alternate;
-  filter: drop-shadow(0 0 26px rgba(129, 140, 248, 0.45));
-}
-
-.planet-ringed-svg {
-  width: 100%;
-  height: auto;
-  display: block;
+.saturn-img {
+  mask-image: radial-gradient(ellipse at 50% 50%, black 68%, rgba(0, 0, 0, 0.75) 85%, transparent 98%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 68%, rgba(0, 0, 0, 0.75) 85%, transparent 98%);
 }
 
 @keyframes planetDrift {
@@ -3050,23 +3047,23 @@ h1 {
     transform: translate3d(0, 0, 0) rotate(0deg);
   }
   100% {
-    transform: translate3d(8px, -12px, 0) rotate(3deg);
+    transform: translate3d(10px, -12px, 0) rotate(2deg);
   }
 }
 
-/* 3. Crimson Mars Planet (Upper Right) */
+/* 3. Photorealistic Crimson Mars (Upper Right) */
 .cosmos-planet-mars {
-  top: 10%;
-  right: 7%;
-  width: 92px;
-  animation: marsFloat 12s ease-in-out infinite alternate;
-  filter: drop-shadow(0 0 22px rgba(239, 68, 68, 0.48));
+  top: 6%;
+  right: 5%;
+  width: 140px;
+  height: 140px;
+  animation: marsFloat 13s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 28px rgba(239, 68, 68, 0.45));
 }
 
-.planet-mars-svg {
-  width: 100%;
-  height: auto;
-  display: block;
+.mars-img {
+  mask-image: radial-gradient(circle at 50% 50%, black 68%, rgba(0, 0, 0, 0.8) 85%, transparent 98%);
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, black 68%, rgba(0, 0, 0, 0.8) 85%, transparent 98%);
 }
 
 @keyframes marsFloat {
@@ -3074,117 +3071,88 @@ h1 {
     transform: translateY(0);
   }
   100% {
-    transform: translateY(-14px);
+    transform: translateY(-16px);
   }
 }
 
-/* 4. Futuristic Ion-Drive Spaceship Cruiser (Cruising across upper-right) */
+/* 4. Photorealistic Exploration Cruiser Spaceship (Cruising Upper Right) */
 .cosmos-spaceship {
-  top: 24%;
-  right: 17%;
-  width: 120px;
-  animation: shipCruising 11s ease-in-out infinite alternate;
-  filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.4));
+  top: 26%;
+  right: 12%;
+  width: 200px;
+  height: 135px;
+  animation: shipCruising 13s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 24px rgba(56, 189, 248, 0.45));
 }
 
-.spaceship-svg {
-  width: 100%;
-  height: auto;
-  display: block;
+.spaceship-img {
+  mask-image: radial-gradient(ellipse at 50% 50%, black 65%, rgba(0, 0, 0, 0.75) 82%, transparent 98%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 65%, rgba(0, 0, 0, 0.75) 82%, transparent 98%);
 }
 
 @keyframes shipCruising {
   0% {
-    transform: translate3d(0, 0, 0) rotate(3deg);
+    transform: translate3d(0, 0, 0) rotate(2deg);
   }
   50% {
-    transform: translate3d(-18px, -12px, 0) rotate(-2deg);
+    transform: translate3d(-18px, -14px, 0) rotate(-1deg);
   }
   100% {
-    transform: translate3d(-34px, -6px, 0) rotate(2deg);
+    transform: translate3d(-36px, -6px, 0) rotate(1deg);
   }
-}
-
-/* 5. High-Tech Orbital Satellite (Right flank) */
-.cosmos-satellite {
-  top: 42%;
-  right: 5%;
-  width: 105px;
-  animation: satDrift 10s ease-in-out infinite alternate;
-  filter: drop-shadow(0 0 14px rgba(234, 179, 8, 0.35));
-}
-
-.satellite-svg {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-@keyframes satDrift {
-  0% {
-    transform: translate3d(0, 0, 0) rotate(5deg);
-  }
-  100% {
-    transform: translate3d(8px, -16px, 0) rotate(-4deg);
-  }
-}
-
-.sat-beacon {
-  animation: beaconFlash 1.2s ease-in-out infinite;
 }
 
 /* Responsive Cosmos adjustments */
-@media (max-width: 1200px) {
+@media (max-width: 1280px) {
   .cosmos-astronaut {
-    width: 88px;
+    width: 130px;
+    height: 130px;
     left: 2%;
-    top: 36%;
+    top: 30%;
   }
-  .cosmos-planet-ringed {
-    width: 115px;
+  .cosmos-planet-saturn {
+    width: 160px;
+    height: 100px;
     left: 3%;
-    top: 8%;
+    top: 6%;
   }
   .cosmos-planet-mars {
-    width: 72px;
-    right: 3%;
-    top: 9%;
+    width: 100px;
+    height: 100px;
+    right: 4%;
+    top: 7%;
   }
   .cosmos-spaceship {
-    width: 95px;
-    right: 12%;
-    top: 22%;
-  }
-  .cosmos-satellite {
-    width: 80px;
-    right: 2%;
-    top: 42%;
+    width: 140px;
+    height: 95px;
+    right: 8%;
+    top: 25%;
   }
 }
 
 @media (max-width: 768px) {
   .cosmos-astronaut {
-    width: 65px;
-    left: 4%;
-    top: 20%;
-    opacity: 0.75;
+    width: 90px;
+    height: 90px;
+    left: 3%;
+    top: 22%;
+    opacity: 0.85;
   }
-  .cosmos-planet-ringed {
-    width: 75px;
-    left: 4%;
-    top: 6%;
-    opacity: 0.8;
+  .cosmos-planet-saturn {
+    width: 110px;
+    height: 70px;
+    left: 3%;
+    top: 5%;
+    opacity: 0.9;
   }
   .cosmos-planet-mars {
-    width: 52px;
+    width: 70px;
+    height: 70px;
     right: 4%;
-    top: 8%;
-    opacity: 0.8;
+    top: 6%;
+    opacity: 0.9;
   }
   .cosmos-spaceship {
-    display: none;
-  }
-  .cosmos-satellite {
     display: none;
   }
 }
