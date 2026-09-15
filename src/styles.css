@@ -2808,13 +2808,13 @@ h1 {
   max-width: 520px;
   margin: auto;
   padding: 20px;
-  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
 }
 
 .launch-gate.launch-gate-leaving {
   opacity: 0;
-  transform: scale(1.08) translateY(-24px);
+  transform: scale(1.06) translateY(-18px);
   pointer-events: none;
 }
 
@@ -3045,6 +3045,18 @@ h1 {
   align-items: center;
   gap: 16px;
   margin-top: 20px;
+  animation: hudAppear 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes hudAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(-24px) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .launch-hud-ring {
@@ -3370,6 +3382,21 @@ h1 {
 }
 
 /* Liftoff Rocket Animation State */
+.rocket-entering {
+  animation: rocketFadeIn 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes rocketFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(35px) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .rocket-prelaunch {
   animation: rocketCountdownRise 7s linear forwards;
 }

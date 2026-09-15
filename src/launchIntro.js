@@ -193,11 +193,11 @@ export class LaunchIntroController {
   }
 
   playBubblePopSequence() {
-    const popNotes = [520, 780, 640, 920, 840, 1150, 960, 1380, 1200, 1600];
+    const popNotes = [520, 780, 640, 920, 840, 1150, 960, 1380, 1200, 1600, 720, 1080, 880, 1240];
     popNotes.forEach((freq, index) => {
       setTimeout(() => {
-        this.playBubblePop(freq, 0.07);
-      }, index * 45);
+        this.playBubblePop(freq, 0.08);
+      }, index * 70);
     });
   }
 
@@ -398,14 +398,16 @@ export class LaunchIntroController {
       originY = rect.top + rect.height / 2;
     }
 
-    this.spawnBubbleBurst(originX, originY, 140);
+    // Spawn dramatic, giant bubbles covering the entire screen
+    this.spawnBubbleBurst(originX, originY, 180);
 
     // 3. Smooth transition from Gate to Rocket Launch
     if (this.gate) {
       this.gate.classList.add("launch-gate-leaving");
     }
 
-    setTimeout(() => {
+    // Step 1: Let the majestic bubbles bloom and float across the screen for 1.5s
+    const t1 = setTimeout(() => {
       if (this.gate) {
         this.gate.classList.add("launch-gate-hidden");
       }
@@ -414,14 +416,22 @@ export class LaunchIntroController {
       }
       if (this.rocketContainer) {
         this.rocketContainer.style.display = "flex";
+        this.rocketContainer.className = "launch-rocket-container rocket-entering";
       }
 
-      // Start the rocket countdown sequence
+      // Smoothly dissolve the bubbles over the next ~750ms as the rocket materializes
+      this.dissolveRemainingBubbles();
+    }, 1500);
+    this.timers.push(t1);
+
+    // Step 2: Start the countdown once the rocket has smoothly settled and bubbles naturally dissipated
+    const t2 = setTimeout(() => {
       this.startCountdownSequence();
-    }, 450);
+    }, 2350);
+    this.timers.push(t2);
   }
 
-  spawnBubbleBurst(originX, originY, count = 140) {
+  spawnBubbleBurst(originX, originY, count = 180) {
     const colors = [
       "#38bdf8", // Sky Cyan
       "#818cf8", // Indigo
@@ -435,26 +445,47 @@ export class LaunchIntroController {
 
     for (let i = 0; i < count; i++) {
       const angle = Math.random() * Math.PI * 2;
-      const speed = Math.random() * 15 + 3.5;
-      const radius = Math.random() * 26 + 10;
+      // High-velocity outward blast to reach every corner of the viewport
+      const speed = Math.random() * 24 + 4.5;
+
+      // Bubble size distribution:
+      // ~30% Giant hero bubbles (radius 55px - 110px) to cover the whole screen!
+      // ~45% Medium-large bubbles (radius 26px - 54px)
+      // ~25% Sparkle accent bubbles (radius 10px - 25px)
+      let radius;
+      const sizeRand = Math.random();
+      if (sizeRand < 0.30) {
+        radius = Math.random() * 55 + 55; // 55px to 110px radius (up to 220px across!)
+      } else if (sizeRand < 0.75) {
+        radius = Math.random() * 28 + 26; // 26px to 54px radius
+      } else {
+        radius = Math.random() * 15 + 10; // 10px to 25px radius
+      }
+
       this.bubbles.push({
-        x: originX + (Math.random() * 16 - 8),
-        y: originY + (Math.random() * 16 - 8),
+        x: originX + (Math.random() * 40 - 20),
+        y: originY + (Math.random() * 40 - 20),
         vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed - Math.random() * 2.5,
-        friction: 0.92,
-        floatVy: -(Math.random() * 2.0 + 1.0),
+        vy: Math.sin(angle) * speed - (Math.random() * 3.0 + 1.0),
+        friction: 0.945, // Gentle deceleration as bubbles billow
+        floatVy: -(Math.random() * 1.6 + 0.6), // Buoyant upward float
         radius: radius,
+        growth: Math.random() * 0.12 + 0.03, // Slight natural soap bubble expansion
         color: colors[Math.floor(Math.random() * colors.length)],
-        alpha: Math.random() * 0.4 + 0.6,
-        decay: Math.random() * 0.035 + 0.025, // Quick fade-out so bubbles exist only upon clicking
-        wobbleSpeed: Math.random() * 0.06 + 0.025,
+        alpha: Math.random() * 0.35 + 0.65,
+        decay: Math.random() * 0.005 + 0.0035, // Natural ~2.5s floating lifespan
+        wobbleSpeed: Math.random() * 0.05 + 0.02,
         wobblePhase: Math.random() * Math.PI * 2,
-        wobbleAmp: Math.random() * 2.2 + 1,
-        popped: false,
-        popDroplets: [],
+        wobbleAmp: Math.random() * 3.5 + 1.5,
       });
     }
+  }
+
+  dissolveRemainingBubbles() {
+    // Gracefully accelerate fade-out of remaining bubbles as the rocket materializes
+    this.bubbles.forEach((b) => {
+      b.decay = Math.max(b.decay, 0.022);
+    });
   }
 
   spawnAmbientBubbles() {
@@ -464,7 +495,7 @@ export class LaunchIntroController {
   startCountdownSequence() {
     this.isFinished = false;
     this.clearTimers();
-    // Ensure all click-burst bubbles are completely cleared when countdown/rocket sequence begins
+    // Clear any residual bubbles before countdown begins so space is clean for the rocket
     this.bubbles = [];
 
     const countdownEl = document.querySelector("#launch-countdown-num");
@@ -582,30 +613,28 @@ export class LaunchIntroController {
       this.ctx.fill();
     });
 
-    // 2. Render Bubbles (Screen-filling iridescent 3D bubbles - click burst only)
-    // Once countdown/rocket starts, zero bubbles are rendered
-    const isRocketActive = this.rocketContainer && this.rocketContainer.style.display !== "none";
-    if (!isRocketActive) {
-      for (let i = this.bubbles.length - 1; i >= 0; i--) {
-        const b = this.bubbles[i];
+    // 2. Render Bubbles (Screen-filling iridescent 3D bubbles from click burst)
+    for (let i = this.bubbles.length - 1; i >= 0; i--) {
+      const b = this.bubbles[i];
 
-        b.vx *= b.friction;
-        b.vy *= b.friction;
-        b.x += b.vx;
-        b.y += b.vy + b.floatVy;
-        b.wobblePhase += b.wobbleSpeed;
-        b.alpha -= b.decay;
-
-        // Check if bubble drifted off top or faded
-        if (b.alpha <= 0 || b.y < -50 || b.x < -50 || b.x > this.canvas.width + 50) {
-          this.bubbles.splice(i, 1);
-          continue;
-        }
-
-        this.drawBubble(b);
+      b.vx *= b.friction;
+      b.vy *= b.friction;
+      b.x += b.vx;
+      b.y += b.vy + b.floatVy;
+      b.wobblePhase += b.wobbleSpeed;
+      b.alpha -= b.decay;
+      if (b.growth) {
+        b.radius += b.growth;
       }
-    } else if (this.bubbles.length > 0) {
-      this.bubbles = [];
+
+      // Check if bubble drifted completely off canvas or faded out
+      const pad = b.radius + 80;
+      if (b.alpha <= 0 || b.y < -pad || b.x < -pad || b.x > this.canvas.width + pad) {
+        this.bubbles.splice(i, 1);
+        continue;
+      }
+
+      this.drawBubble(b);
     }
 
     // 3. Generate Thruster Exhaust during ignition & launch
