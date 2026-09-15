@@ -47,7 +47,6 @@ export class LaunchIntroController {
       this.resizeCanvas();
       window.addEventListener("resize", () => this.resizeCanvas());
       this.initStars();
-      this.initGentleAmbientBubbles(25);
     }
 
     // Ensure initial visual state: Gate is visible, HUD and Rocket hidden until user clicks!
@@ -83,29 +82,6 @@ export class LaunchIntroController {
         size: Math.random() * 2 + 0.5,
         alpha: Math.random() * 0.8 + 0.2,
         speed: Math.random() * 0.5 + 0.2,
-      });
-    }
-  }
-
-  initGentleAmbientBubbles(count = 25) {
-    const colors = ["#38bdf8", "#818cf8", "#c084fc", "#f472b6", "#34d399", "#fbbf24", "#ffffff"];
-    for (let i = 0; i < count; i++) {
-      this.bubbles.push({
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
-        vx: (Math.random() - 0.5) * 0.8,
-        vy: 0,
-        friction: 1,
-        floatVy: -(Math.random() * 0.9 + 0.4),
-        radius: Math.random() * 18 + 8,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        alpha: Math.random() * 0.25 + 0.2,
-        decay: 0.0005,
-        wobbleSpeed: Math.random() * 0.04 + 0.015,
-        wobblePhase: Math.random() * Math.PI * 2,
-        wobbleAmp: Math.random() * 1.5 + 0.8,
-        popped: false,
-        popDroplets: [],
       });
     }
   }
@@ -423,7 +399,6 @@ export class LaunchIntroController {
     }
 
     this.spawnBubbleBurst(originX, originY, 140);
-    this.spawnAmbientBubbles(85);
 
     // 3. Smooth transition from Gate to Rocket Launch
     if (this.gate) {
@@ -467,12 +442,12 @@ export class LaunchIntroController {
         y: originY + (Math.random() * 16 - 8),
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed - Math.random() * 2.5,
-        friction: 0.94,
+        friction: 0.92,
         floatVy: -(Math.random() * 2.0 + 1.0),
         radius: radius,
         color: colors[Math.floor(Math.random() * colors.length)],
         alpha: Math.random() * 0.4 + 0.6,
-        decay: Math.random() * 0.0025 + 0.0012,
+        decay: Math.random() * 0.035 + 0.025, // Quick fade-out so bubbles exist only upon clicking
         wobbleSpeed: Math.random() * 0.06 + 0.025,
         wobblePhase: Math.random() * Math.PI * 2,
         wobbleAmp: Math.random() * 2.2 + 1,
@@ -482,32 +457,15 @@ export class LaunchIntroController {
     }
   }
 
-  spawnAmbientBubbles(count = 85) {
-    const colors = ["#38bdf8", "#818cf8", "#c084fc", "#f472b6", "#34d399", "#fbbf24", "#ffffff"];
-    for (let i = 0; i < count; i++) {
-      this.bubbles.push({
-        x: Math.random() * window.innerWidth,
-        y: window.innerHeight + Math.random() * 250,
-        vx: (Math.random() - 0.5) * 2.0,
-        vy: 0,
-        friction: 1,
-        floatVy: -(Math.random() * 2.5 + 1.2),
-        radius: Math.random() * 22 + 8,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        alpha: Math.random() * 0.35 + 0.5,
-        decay: Math.random() * 0.0018 + 0.0008,
-        wobbleSpeed: Math.random() * 0.05 + 0.02,
-        wobblePhase: Math.random() * Math.PI * 2,
-        wobbleAmp: Math.random() * 2.0 + 1.0,
-        popped: false,
-        popDroplets: [],
-      });
-    }
+  spawnAmbientBubbles() {
+    // No ambient bubbles during countdown or rocket launch - bubbles only on click
   }
 
   startCountdownSequence() {
     this.isFinished = false;
     this.clearTimers();
+    // Ensure all click-burst bubbles are completely cleared when countdown/rocket sequence begins
+    this.bubbles = [];
 
     const countdownEl = document.querySelector("#launch-countdown-num");
     const statusTextEl = document.querySelector("#launch-status-text");
@@ -540,11 +498,6 @@ export class LaunchIntroController {
         }
         this.triggerHaptic(stepItem.haptic);
         this.setRumble(stepItem.rumble);
-
-        // Periodically spawn a few more rising bubbles during the countdown
-        if (index % 2 === 0) {
-          this.spawnAmbientBubbles(15);
-        }
       }, index * 1000);
       this.timers.push(timer);
     });
@@ -629,24 +582,30 @@ export class LaunchIntroController {
       this.ctx.fill();
     });
 
-    // 2. Render Bubbles (Screen-filling iridescent 3D bubbles)
-    for (let i = this.bubbles.length - 1; i >= 0; i--) {
-      const b = this.bubbles[i];
+    // 2. Render Bubbles (Screen-filling iridescent 3D bubbles - click burst only)
+    // Once countdown/rocket starts, zero bubbles are rendered
+    const isRocketActive = this.rocketContainer && this.rocketContainer.style.display !== "none";
+    if (!isRocketActive) {
+      for (let i = this.bubbles.length - 1; i >= 0; i--) {
+        const b = this.bubbles[i];
 
-      b.vx *= b.friction;
-      b.vy *= b.friction;
-      b.x += b.vx;
-      b.y += b.vy + b.floatVy;
-      b.wobblePhase += b.wobbleSpeed;
-      b.alpha -= b.decay;
+        b.vx *= b.friction;
+        b.vy *= b.friction;
+        b.x += b.vx;
+        b.y += b.vy + b.floatVy;
+        b.wobblePhase += b.wobbleSpeed;
+        b.alpha -= b.decay;
 
-      // Check if bubble drifted off top or faded
-      if (b.alpha <= 0 || b.y < -50 || b.x < -50 || b.x > this.canvas.width + 50) {
-        this.bubbles.splice(i, 1);
-        continue;
+        // Check if bubble drifted off top or faded
+        if (b.alpha <= 0 || b.y < -50 || b.x < -50 || b.x > this.canvas.width + 50) {
+          this.bubbles.splice(i, 1);
+          continue;
+        }
+
+        this.drawBubble(b);
       }
-
-      this.drawBubble(b);
+    } else if (this.bubbles.length > 0) {
+      this.bubbles = [];
     }
 
     // 3. Generate Thruster Exhaust during ignition & launch
@@ -810,6 +769,8 @@ export class LaunchIntroController {
     this.isFinished = false;
     this.isGateOpen = false;
     this.clearTimers();
+    this.bubbles = [];
+    this.particles = [];
 
     if (this.overlay) {
       this.overlay.classList.remove("launch-hidden", "launch-dissolve");
