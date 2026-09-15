@@ -22,6 +22,7 @@ export class LaunchIntroController {
     this.particles = [];
     this.bubbles = [];
     this.stars = [];
+    this.shootingStars = [];
     this.timers = [];
     this.animFrameId = null;
     this.audioCtx = null;
@@ -85,13 +86,24 @@ export class LaunchIntroController {
 
   initStars() {
     this.stars = [];
-    const starCount = Math.floor((window.innerWidth * window.innerHeight) / 3000);
+    this.shootingStars = [];
+    const starCount = Math.floor((window.innerWidth * window.innerHeight) / 2200);
+    const starColors = ["#ffffff", "#ffffff", "#e0f2fe", "#fef08a", "#bae6fd", "#f8fafc"];
+
     for (let i = 0; i < starCount; i++) {
+      const isHero = Math.random() < 0.09; // 9% prominent sparkling stars
+      const isMedium = Math.random() < 0.28; // 28% medium sparkling stars
+
       this.stars.push({
         x: Math.random() * window.innerWidth,
         y: Math.random() * window.innerHeight,
-        size: Math.random() * 2 + 0.5,
-        alpha: Math.random() * 0.8 + 0.2,
+        size: isHero ? Math.random() * 1.4 + 2.0 : (isMedium ? Math.random() * 0.8 + 1.2 : Math.random() * 0.5 + 0.6),
+        baseAlpha: isHero ? Math.random() * 0.25 + 0.45 : Math.random() * 0.3 + 0.15,
+        twinkleAmp: isHero ? Math.random() * 0.45 + 0.35 : Math.random() * 0.35 + 0.2,
+        twinkleSpeed: Math.random() * 0.05 + 0.018,
+        twinklePhase: Math.random() * Math.PI * 2,
+        color: starColors[Math.floor(Math.random() * starColors.length)],
+        hasGlint: isHero,
         speed: Math.random() * 0.5 + 0.2,
       });
     }
@@ -619,18 +631,99 @@ export class LaunchIntroController {
       this.bubbleCtx.clearRect(0, 0, this.bubbleCanvas.width, this.bubbleCanvas.height);
     }
 
-    // 1. Draw Starfield
-    this.ctx.fillStyle = "#ffffff";
+    // 1. Draw Starfield with Realistic Twinkling & Diffraction Spikes
     this.stars.forEach((star) => {
       if (this.screenRumbleLevel >= 2) {
         star.y += star.speed * 4;
         if (star.y > this.canvas.height) star.y = 0;
       }
-      this.ctx.globalAlpha = star.alpha;
+
+      // Dynamic sine-wave scintillation / twinkling
+      star.twinklePhase += star.twinkleSpeed;
+      const currentAlpha = Math.max(0.08, Math.min(1.0, star.baseAlpha + Math.sin(star.twinklePhase) * star.twinkleAmp));
+
+      this.ctx.save();
+      this.ctx.globalAlpha = currentAlpha;
+
+      // Soft radiant aura around bright stars
+      if (star.hasGlint && currentAlpha > 0.6) {
+        const glowRadius = star.size * 2.8;
+        const glowGrad = this.ctx.createRadialGradient(star.x, star.y, 0, star.x, star.y, glowRadius);
+        glowGrad.addColorStop(0, star.color);
+        glowGrad.addColorStop(0.35, "rgba(255, 255, 255, 0.3)");
+        glowGrad.addColorStop(1, "transparent");
+        this.ctx.fillStyle = glowGrad;
+        this.ctx.beginPath();
+        this.ctx.arc(star.x, star.y, glowRadius, 0, Math.PI * 2);
+        this.ctx.fill();
+
+        // 4-point diamond diffraction glint when star reaches peak twinkle
+        if (currentAlpha > 0.78) {
+          const spikeLen = star.size * 3.4 * ((currentAlpha - 0.78) / 0.22);
+          this.ctx.strokeStyle = star.color;
+          this.ctx.lineWidth = 0.75;
+          this.ctx.beginPath();
+          this.ctx.moveTo(star.x - spikeLen, star.y);
+          this.ctx.lineTo(star.x + spikeLen, star.y);
+          this.ctx.moveTo(star.x, star.y - spikeLen);
+          this.ctx.lineTo(star.x, star.y + spikeLen);
+          this.ctx.stroke();
+        }
+      }
+
+      // Star core
+      this.ctx.fillStyle = star.color;
       this.ctx.beginPath();
       this.ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
       this.ctx.fill();
+      this.ctx.restore();
     });
+
+    // Occasional cosmic shooting star (meteor streak across upper sky)
+    if (Math.random() < 0.012 && this.shootingStars.length < 2) {
+      this.shootingStars.push({
+        x: Math.random() * (this.canvas.width * 0.75),
+        y: Math.random() * (this.canvas.height * 0.35),
+        len: Math.random() * 70 + 60,
+        speed: Math.random() * 12 + 14,
+        angle: Math.PI / 4 + (Math.random() - 0.5) * 0.25,
+        life: 1.0,
+        decay: Math.random() * 0.02 + 0.02,
+      });
+    }
+
+    for (let i = this.shootingStars.length - 1; i >= 0; i--) {
+      const s = this.shootingStars[i];
+      s.x += Math.cos(s.angle) * s.speed;
+      s.y += Math.sin(s.angle) * s.speed;
+      s.life -= s.decay;
+
+      if (s.life <= 0 || s.x > this.canvas.width + 100 || s.y > this.canvas.height + 100) {
+        this.shootingStars.splice(i, 1);
+        continue;
+      }
+
+      this.ctx.save();
+      this.ctx.globalAlpha = Math.max(0, s.life * 0.85);
+      const tailX = s.x - Math.cos(s.angle) * s.len;
+      const tailY = s.y - Math.sin(s.angle) * s.len;
+      const grad = this.ctx.createLinearGradient(tailX, tailY, s.x, s.y);
+      grad.addColorStop(0, "transparent");
+      grad.addColorStop(0.7, "rgba(56, 189, 248, 0.45)");
+      grad.addColorStop(1, "#ffffff");
+      this.ctx.strokeStyle = grad;
+      this.ctx.lineWidth = 1.6;
+      this.ctx.beginPath();
+      this.ctx.moveTo(tailX, tailY);
+      this.ctx.lineTo(s.x, s.y);
+      this.ctx.stroke();
+
+      this.ctx.fillStyle = "#ffffff";
+      this.ctx.beginPath();
+      this.ctx.arc(s.x, s.y, 2, 0, Math.PI * 2);
+      this.ctx.fill();
+      this.ctx.restore();
+    }
 
     // 2. Render Bubbles (Screen-filling iridescent 3D bubbles from click burst)
     for (let i = this.bubbles.length - 1; i >= 0; i--) {
