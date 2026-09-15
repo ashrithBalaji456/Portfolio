@@ -117,14 +117,27 @@ export class LaunchIntroController {
 
   spawnTailStar() {
     if (!this.canvas) return;
-    const fromLeft = Math.random() > 0.4;
-    const startX = fromLeft
-      ? Math.random() * (this.canvas.width * 0.6) - 50
-      : Math.random() * (this.canvas.width * 0.6) + this.canvas.width * 0.4;
-    const startY = Math.random() * (this.canvas.height * 0.35) - 20;
-    const angle = fromLeft
-      ? Math.PI * 0.22 + (Math.random() - 0.5) * 0.15
-      : Math.PI * 0.78 + (Math.random() - 0.5) * 0.15;
+    const isPortrait = this.canvas.height > this.canvas.width * 0.9;
+    const fromLeft = Math.random() > 0.45;
+
+    let startX, startY, angle;
+
+    if (isPortrait || Math.random() < 0.65) {
+      // Dive toward Earth horizon at the bottom
+      startX = fromLeft
+        ? Math.random() * (this.canvas.width * 0.45) - 30
+        : this.canvas.width * (0.55 + Math.random() * 0.45) + 30;
+      startY = Math.random() * (this.canvas.height * 0.25) - 40;
+      const targetX = this.canvas.width * (0.2 + Math.random() * 0.6);
+      const targetY = this.canvas.height + 30;
+      angle = Math.atan2(targetY - startY, targetX - startX);
+    } else {
+      startX = fromLeft ? -50 : this.canvas.width + 50;
+      startY = Math.random() * (this.canvas.height * 0.35) - 20;
+      angle = fromLeft
+        ? Math.PI * 0.25 + (Math.random() - 0.5) * 0.15
+        : Math.PI * 0.75 + (Math.random() - 0.5) * 0.15;
+    }
 
     const tailThemes = [
       { core: "#ffffff", glow: "rgba(56, 189, 248, 0.8)", tailTip: "rgba(56, 189, 248, 0.15)" },
@@ -149,12 +162,32 @@ export class LaunchIntroController {
 
   spawnComet() {
     if (!this.canvas) return;
+    const isPortrait = this.canvas.height > this.canvas.width * 0.85;
     const fromLeft = Math.random() > 0.45;
-    const startX = fromLeft ? -120 : this.canvas.width + 120;
-    const startY = Math.random() * (this.canvas.height * 0.38) - 40;
-    const angle = fromLeft
-      ? Math.PI * 0.17 + (Math.random() - 0.5) * 0.1 // graceful sweep downwards right
-      : Math.PI * 0.83 + (Math.random() - 0.5) * 0.1; // graceful sweep downwards left
+
+    let startX, startY, angle, curveDir;
+
+    // In mobile / desktop mode on mobile (or ~65% of comets on PC), comets dive directly into Earth!
+    if (isPortrait || Math.random() < 0.65) {
+      startX = fromLeft
+        ? Math.random() * (this.canvas.width * 0.35) - 60
+        : this.canvas.width * (0.65 + Math.random() * 0.35) + 60;
+      startY = Math.random() * (this.canvas.height * 0.18) - 60;
+
+      // Target Earth horizon situated at the bottom
+      const targetX = this.canvas.width * (0.28 + Math.random() * 0.44);
+      const targetY = this.canvas.height + 40;
+
+      angle = Math.atan2(targetY - startY, targetX - startX);
+      curveDir = fromLeft ? -1 : 1;
+    } else {
+      startX = fromLeft ? -120 : this.canvas.width + 120;
+      startY = Math.random() * (this.canvas.height * 0.32) - 40;
+      angle = fromLeft
+        ? Math.PI * 0.22 + (Math.random() - 0.5) * 0.1
+        : Math.PI * 0.78 + (Math.random() - 0.5) * 0.1;
+      curveDir = fromLeft ? -1 : 1;
+    }
 
     const cometTypes = [
       {
@@ -187,9 +220,9 @@ export class LaunchIntroController {
     this.comets.push({
       x: startX,
       y: startY,
-      speed: Math.random() * 1.5 + 3.2, // Graceful, majestic cosmic speed
+      speed: Math.random() * 1.5 + 3.4, // Graceful, majestic cosmic speed
       angle,
-      curveDir: fromLeft ? -1 : 1,
+      curveDir,
       tailLen: Math.random() * 80 + 320,
       nucleusRadius: Math.random() * 1.0 + 3.5,
       theme,
@@ -199,6 +232,7 @@ export class LaunchIntroController {
       twinklePhase: Math.random() * Math.PI * 2,
       twinkleSpeed: Math.random() * 0.08 + 0.06, // Rapid, lively twinkling rate
       trailStars: [],
+      reachedEarth: false,
     });
   }
 
@@ -883,8 +917,17 @@ export class LaunchIntroController {
       }
 
       const margin = 200;
-      const isPastBoundary = c.x < -margin || c.x > this.canvas.width + margin || c.y > this.canvas.height + margin;
-      if (isPastBoundary) {
+      const earthAtmosphereY = this.canvas.height - 130;
+      const isTouchingEarth = c.y >= earthAtmosphereY;
+
+      if (isTouchingEarth) {
+        c.reachedEarth = true;
+        // Atmospheric ablation: comet flares up and rapidly burns into Earth's blue atmosphere
+        c.alpha -= 0.038;
+      }
+
+      const isPastBoundary = c.x < -margin || c.x > this.canvas.width + margin || c.y > this.canvas.height + 80 || (c.reachedEarth && c.alpha <= 0);
+      if (isPastBoundary && !isTouchingEarth) {
         c.alpha -= 0.015;
       }
 
@@ -954,6 +997,24 @@ export class LaunchIntroController {
       if (c.alpha > 0) {
         this.ctx.save();
         this.ctx.globalAlpha = c.alpha;
+
+        // Earth Atmospheric Entry Ionization Flare (when plunging into Earth's blue horizon)
+        if (c.y >= earthAtmosphereY - 80) {
+          const entryBloom = Math.min(85, (c.y - (earthAtmosphereY - 80)) * 0.9 + 25);
+          const bloomGrad = this.ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, entryBloom);
+          bloomGrad.addColorStop(0, "rgba(255, 255, 255, 0.9)");
+          bloomGrad.addColorStop(0.3, c.theme.innerComa);
+          bloomGrad.addColorStop(0.65, "rgba(56, 189, 248, 0.35)");
+          bloomGrad.addColorStop(1, "transparent");
+
+          this.ctx.save();
+          this.ctx.globalAlpha = c.alpha * 0.85;
+          this.ctx.fillStyle = bloomGrad;
+          this.ctx.beginPath();
+          this.ctx.arc(c.x, c.y, entryBloom, 0, Math.PI * 2);
+          this.ctx.fill();
+          this.ctx.restore();
+        }
 
         const ux = Math.cos(c.angle);
         const uy = Math.sin(c.angle);
