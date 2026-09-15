@@ -1,26 +1,34 @@
 /**
  * Rocket Launch Opening Animation & Effects Module
  * Features:
- * - High-performance 60fps Canvas Particle Engine (Fire, Smoke Clouds, Embers, Exhaust Shockwaves, Warp Stars)
- * - CSS Screen Shake & Device Vibration Haptics
- * - Web Audio API Synthesizer (Countdown Ticks, Thruster Sub-Bass, Ignition Roar, Launch Chime)
+ * - Interactive "Click to Open" Gate screen (no sudden auto-launch)
+ * - Explosive Screen-Filling Iridescent 3D Bubble Burst & Floating Bubbles Simulation
+ * - Web Audio API Synthesizer (Liquid Bubble Pops, Warp Chime Chords, Countdown Ticks, Thruster Rumble, Ignition Roar)
+ * - Canvas Particle Engine (Stars, Bubbles, Fire Exhaust, Smoke Clouds)
+ * - CSS Screen Rumble & Device Vibration Haptics
  * - Rocket Capsule with Ashrith Balaji's Profile Photo & Title
- * - Auto-run on landing + Replay Launch & Skip controls
+ * - Full Skip Launch & Replay Launch integration
  */
 
 export class LaunchIntroController {
   constructor() {
     this.overlay = null;
+    this.gate = null;
+    this.gateBtn = null;
+    this.hud = null;
+    this.rocketContainer = null;
     this.canvas = null;
     this.ctx = null;
     this.particles = [];
+    this.bubbles = [];
     this.stars = [];
+    this.timers = [];
     this.animFrameId = null;
     this.audioCtx = null;
     this.isMuted = false;
     this.isFinished = false;
-    this.step = 0; // 0: Init, 3: Count3, 2: Count2, 1: Count1, 0: Ignition/Launch
-    this.countdownValue = 3;
+    this.isGateOpen = false;
+    this.countdownValue = 7;
     this.screenRumbleLevel = 0; // 0: none, 1: light, 2: heavy, 3: extreme
   }
 
@@ -28,16 +36,35 @@ export class LaunchIntroController {
     this.overlay = document.querySelector("#launch-overlay");
     if (!this.overlay) return;
 
+    this.gate = document.querySelector("#launch-gate");
+    this.gateBtn = document.querySelector("#launch-gate-btn");
+    this.hud = document.querySelector("#launch-hud");
+    this.rocketContainer = document.querySelector("#launch-rocket-container");
+
     this.canvas = document.querySelector("#launch-canvas");
     if (this.canvas) {
       this.ctx = this.canvas.getContext("2d");
       this.resizeCanvas();
       window.addEventListener("resize", () => this.resizeCanvas());
       this.initStars();
+      this.initGentleAmbientBubbles(25);
     }
 
+    // Ensure initial visual state: Gate is visible, HUD and Rocket hidden until user clicks!
+    if (this.gate) {
+      this.gate.classList.remove("launch-gate-leaving", "launch-gate-hidden");
+    }
+    if (this.hud) {
+      this.hud.style.display = "none";
+    }
+    if (this.rocketContainer) {
+      this.rocketContainer.style.display = "none";
+    }
+
+    document.body.style.overflow = "hidden";
+
     this.bindEvents();
-    this.startSequence();
+    this.startParticleLoop();
   }
 
   resizeCanvas() {
@@ -60,40 +87,61 @@ export class LaunchIntroController {
     }
   }
 
+  initGentleAmbientBubbles(count = 25) {
+    const colors = ["#38bdf8", "#818cf8", "#c084fc", "#f472b6", "#34d399", "#fbbf24", "#ffffff"];
+    for (let i = 0; i < count; i++) {
+      this.bubbles.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        vx: (Math.random() - 0.5) * 0.8,
+        vy: 0,
+        friction: 1,
+        floatVy: -(Math.random() * 0.9 + 0.4),
+        radius: Math.random() * 18 + 8,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        alpha: Math.random() * 0.25 + 0.2,
+        decay: 0.0005,
+        wobbleSpeed: Math.random() * 0.04 + 0.015,
+        wobblePhase: Math.random() * Math.PI * 2,
+        wobbleAmp: Math.random() * 1.5 + 0.8,
+        popped: false,
+        popDroplets: [],
+      });
+    }
+  }
+
   bindEvents() {
     const unlockAudio = () => {
       this.initAudio();
       if (this.audioCtx && this.audioCtx.state === "suspended") {
         this.audioCtx.resume();
       }
-      const soundBtn = document.querySelector("#launch-start-sound-btn");
-      if (soundBtn) {
-        soundBtn.style.display = "none";
-      }
     };
 
-    const startBtn = document.querySelector("#launch-start-sound-btn");
-    if (startBtn) {
-      startBtn.addEventListener("click", (e) => {
+    // Primary Click to Open Trigger
+    if (this.gateBtn) {
+      this.gateBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         unlockAudio();
-        this.playBeep(880, 0.25);
+        this.triggerGateOpen(e);
       });
     }
 
-    window.addEventListener("touchstart", unlockAudio, { passive: true });
-    window.addEventListener("touchend", unlockAudio, { passive: true });
-    window.addEventListener("pointerdown", unlockAudio);
-    window.addEventListener("click", unlockAudio);
-    window.addEventListener("keydown", unlockAudio);
-
-    if (this.overlay) {
-      this.overlay.addEventListener("click", unlockAudio);
+    if (this.gate) {
+      this.gate.addEventListener("click", (e) => {
+        if (!this.isGateOpen) {
+          unlockAudio();
+          this.triggerGateOpen(e);
+        }
+      });
     }
 
     const skipBtn = document.querySelector("#launch-skip-btn");
     if (skipBtn) {
-      skipBtn.addEventListener("click", () => this.skipLaunch());
+      skipBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.skipLaunch();
+      });
     }
 
     const muteBtn = document.querySelector("#launch-audio-toggle");
@@ -108,7 +156,7 @@ export class LaunchIntroController {
         }
         if (!this.isMuted) {
           this.initAudio();
-          this.playBeep(880, 0.2);
+          this.playBubblePop(750, 0.08);
         }
       });
     }
@@ -141,6 +189,56 @@ export class LaunchIntroController {
     }
   }
 
+  // Liquid bubble pop audio effect
+  playBubblePop(freq = 600, duration = 0.08) {
+    if (this.isMuted) return;
+    this.initAudio();
+    if (!this.audioCtx) return;
+    if (this.audioCtx.state === "suspended") {
+      this.audioCtx.resume();
+    }
+    try {
+      const time = this.audioCtx.currentTime;
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, time);
+      osc.frequency.exponentialRampToValueAtTime(freq * 2.3, time + duration * 0.65);
+
+      gain.gain.setValueAtTime(0.35, time);
+      gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+      osc.start(time);
+      osc.stop(time + duration);
+    } catch (e) {}
+  }
+
+  playBubblePopSequence() {
+    const popNotes = [520, 780, 640, 920, 840, 1150, 960, 1380, 1200, 1600];
+    popNotes.forEach((freq, index) => {
+      setTimeout(() => {
+        this.playBubblePop(freq, 0.07);
+      }, index * 45);
+    });
+  }
+
+  playWarpChime() {
+    if (this.isMuted) return;
+    this.initAudio();
+    if (!this.audioCtx) return;
+    try {
+      const notes = [440, 554.37, 659.25, 880, 1108.73, 1318.51]; // A4, C#5, E5, A5, C#6, E6
+      notes.forEach((freq, i) => {
+        setTimeout(() => {
+          this.playBeep(freq, 0.45, "triangle");
+        }, i * 65);
+      });
+    } catch (e) {}
+  }
+
   playBeep(freq = 800, duration = 0.2, type = "sine") {
     if (this.isMuted) return;
     this.initAudio();
@@ -151,12 +249,11 @@ export class LaunchIntroController {
     try {
       const time = this.audioCtx.currentTime;
 
-      // Primary tone
       const osc = this.audioCtx.createOscillator();
       const gain = this.audioCtx.createGain();
       osc.type = type;
       osc.frequency.setValueAtTime(freq, time);
-      gain.gain.setValueAtTime(0.5, time);
+      gain.gain.setValueAtTime(0.45, time);
       gain.gain.linearRampToValueAtTime(0.001, time + duration);
 
       osc.connect(gain);
@@ -164,12 +261,11 @@ export class LaunchIntroController {
       osc.start(time);
       osc.stop(time + duration);
 
-      // Cyber Harmony chime
       const osc2 = this.audioCtx.createOscillator();
       const gain2 = this.audioCtx.createGain();
       osc2.type = "triangle";
       osc2.frequency.setValueAtTime(freq * 1.5, time);
-      gain2.gain.setValueAtTime(0.25, time);
+      gain2.gain.setValueAtTime(0.2, time);
       gain2.gain.linearRampToValueAtTime(0.001, time + duration);
 
       osc2.connect(gain2);
@@ -191,14 +287,13 @@ export class LaunchIntroController {
     try {
       const time = this.audioCtx.currentTime;
 
-      // Low frequency thruster hum
       const osc = this.audioCtx.createOscillator();
       const gain = this.audioCtx.createGain();
       osc.type = "sawtooth";
       osc.frequency.setValueAtTime(60, time);
       osc.frequency.linearRampToValueAtTime(110, time + duration);
 
-      gain.gain.setValueAtTime(0.4, time);
+      gain.gain.setValueAtTime(0.35, time);
       gain.gain.linearRampToValueAtTime(0.001, time + duration);
 
       const filter = this.audioCtx.createBiquadFilter();
@@ -225,7 +320,6 @@ export class LaunchIntroController {
     try {
       const time = this.audioCtx.currentTime;
 
-      // Heavy Noise Buffer
       const bufferSize = Math.floor(this.audioCtx.sampleRate * duration);
       const buffer = this.audioCtx.createBuffer(1, bufferSize, this.audioCtx.sampleRate);
       const data = buffer.getChannelData(0);
@@ -253,7 +347,6 @@ export class LaunchIntroController {
       gain.connect(this.audioCtx.destination);
       noise.start(time);
 
-      // Deep Sub-Bass Explosion Sweep
       const subOsc = this.audioCtx.createOscillator();
       const subGain = this.audioCtx.createGain();
       subOsc.type = "sine";
@@ -291,8 +384,8 @@ export class LaunchIntroController {
     this.screenRumbleLevel = level;
 
     const targets = [
-      document.querySelector(".launch-hud"),
-      document.querySelector("#launch-rocket-container"),
+      this.hud,
+      this.rocketContainer,
       document.querySelector(".launch-profile-card")
     ].filter(Boolean);
 
@@ -304,15 +397,117 @@ export class LaunchIntroController {
     });
   }
 
-  startSequence() {
+  /**
+   * Main Trigger: When User Clicks "Click to Open"
+   */
+  triggerGateOpen(e) {
+    if (this.isGateOpen) return;
+    this.isGateOpen = true;
+
+    // 1. Audio sound effects
+    this.initAudio();
+    this.playBubblePopSequence();
+    this.playWarpChime();
+    this.triggerHaptic([60, 40, 60]);
+
+    // 2. Spawn massive 3D bubble burst from click coordinate
+    let originX = window.innerWidth / 2;
+    let originY = window.innerHeight * 0.55;
+    if (e && typeof e.clientX === "number" && e.clientX > 0) {
+      originX = e.clientX;
+      originY = e.clientY;
+    } else if (this.gateBtn) {
+      const rect = this.gateBtn.getBoundingClientRect();
+      originX = rect.left + rect.width / 2;
+      originY = rect.top + rect.height / 2;
+    }
+
+    this.spawnBubbleBurst(originX, originY, 140);
+    this.spawnAmbientBubbles(85);
+
+    // 3. Smooth transition from Gate to Rocket Launch
+    if (this.gate) {
+      this.gate.classList.add("launch-gate-leaving");
+    }
+
+    setTimeout(() => {
+      if (this.gate) {
+        this.gate.classList.add("launch-gate-hidden");
+      }
+      if (this.hud) {
+        this.hud.style.display = "flex";
+      }
+      if (this.rocketContainer) {
+        this.rocketContainer.style.display = "flex";
+      }
+
+      // Start the rocket countdown sequence
+      this.startCountdownSequence();
+    }, 450);
+  }
+
+  spawnBubbleBurst(originX, originY, count = 140) {
+    const colors = [
+      "#38bdf8", // Sky Cyan
+      "#818cf8", // Indigo
+      "#c084fc", // Purple
+      "#f472b6", // Rose
+      "#34d399", // Mint
+      "#fbbf24", // Amber
+      "#ffffff", // Crystal White
+      "#67e8f9", // Bright Turquoise
+    ];
+
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 15 + 3.5;
+      const radius = Math.random() * 26 + 10;
+      this.bubbles.push({
+        x: originX + (Math.random() * 16 - 8),
+        y: originY + (Math.random() * 16 - 8),
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - Math.random() * 2.5,
+        friction: 0.94,
+        floatVy: -(Math.random() * 2.0 + 1.0),
+        radius: radius,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        alpha: Math.random() * 0.4 + 0.6,
+        decay: Math.random() * 0.0025 + 0.0012,
+        wobbleSpeed: Math.random() * 0.06 + 0.025,
+        wobblePhase: Math.random() * Math.PI * 2,
+        wobbleAmp: Math.random() * 2.2 + 1,
+        popped: false,
+        popDroplets: [],
+      });
+    }
+  }
+
+  spawnAmbientBubbles(count = 85) {
+    const colors = ["#38bdf8", "#818cf8", "#c084fc", "#f472b6", "#34d399", "#fbbf24", "#ffffff"];
+    for (let i = 0; i < count; i++) {
+      this.bubbles.push({
+        x: Math.random() * window.innerWidth,
+        y: window.innerHeight + Math.random() * 250,
+        vx: (Math.random() - 0.5) * 2.0,
+        vy: 0,
+        friction: 1,
+        floatVy: -(Math.random() * 2.5 + 1.2),
+        radius: Math.random() * 22 + 8,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        alpha: Math.random() * 0.35 + 0.5,
+        decay: Math.random() * 0.0018 + 0.0008,
+        wobbleSpeed: Math.random() * 0.05 + 0.02,
+        wobblePhase: Math.random() * Math.PI * 2,
+        wobbleAmp: Math.random() * 2.0 + 1.0,
+        popped: false,
+        popDroplets: [],
+      });
+    }
+  }
+
+  startCountdownSequence() {
     this.isFinished = false;
     this.clearTimers();
-
-    if (this.overlay) {
-      this.overlay.classList.remove("launch-hidden", "launch-dissolve");
-      this.overlay.classList.add("launch-active");
-    }
-    document.body.style.overflow = "hidden";
 
     const countdownEl = document.querySelector("#launch-countdown-num");
     const statusTextEl = document.querySelector("#launch-status-text");
@@ -321,9 +516,6 @@ export class LaunchIntroController {
     if (rocketEl) {
       rocketEl.className = "launch-rocket-container rocket-prelaunch";
     }
-
-    this.initAudio();
-    this.startParticleLoop();
 
     // 7-SECOND COUNTDOWN TIMELINE
     const steps = [
@@ -348,6 +540,11 @@ export class LaunchIntroController {
         }
         this.triggerHaptic(stepItem.haptic);
         this.setRumble(stepItem.rumble);
+
+        // Periodically spawn a few more rising bubbles during the countdown
+        if (index % 2 === 0) {
+          this.spawnAmbientBubbles(15);
+        }
       }, index * 1000);
       this.timers.push(timer);
     });
@@ -388,7 +585,7 @@ export class LaunchIntroController {
 
     // Burst flames & smoke particles
     for (let i = 0; i < 180; i++) {
-      const angle = (Math.PI / 180) * (Math.random() * 120 + 30); // downward fan
+      const angle = (Math.PI / 180) * (Math.random() * 120 + 30);
       const speed = Math.random() * 14 + 4;
       this.particles.push({
         x: startX + (Math.random() * 40 - 20),
@@ -423,7 +620,7 @@ export class LaunchIntroController {
     this.ctx.fillStyle = "#ffffff";
     this.stars.forEach((star) => {
       if (this.screenRumbleLevel >= 2) {
-        star.y += star.speed * 4; // Warp effect during launch!
+        star.y += star.speed * 4;
         if (star.y > this.canvas.height) star.y = 0;
       }
       this.ctx.globalAlpha = star.alpha;
@@ -432,7 +629,27 @@ export class LaunchIntroController {
       this.ctx.fill();
     });
 
-    // 2. Generate Thruster Exhaust during ignition & launch
+    // 2. Render Bubbles (Screen-filling iridescent 3D bubbles)
+    for (let i = this.bubbles.length - 1; i >= 0; i--) {
+      const b = this.bubbles[i];
+
+      b.vx *= b.friction;
+      b.vy *= b.friction;
+      b.x += b.vx;
+      b.y += b.vy + b.floatVy;
+      b.wobblePhase += b.wobbleSpeed;
+      b.alpha -= b.decay;
+
+      // Check if bubble drifted off top or faded
+      if (b.alpha <= 0 || b.y < -50 || b.x < -50 || b.x > this.canvas.width + 50) {
+        this.bubbles.splice(i, 1);
+        continue;
+      }
+
+      this.drawBubble(b);
+    }
+
+    // 3. Generate Thruster Exhaust during ignition & launch
     const rocketEl = document.querySelector("#launch-rocket-container");
     if (rocketEl && this.screenRumbleLevel > 0) {
       const rect = rocketEl.getBoundingClientRect();
@@ -441,7 +658,6 @@ export class LaunchIntroController {
 
       const pCount = this.screenRumbleLevel === 3 ? 12 : 5;
       for (let i = 0; i < pCount; i++) {
-        // Flame particles
         this.particles.push({
           x: originX + (Math.random() * 24 - 12),
           y: originY + (Math.random() * 10),
@@ -454,7 +670,6 @@ export class LaunchIntroController {
           type: "fire",
         });
 
-        // Smoke billowing particles
         if (Math.random() > 0.4) {
           this.particles.push({
             x: originX + (Math.random() * 40 - 20),
@@ -471,7 +686,7 @@ export class LaunchIntroController {
       }
     }
 
-    // 3. Render Particles
+    // 4. Render Rocket Particles
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const p = this.particles[i];
       p.x += p.vx;
@@ -511,6 +726,58 @@ export class LaunchIntroController {
     }
   }
 
+  drawBubble(b) {
+    const ctx = this.ctx;
+    const r = b.radius;
+    const x = b.x + Math.sin(b.wobblePhase) * b.wobbleAmp;
+    const y = b.y + Math.cos(b.wobblePhase) * (b.wobbleAmp * 0.6);
+
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, b.alpha);
+
+    // 1. Soft iridescent soap bubble gradient fill
+    const fillGrad = ctx.createRadialGradient(
+      x - r * 0.35, y - r * 0.35, r * 0.05,
+      x, y, r
+    );
+    fillGrad.addColorStop(0, "rgba(255, 255, 255, 0.5)");
+    fillGrad.addColorStop(0.25, b.color + "22");
+    fillGrad.addColorStop(0.7, b.color + "33");
+    fillGrad.addColorStop(0.92, b.color + "66");
+    fillGrad.addColorStop(1, "rgba(255, 255, 255, 0.8)");
+
+    ctx.fillStyle = fillGrad;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 2. Luminous outer boundary ring with chromatic shimmer
+    ctx.lineWidth = Math.max(1, r * 0.08);
+    const strokeGrad = ctx.createLinearGradient(x - r, y - r, x + r, y + r);
+    strokeGrad.addColorStop(0, "rgba(255, 255, 255, 0.95)");
+    strokeGrad.addColorStop(0.35, b.color);
+    strokeGrad.addColorStop(0.7, "rgba(255, 255, 255, 0.4)");
+    strokeGrad.addColorStop(1, b.color);
+    ctx.strokeStyle = strokeGrad;
+    ctx.stroke();
+
+    // 3. Primary curved specular highlight glint
+    ctx.beginPath();
+    ctx.arc(x, y, r * 0.76, Math.PI * 1.15, Math.PI * 1.48);
+    ctx.lineWidth = Math.max(1.5, r * 0.15);
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.92)";
+    ctx.lineCap = "round";
+    ctx.stroke();
+
+    // 4. Secondary reflection point
+    ctx.beginPath();
+    ctx.arc(x + r * 0.45, y + r * 0.45, Math.max(1, r * 0.1), 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
+    ctx.fill();
+
+    ctx.restore();
+  }
+
   skipLaunch() {
     this.finishLaunch();
   }
@@ -539,9 +806,30 @@ export class LaunchIntroController {
 
   replayLaunch() {
     window.scrollTo({ top: 0, behavior: "smooth" });
-    setTimeout(() => {
-      this.startSequence();
-    }, 200);
+
+    this.isFinished = false;
+    this.isGateOpen = false;
+    this.clearTimers();
+
+    if (this.overlay) {
+      this.overlay.classList.remove("launch-hidden", "launch-dissolve");
+      this.overlay.classList.add("launch-active");
+    }
+
+    // Reset gate, hud, and rocket
+    if (this.gate) {
+      this.gate.classList.remove("launch-gate-leaving", "launch-gate-hidden");
+    }
+    if (this.hud) {
+      this.hud.style.display = "none";
+    }
+    if (this.rocketContainer) {
+      this.rocketContainer.style.display = "none";
+      this.rocketContainer.className = "launch-rocket-container rocket-prelaunch";
+    }
+
+    document.body.style.overflow = "hidden";
+    this.startParticleLoop();
   }
 }
 
