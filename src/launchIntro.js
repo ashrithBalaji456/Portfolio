@@ -22,7 +22,10 @@ export class LaunchIntroController {
     this.particles = [];
     this.bubbles = [];
     this.stars = [];
-    this.shootingStars = [];
+    this.tailStars = [];
+    this.comets = [];
+    this.nextTailStarTime = Date.now() + 800; // First tail star spawns in 0.8s
+    this.nextCometTime = Date.now() + 1800; // First grand comet sweeps across in 1.8s
     this.timers = [];
     this.animFrameId = null;
     this.audioCtx = null;
@@ -86,7 +89,10 @@ export class LaunchIntroController {
 
   initStars() {
     this.stars = [];
-    this.shootingStars = [];
+    this.tailStars = [];
+    this.comets = [];
+    this.nextTailStarTime = Date.now() + 800; // First tail star in 0.8s
+    this.nextCometTime = Date.now() + 1800; // First grand comet in 1.8s
     const starCount = Math.floor((window.innerWidth * window.innerHeight) / 2200);
     const starColors = ["#ffffff", "#ffffff", "#e0f2fe", "#fef08a", "#bae6fd", "#f8fafc"];
 
@@ -107,6 +113,91 @@ export class LaunchIntroController {
         speed: Math.random() * 0.5 + 0.2,
       });
     }
+  }
+
+  spawnTailStar() {
+    if (!this.canvas) return;
+    const fromLeft = Math.random() > 0.4;
+    const startX = fromLeft
+      ? Math.random() * (this.canvas.width * 0.6) - 50
+      : Math.random() * (this.canvas.width * 0.6) + this.canvas.width * 0.4;
+    const startY = Math.random() * (this.canvas.height * 0.35) - 20;
+    const angle = fromLeft
+      ? Math.PI * 0.22 + (Math.random() - 0.5) * 0.15
+      : Math.PI * 0.78 + (Math.random() - 0.5) * 0.15;
+
+    const tailThemes = [
+      { core: "#ffffff", glow: "rgba(56, 189, 248, 0.8)", tailTip: "rgba(56, 189, 248, 0.15)" },
+      { core: "#ffffff", glow: "rgba(254, 240, 138, 0.85)", tailTip: "rgba(251, 191, 36, 0.15)" },
+      { core: "#ffffff", glow: "rgba(192, 132, 252, 0.8)", tailTip: "rgba(168, 85, 247, 0.15)" },
+      { core: "#ffffff", glow: "rgba(94, 234, 212, 0.85)", tailTip: "rgba(20, 184, 166, 0.15)" },
+    ];
+    const theme = tailThemes[Math.floor(Math.random() * tailThemes.length)];
+
+    this.tailStars.push({
+      x: startX,
+      y: startY,
+      len: Math.random() * 110 + 130, // Long glowing tail (130px - 240px)
+      speed: Math.random() * 8 + 18, // Swift meteor speed
+      angle,
+      theme,
+      life: 1.0,
+      decay: Math.random() * 0.012 + 0.014,
+      sparks: [],
+    });
+  }
+
+  spawnComet() {
+    if (!this.canvas) return;
+    const fromLeft = Math.random() > 0.45;
+    const startX = fromLeft ? -120 : this.canvas.width + 120;
+    const startY = Math.random() * (this.canvas.height * 0.38) - 40;
+    const angle = fromLeft
+      ? Math.PI * 0.17 + (Math.random() - 0.5) * 0.1 // graceful sweep downwards right
+      : Math.PI * 0.83 + (Math.random() - 0.5) * 0.1; // graceful sweep downwards left
+
+    const cometTypes = [
+      {
+        nucleus: "#ffffff",
+        innerComa: "#38bdf8",
+        outerComa: "rgba(56, 189, 248, 0.28)",
+        ionTail: "rgba(56, 189, 248, 0.75)",
+        dustTail: "rgba(129, 140, 248, 0.35)",
+        dustColor: "#7dd3fc",
+      },
+      {
+        nucleus: "#ffffff",
+        innerComa: "#f59e0b",
+        outerComa: "rgba(251, 191, 36, 0.28)",
+        ionTail: "rgba(251, 191, 36, 0.75)",
+        dustTail: "rgba(249, 115, 22, 0.35)",
+        dustColor: "#fde047",
+      },
+      {
+        nucleus: "#ffffff",
+        innerComa: "#2dd4bf",
+        outerComa: "rgba(45, 212, 191, 0.28)",
+        ionTail: "rgba(45, 212, 191, 0.75)",
+        dustTail: "rgba(56, 189, 248, 0.35)",
+        dustColor: "#5eead4",
+      },
+    ];
+    const theme = cometTypes[Math.floor(Math.random() * cometTypes.length)];
+
+    this.comets.push({
+      x: startX,
+      y: startY,
+      speed: Math.random() * 1.8 + 3.8, // Graceful, stately comet cruise speed
+      angle,
+      tailLen: Math.random() * 120 + 350, // Grand long dust and ion tail (350-470px)
+      tailWidth: Math.random() * 10 + 28, // Conical fan expansion
+      nucleusRadius: Math.random() * 1.2 + 4.0,
+      theme,
+      alpha: 0.0,
+      maxAlpha: Math.random() * 0.15 + 0.85,
+      fadeIn: true,
+      dust: [],
+    });
   }
 
   bindEvents() {
@@ -679,50 +770,242 @@ export class LaunchIntroController {
       this.ctx.restore();
     });
 
-    // Occasional cosmic shooting star (meteor streak across upper sky)
-    if (Math.random() < 0.012 && this.shootingStars.length < 2) {
-      this.shootingStars.push({
-        x: Math.random() * (this.canvas.width * 0.75),
-        y: Math.random() * (this.canvas.height * 0.35),
-        len: Math.random() * 70 + 60,
-        speed: Math.random() * 12 + 14,
-        angle: Math.PI / 4 + (Math.random() - 0.5) * 0.25,
-        life: 1.0,
-        decay: Math.random() * 0.02 + 0.02,
-      });
+    // Regular Interval Tail Stars & Majestic Comets Scheduler
+    const now = Date.now();
+    if (now >= this.nextTailStarTime && this.tailStars.length < 3) {
+      this.spawnTailStar();
+      this.nextTailStarTime = now + Math.random() * 1200 + 3200; // Regular interval every ~3.2-4.4s
+    }
+    if (now >= this.nextCometTime && this.comets.length < 2) {
+      this.spawnComet();
+      this.nextCometTime = now + Math.random() * 3000 + 8000; // Regular interval every ~8-11s
     }
 
-    for (let i = this.shootingStars.length - 1; i >= 0; i--) {
-      const s = this.shootingStars[i];
-      s.x += Math.cos(s.angle) * s.speed;
-      s.y += Math.sin(s.angle) * s.speed;
-      s.life -= s.decay;
+    // A. Render Tail Stars (Swift meteors with glowing trailing streaks & sparkling embers)
+    for (let i = this.tailStars.length - 1; i >= 0; i--) {
+      const ts = this.tailStars[i];
+      ts.x += Math.cos(ts.angle) * ts.speed;
+      ts.y += Math.sin(ts.angle) * ts.speed;
+      ts.life -= ts.decay;
 
-      if (s.life <= 0 || s.x > this.canvas.width + 100 || s.y > this.canvas.height + 100) {
-        this.shootingStars.splice(i, 1);
+      // Spawn micro sparkling embers in wake
+      if (Math.random() < 0.45 && ts.life > 0.15) {
+        ts.sparks.push({
+          x: ts.x - Math.cos(ts.angle) * (Math.random() * 30),
+          y: ts.y - Math.sin(ts.angle) * (Math.random() * 30),
+          vx: (Math.random() - 0.5) * 0.7,
+          vy: (Math.random() - 0.5) * 0.7,
+          life: 1.0,
+          decay: Math.random() * 0.04 + 0.03,
+          color: ts.theme.glow,
+          size: Math.random() * 1.5 + 0.7,
+        });
+      }
+
+      // Draw embers
+      for (let s = ts.sparks.length - 1; s >= 0; s--) {
+        const sp = ts.sparks[s];
+        sp.x += sp.vx;
+        sp.y += sp.vy;
+        sp.life -= sp.decay;
+        if (sp.life <= 0) {
+          ts.sparks.splice(s, 1);
+          continue;
+        }
+        this.ctx.save();
+        this.ctx.globalAlpha = sp.life * Math.max(0, ts.life) * 0.85;
+        this.ctx.fillStyle = sp.color;
+        this.ctx.beginPath();
+        this.ctx.arc(sp.x, sp.y, sp.size, 0, Math.PI * 2);
+        this.ctx.fill();
+        this.ctx.restore();
+      }
+
+      if (ts.life <= 0 && ts.sparks.length === 0) {
+        this.tailStars.splice(i, 1);
         continue;
       }
 
-      this.ctx.save();
-      this.ctx.globalAlpha = Math.max(0, s.life * 0.85);
-      const tailX = s.x - Math.cos(s.angle) * s.len;
-      const tailY = s.y - Math.sin(s.angle) * s.len;
-      const grad = this.ctx.createLinearGradient(tailX, tailY, s.x, s.y);
-      grad.addColorStop(0, "transparent");
-      grad.addColorStop(0.7, "rgba(56, 189, 248, 0.45)");
-      grad.addColorStop(1, "#ffffff");
-      this.ctx.strokeStyle = grad;
-      this.ctx.lineWidth = 1.6;
-      this.ctx.beginPath();
-      this.ctx.moveTo(tailX, tailY);
-      this.ctx.lineTo(s.x, s.y);
-      this.ctx.stroke();
+      if (ts.life > 0) {
+        this.ctx.save();
+        this.ctx.globalAlpha = Math.max(0, ts.life);
 
-      this.ctx.fillStyle = "#ffffff";
-      this.ctx.beginPath();
-      this.ctx.arc(s.x, s.y, 2, 0, Math.PI * 2);
-      this.ctx.fill();
-      this.ctx.restore();
+        const tailX = ts.x - Math.cos(ts.angle) * ts.len;
+        const tailY = ts.y - Math.sin(ts.angle) * ts.len;
+
+        const streakGrad = this.ctx.createLinearGradient(tailX, tailY, ts.x, ts.y);
+        streakGrad.addColorStop(0, "transparent");
+        streakGrad.addColorStop(0.5, ts.theme.tailTip);
+        streakGrad.addColorStop(0.85, ts.theme.glow);
+        streakGrad.addColorStop(1, ts.theme.core);
+
+        this.ctx.strokeStyle = streakGrad;
+        this.ctx.lineWidth = 2.2;
+        this.ctx.beginPath();
+        this.ctx.moveTo(tailX, tailY);
+        this.ctx.lineTo(ts.x, ts.y);
+        this.ctx.stroke();
+
+        // Glowing star head with cross glint
+        this.ctx.fillStyle = ts.theme.core;
+        this.ctx.beginPath();
+        this.ctx.arc(ts.x, ts.y, 2.5, 0, Math.PI * 2);
+        this.ctx.fill();
+
+        const glintLen = 6.5;
+        this.ctx.strokeStyle = "rgba(255, 255, 255, 0.95)";
+        this.ctx.lineWidth = 0.8;
+        this.ctx.beginPath();
+        this.ctx.moveTo(ts.x - glintLen, ts.y);
+        this.ctx.lineTo(ts.x + glintLen, ts.y);
+        this.ctx.moveTo(ts.x, ts.y - glintLen);
+        this.ctx.lineTo(ts.x, ts.y + glintLen);
+        this.ctx.stroke();
+
+        this.ctx.restore();
+      }
+    }
+
+    // B. Render Majestic Comets (Luminous gas coma & grand spreading ion/dust tail)
+    for (let i = this.comets.length - 1; i >= 0; i--) {
+      const c = this.comets[i];
+      c.x += Math.cos(c.angle) * c.speed;
+      c.y += Math.sin(c.angle) * c.speed;
+
+      if (c.fadeIn) {
+        c.alpha += 0.015;
+        if (c.alpha >= c.maxAlpha) {
+          c.alpha = c.maxAlpha;
+          c.fadeIn = false;
+        }
+      }
+
+      const margin = 200;
+      const isPastBoundary = c.x < -margin || c.x > this.canvas.width + margin || c.y > this.canvas.height + margin;
+      if (isPastBoundary) {
+        c.alpha -= 0.015;
+      }
+
+      // Emit stardust along trailing wake
+      if (Math.random() < 0.55 && c.alpha > 0.1) {
+        const dustDist = Math.random() * (c.tailLen * 0.75) + 25;
+        const dustSpread = (Math.random() - 0.5) * (c.tailWidth * (dustDist / c.tailLen) * 1.5);
+        const normAngle = c.angle + Math.PI / 2;
+        c.dust.push({
+          x: c.x - Math.cos(c.angle) * dustDist + Math.cos(normAngle) * dustSpread,
+          y: c.y - Math.sin(c.angle) * dustDist + Math.sin(normAngle) * dustSpread,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          size: Math.random() * 2.0 + 0.8,
+          alpha: 1.0,
+          decay: Math.random() * 0.014 + 0.01,
+          color: c.theme.dustColor,
+        });
+      }
+
+      for (let d = c.dust.length - 1; d >= 0; d--) {
+        const dp = c.dust[d];
+        dp.x += dp.vx;
+        dp.y += dp.vy;
+        dp.alpha -= dp.decay;
+        if (dp.alpha <= 0) {
+          c.dust.splice(d, 1);
+          continue;
+        }
+        this.ctx.save();
+        this.ctx.globalAlpha = dp.alpha * c.alpha * 0.7;
+        this.ctx.fillStyle = dp.color;
+        this.ctx.beginPath();
+        this.ctx.arc(dp.x, dp.y, dp.size, 0, Math.PI * 2);
+        this.ctx.fill();
+        this.ctx.restore();
+      }
+
+      if (c.alpha <= 0 && isPastBoundary && c.dust.length === 0) {
+        this.comets.splice(i, 1);
+        continue;
+      }
+
+      if (c.alpha > 0) {
+        this.ctx.save();
+        this.ctx.globalAlpha = c.alpha;
+
+        const tailEndX = c.x - Math.cos(c.angle) * c.tailLen;
+        const tailEndY = c.y - Math.sin(c.angle) * c.tailLen;
+        const perpX = Math.cos(c.angle + Math.PI / 2);
+        const perpY = Math.sin(c.angle + Math.PI / 2);
+
+        // 1. Broad Conical Dust Tail (Curving fan spreading behind comet)
+        const p1X = c.x + perpX * (c.nucleusRadius * 1.5);
+        const p1Y = c.y + perpY * (c.nucleusRadius * 1.5);
+        const p2X = tailEndX + perpX * (c.tailWidth * 1.4);
+        const p2Y = tailEndY + perpY * (c.tailWidth * 1.4);
+        const p3X = tailEndX - perpX * (c.tailWidth * 0.9);
+        const p3Y = tailEndY - perpY * (c.tailWidth * 0.9);
+        const p4X = c.x - perpX * (c.nucleusRadius * 1.5);
+        const p4Y = c.y - perpY * (c.nucleusRadius * 1.5);
+
+        const dustGrad = this.ctx.createLinearGradient(c.x, c.y, tailEndX, tailEndY);
+        dustGrad.addColorStop(0, c.theme.tailColor1 || c.theme.innerComa);
+        dustGrad.addColorStop(0.35, c.theme.dustTail);
+        dustGrad.addColorStop(0.8, "rgba(56, 189, 248, 0.08)");
+        dustGrad.addColorStop(1, "transparent");
+
+        this.ctx.fillStyle = dustGrad;
+        this.ctx.beginPath();
+        this.ctx.moveTo(p1X, p1Y);
+        this.ctx.lineTo(p2X, p2Y);
+        this.ctx.lineTo(p3X, p3Y);
+        this.ctx.lineTo(p4X, p4Y);
+        this.ctx.closePath();
+        this.ctx.fill();
+
+        // 2. Focused Ion Beam (Narrow bright ionized core)
+        const ionGrad = this.ctx.createLinearGradient(c.x, c.y, tailEndX, tailEndY);
+        ionGrad.addColorStop(0, "rgba(255, 255, 255, 0.95)");
+        ionGrad.addColorStop(0.25, c.theme.ionTail);
+        ionGrad.addColorStop(0.7, c.theme.dustTail);
+        ionGrad.addColorStop(1, "transparent");
+
+        this.ctx.strokeStyle = ionGrad;
+        this.ctx.lineWidth = 3.2;
+        this.ctx.beginPath();
+        this.ctx.moveTo(c.x, c.y);
+        this.ctx.lineTo(tailEndX, tailEndY);
+        this.ctx.stroke();
+
+        // 3. Glowing Spherical Gas Coma Halo
+        const comaRadius = c.nucleusRadius * 4.8;
+        const comaGrad = this.ctx.createRadialGradient(c.x, c.y, c.nucleusRadius * 0.5, c.x, c.y, comaRadius);
+        comaGrad.addColorStop(0, c.theme.nucleus);
+        comaGrad.addColorStop(0.3, c.theme.innerComa);
+        comaGrad.addColorStop(0.75, c.theme.outerComa);
+        comaGrad.addColorStop(1, "transparent");
+
+        this.ctx.fillStyle = comaGrad;
+        this.ctx.beginPath();
+        this.ctx.arc(c.x, c.y, comaRadius, 0, Math.PI * 2);
+        this.ctx.fill();
+
+        // 4. Incandescent Nucleus Spark
+        this.ctx.fillStyle = "#ffffff";
+        this.ctx.beginPath();
+        this.ctx.arc(c.x, c.y, c.nucleusRadius, 0, Math.PI * 2);
+        this.ctx.fill();
+
+        // Specular glint
+        const cGlint = c.nucleusRadius * 2.5;
+        this.ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
+        this.ctx.lineWidth = 1;
+        this.ctx.beginPath();
+        this.ctx.moveTo(c.x - cGlint, c.y);
+        this.ctx.lineTo(c.x + cGlint, c.y);
+        this.ctx.moveTo(c.x, c.y - cGlint);
+        this.ctx.lineTo(c.x, c.y + cGlint);
+        this.ctx.stroke();
+
+        this.ctx.restore();
+      }
     }
 
     // 2. Render Bubbles (Screen-filling iridescent 3D bubbles from click burst)
@@ -912,6 +1195,10 @@ export class LaunchIntroController {
     this.clearTimers();
     this.bubbles = [];
     this.particles = [];
+    this.tailStars = [];
+    this.comets = [];
+    this.nextTailStarTime = Date.now() + 800;
+    this.nextCometTime = Date.now() + 1800;
     if (this.bubbleCtx && this.bubbleCanvas) {
       this.bubbleCtx.clearRect(0, 0, this.bubbleCanvas.width, this.bubbleCanvas.height);
     }
