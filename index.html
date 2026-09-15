@@ -32,6 +32,192 @@
         </button>
       </div>
 
+      <!-- COSMIC ELEMENTS: ASTRONAUTS, PLANETS & SPACESHIPS -->
+      <div class="launch-cosmos-layer" id="launch-cosmos-layer" aria-hidden="true">
+        <!-- Spacewalking Astronaut Floating in Zero Gravity -->
+        <div class="cosmos-element cosmos-astronaut" title="Spacewalking Astronaut">
+          <svg viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg" class="astronaut-svg">
+            <defs>
+              <linearGradient id="astroSuit" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#ffffff"/>
+                <stop offset="60%" stop-color="#e2e8f0"/>
+                <stop offset="100%" stop-color="#94a3b8"/>
+              </linearGradient>
+              <linearGradient id="astroVisor" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#fef08a"/>
+                <stop offset="35%" stop-color="#f59e0b"/>
+                <stop offset="70%" stop-color="#d97706"/>
+                <stop offset="100%" stop-color="#0284c7"/>
+              </linearGradient>
+              <filter id="astroGlow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#38bdf8" flood-opacity="0.45"/>
+              </filter>
+            </defs>
+            <!-- Safety Tether -->
+            <path d="M 60 70 Q 25 105 0 135" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.5"/>
+            <!-- Life Support Backpack -->
+            <rect x="42" y="32" width="36" height="42" rx="8" fill="#334155" stroke="#64748b" stroke-width="1.5"/>
+            <circle cx="48" cy="38" r="2.5" fill="#22c55e" class="astro-beacon-l"/>
+            <circle cx="72" cy="38" r="2.5" fill="#38bdf8" class="astro-beacon-r"/>
+            <!-- Suit Body -->
+            <ellipse cx="60" cy="56" rx="18" ry="22" fill="url(#astroSuit)" filter="url(#astroGlow)"/>
+            <!-- Chest control pack -->
+            <rect x="52" y="46" width="16" height="18" rx="3" fill="#1e293b" stroke="#38bdf8" stroke-width="1"/>
+            <rect x="55" y="49" width="10" height="4" rx="1" fill="#38bdf8"/>
+            <circle cx="56" cy="58" r="1.5" fill="#ef4444"/>
+            <circle cx="61" cy="58" r="1.5" fill="#22c55e"/>
+            <circle cx="64" cy="58" r="1.5" fill="#eab308"/>
+            <!-- Helmet -->
+            <circle cx="60" cy="24" r="16" fill="url(#astroSuit)"/>
+            <!-- Reflective Gold Visor -->
+            <ellipse cx="61" cy="23" rx="11" ry="9" fill="url(#astroVisor)"/>
+            <path d="M 54 18 Q 63 17 68 20" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
+            <!-- Arms Floating -->
+            <path d="M 44 45 Q 30 36 26 22" stroke="url(#astroSuit)" stroke-width="8" stroke-linecap="round"/>
+            <circle cx="25" cy="20" r="5" fill="#64748b"/>
+            <path d="M 76 46 Q 92 54 100 48" stroke="url(#astroSuit)" stroke-width="8" stroke-linecap="round"/>
+            <circle cx="102" cy="47" r="5" fill="#64748b"/>
+            <!-- Legs Floating in Microgravity -->
+            <path d="M 52 74 Q 46 95 38 114" stroke="url(#astroSuit)" stroke-width="9" stroke-linecap="round"/>
+            <ellipse cx="36" cy="116" rx="6" ry="4" fill="#475569"/>
+            <path d="M 68 74 Q 74 92 84 108" stroke="url(#astroSuit)" stroke-width="9" stroke-linecap="round"/>
+            <ellipse cx="86" cy="110" rx="6" ry="4" fill="#475569"/>
+          </svg>
+        </div>
+
+        <!-- Distant Ringed Planet (Saturn / Exoplanet) -->
+        <div class="cosmos-element cosmos-planet-ringed" title="Ringed Planet">
+          <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg" class="planet-ringed-svg">
+            <defs>
+              <radialGradient id="ringedPlanet" cx="40%" cy="40%" r="60%">
+                <stop offset="0%" stop-color="#c084fc"/>
+                <stop offset="35%" stop-color="#818cf8"/>
+                <stop offset="70%" stop-color="#312e81"/>
+                <stop offset="100%" stop-color="#0f172a"/>
+              </radialGradient>
+              <linearGradient id="ringsGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="rgba(192, 132, 252, 0.9)"/>
+                <stop offset="30%" stop-color="rgba(251, 191, 36, 0.8)"/>
+                <stop offset="60%" stop-color="rgba(56, 189, 248, 0.75)"/>
+                <stop offset="100%" stop-color="rgba(129, 140, 248, 0.2)"/>
+              </linearGradient>
+              <filter id="planetGlow" x="-30%" y="-30%" width="160%" height="160%">
+                <feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="#818cf8" flood-opacity="0.5"/>
+              </filter>
+            </defs>
+            <!-- Back Ring -->
+            <ellipse cx="80" cy="80" rx="72" ry="22" fill="none" stroke="url(#ringsGrad)" stroke-width="12" transform="rotate(-24 80 80)" opacity="0.45"/>
+            <ellipse cx="80" cy="80" rx="64" ry="18" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.8" transform="rotate(-24 80 80)"/>
+            <!-- Planet Body -->
+            <circle cx="80" cy="80" r="42" fill="url(#ringedPlanet)" filter="url(#planetGlow)"/>
+            <!-- Atmospheric Bands -->
+            <path d="M 42 72 Q 80 84 118 72" stroke="rgba(251, 191, 36, 0.35)" stroke-width="5" fill="none" opacity="0.7"/>
+            <path d="M 44 86 Q 80 98 116 86" stroke="rgba(56, 189, 248, 0.3)" stroke-width="4" fill="none" opacity="0.6"/>
+            <!-- Front Ring Overlay -->
+            <ellipse cx="80" cy="80" rx="72" ry="22" fill="none" stroke="url(#ringsGrad)" stroke-width="12" stroke-dasharray="230 180" stroke-dashoffset="-35" transform="rotate(-24 80 80)"/>
+            <!-- Orbiting Moon -->
+            <circle cx="22" cy="50" r="3.5" fill="#fef08a" filter="drop-shadow(0 0 5px #fef08a)"/>
+          </svg>
+        </div>
+
+        <!-- Crimson Mars / Lunar Crescent Planet -->
+        <div class="cosmos-element cosmos-planet-mars" title="Planet Mars">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="planet-mars-svg">
+            <defs>
+              <radialGradient id="marsGrad" cx="30%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#fca5a5"/>
+                <stop offset="25%" stop-color="#ef4444"/>
+                <stop offset="60%" stop-color="#991b1b"/>
+                <stop offset="100%" stop-color="#180505"/>
+              </radialGradient>
+              <filter id="marsGlow" x="-30%" y="-30%" width="160%" height="160%">
+                <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#ef4444" flood-opacity="0.5"/>
+              </filter>
+            </defs>
+            <circle cx="50" cy="50" r="36" fill="url(#marsGrad)" filter="url(#marsGlow)"/>
+            <ellipse cx="38" cy="36" rx="7" ry="5" fill="#7f1d1d" opacity="0.6"/>
+            <ellipse cx="58" cy="46" rx="9" ry="6" fill="#7f1d1d" opacity="0.55"/>
+            <ellipse cx="44" cy="62" rx="6" ry="4" fill="#7f1d1d" opacity="0.5"/>
+            <path d="M 22 28 Q 50 14 78 28" stroke="rgba(254, 202, 202, 0.6)" stroke-width="2" fill="none"/>
+          </svg>
+        </div>
+
+        <!-- Futuristic Ion-Drive Spaceship Cruiser -->
+        <div class="cosmos-element cosmos-spaceship" title="Deep Space Exploration Cruiser">
+          <svg viewBox="0 0 130 90" fill="none" xmlns="http://www.w3.org/2000/svg" class="spaceship-svg">
+            <defs>
+              <linearGradient id="shipBody" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#ffffff"/>
+                <stop offset="45%" stop-color="#cbd5e1"/>
+                <stop offset="100%" stop-color="#1e293b"/>
+              </linearGradient>
+              <linearGradient id="solarPanel" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#0284c7"/>
+                <stop offset="50%" stop-color="#0369a1"/>
+                <stop offset="100%" stop-color="#082f49"/>
+              </linearGradient>
+              <linearGradient id="plasmaIon" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#38bdf8"/>
+                <stop offset="60%" stop-color="#818cf8"/>
+                <stop offset="100%" stop-color="transparent"/>
+              </linearGradient>
+            </defs>
+            <!-- Ion Engine Plasma Trail -->
+            <ellipse cx="14" cy="45" rx="14" ry="5" fill="url(#plasmaIon)" filter="drop-shadow(0 0 8px #38bdf8)"/>
+            <ellipse cx="8" cy="45" rx="8" ry="3" fill="#ffffff"/>
+            <!-- Solar Array Wings -->
+            <rect x="36" y="8" width="34" height="14" rx="2" fill="url(#solarPanel)" stroke="#38bdf8" stroke-width="1"/>
+            <line x1="47" y1="8" x2="47" y2="22" stroke="#38bdf8" stroke-width="0.8"/>
+            <line x1="58" y1="8" x2="58" y2="22" stroke="#38bdf8" stroke-width="0.8"/>
+            <rect x="36" y="68" width="34" height="14" rx="2" fill="url(#solarPanel)" stroke="#38bdf8" stroke-width="1"/>
+            <line x1="47" y1="68" x2="47" y2="82" stroke="#38bdf8" stroke-width="0.8"/>
+            <line x1="58" y1="68" x2="58" y2="82" stroke="#38bdf8" stroke-width="0.8"/>
+            <!-- Struts -->
+            <line x1="53" y1="22" x2="53" y2="35" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="53" y1="55" x2="53" y2="68" stroke="#94a3b8" stroke-width="2"/>
+            <!-- Spaceship Fuselage -->
+            <path d="M 22 45 Q 40 32 88 36 L 115 45 L 88 54 Q 40 58 22 45 Z" fill="url(#shipBody)" stroke="#94a3b8" stroke-width="1.5"/>
+            <!-- Cockpit Canopy Glass -->
+            <path d="M 75 41 Q 95 42 102 45 Q 95 48 75 49 Z" fill="#38bdf8" filter="drop-shadow(0 0 6px #38bdf8)"/>
+            <!-- Hull Stripe -->
+            <path d="M 45 42 L 80 42 L 76 48 L 45 48 Z" fill="#ef4444" opacity="0.85"/>
+            <circle cx="112" cy="45" r="2" fill="#ffffff" filter="drop-shadow(0 0 4px #ffffff)"/>
+          </svg>
+        </div>
+
+        <!-- High-Tech Orbital Satellite -->
+        <div class="cosmos-element cosmos-satellite" title="Orbital Telemetry Satellite">
+          <svg viewBox="0 0 110 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="satellite-svg">
+            <defs>
+              <linearGradient id="satPanel" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#0284c7"/>
+                <stop offset="100%" stop-color="#0369a1"/>
+              </linearGradient>
+            </defs>
+            <!-- Solar Array Left -->
+            <rect x="4" y="24" width="30" height="32" rx="2" fill="url(#satPanel)" stroke="#38bdf8" stroke-width="1"/>
+            <line x1="14" y1="24" x2="14" y2="56" stroke="#38bdf8" stroke-width="0.8"/>
+            <line x1="24" y1="24" x2="24" y2="56" stroke="#38bdf8" stroke-width="0.8"/>
+            <line x1="4" y1="40" x2="34" y2="40" stroke="#38bdf8" stroke-width="0.8"/>
+            <rect x="34" y="38" width="8" height="4" fill="#94a3b8"/>
+            <!-- Core Bus (Gold Mylar) -->
+            <rect x="42" y="30" width="26" height="20" rx="3" fill="#eab308" stroke="#fef08a" stroke-width="1.2" filter="drop-shadow(0 0 6px rgba(234, 179, 8, 0.5))"/>
+            <!-- Dish Antenna -->
+            <path d="M 55 20 Q 55 10 42 6" stroke="#cbd5e1" stroke-width="1.5" fill="none"/>
+            <ellipse cx="40" cy="5" rx="9" ry="5" fill="none" stroke="#e2e8f0" stroke-width="1.5" transform="rotate(-25 40 5)"/>
+            <circle cx="40" cy="5" r="1.5" fill="#38bdf8" filter="drop-shadow(0 0 4px #38bdf8)"/>
+            <!-- Solar Array Right -->
+            <rect x="68" y="38" width="8" height="4" fill="#94a3b8"/>
+            <rect x="76" y="24" width="30" height="32" rx="2" fill="url(#satPanel)" stroke="#38bdf8" stroke-width="1"/>
+            <line x1="86" y1="24" x2="86" y2="56" stroke="#38bdf8" stroke-width="0.8"/>
+            <line x1="96" y1="24" x2="96" y2="56" stroke="#38bdf8" stroke-width="0.8"/>
+            <line x1="76" y1="40" x2="106" y2="40" stroke="#38bdf8" stroke-width="0.8"/>
+            <!-- Nav Beacon -->
+            <circle cx="62" cy="34" r="2" fill="#ef4444" class="sat-beacon"/>
+          </svg>
+        </div>
+      </div>
+
       <!-- INTERACTIVE CLICK TO OPEN GATE -->
       <div id="launch-gate" class="launch-gate" aria-label="Click to Open Portfolio">
         <div class="launch-gate-card">
