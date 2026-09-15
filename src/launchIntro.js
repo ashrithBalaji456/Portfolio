@@ -44,10 +44,16 @@ export class LaunchIntroController {
     this.canvas = document.querySelector("#launch-canvas");
     if (this.canvas) {
       this.ctx = this.canvas.getContext("2d");
-      this.resizeCanvas();
-      window.addEventListener("resize", () => this.resizeCanvas());
       this.initStars();
     }
+
+    this.bubbleCanvas = document.querySelector("#launch-bubble-canvas");
+    if (this.bubbleCanvas) {
+      this.bubbleCtx = this.bubbleCanvas.getContext("2d");
+    }
+
+    this.resizeCanvas();
+    window.addEventListener("resize", () => this.resizeCanvas());
 
     // Ensure initial visual state: Gate is visible, HUD and Rocket hidden until user clicks!
     if (this.gate) {
@@ -67,9 +73,14 @@ export class LaunchIntroController {
   }
 
   resizeCanvas() {
-    if (!this.canvas) return;
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
+    if (this.canvas) {
+      this.canvas.width = window.innerWidth;
+      this.canvas.height = window.innerHeight;
+    }
+    if (this.bubbleCanvas) {
+      this.bubbleCanvas.width = window.innerWidth;
+      this.bubbleCanvas.height = window.innerHeight;
+    }
   }
 
   initStars() {
@@ -604,6 +615,9 @@ export class LaunchIntroController {
     if (!this.ctx || !this.canvas) return;
 
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    if (this.bubbleCtx && this.bubbleCanvas) {
+      this.bubbleCtx.clearRect(0, 0, this.bubbleCanvas.width, this.bubbleCanvas.height);
+    }
 
     // 1. Draw Starfield
     this.ctx.fillStyle = "#ffffff";
@@ -720,7 +734,7 @@ export class LaunchIntroController {
   }
 
   drawBubble(b) {
-    const ctx = this.ctx;
+    const ctx = this.bubbleCtx || this.ctx;
     const r = b.radius;
     const x = b.x + Math.sin(b.wobblePhase) * b.wobbleAmp;
     const y = b.y + Math.cos(b.wobblePhase) * (b.wobbleAmp * 0.6);
@@ -805,6 +819,9 @@ export class LaunchIntroController {
     this.clearTimers();
     this.bubbles = [];
     this.particles = [];
+    if (this.bubbleCtx && this.bubbleCanvas) {
+      this.bubbleCtx.clearRect(0, 0, this.bubbleCanvas.width, this.bubbleCanvas.height);
+    }
 
     if (this.overlay) {
       this.overlay.classList.remove("launch-hidden", "launch-dissolve");

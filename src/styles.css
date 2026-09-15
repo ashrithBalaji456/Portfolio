@@ -2970,6 +2970,15 @@ h1 {
   box-shadow: 0 0 16px rgba(255, 211, 107, 0.35);
 }
 
+.launch-bubble-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 28; /* Above cosmos elements (z-index: 5) and gate card so bubbles cover all pictures! */
+}
+
 /* ==========================================================================
    COSMOS LAYER: PHOTOREALISTIC ASTRONAUT, PLANETS & SPACESHIP
    ========================================================================== */
@@ -2979,7 +2988,7 @@ h1 {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 2;
+  z-index: 5;
   overflow: hidden;
 }
 
@@ -2998,81 +3007,87 @@ h1 {
   user-select: none;
 }
 
-/* 1. Photorealistic Spacewalking Astronaut (Left Flank) */
+/* 1. Photorealistic Spacewalking Astronaut (Visible Zero-Gravity Floating) */
 .cosmos-astronaut {
-  top: 28%;
-  left: 6%;
-  width: 135px;
-  animation: astronautFloat 11s ease-in-out infinite alternate;
+  top: 26%;
+  left: 5%;
+  width: 140px;
+  animation: astronautFloat 6.5s ease-in-out infinite alternate;
   filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.45));
 }
 
 @keyframes astronautFloat {
   0% {
-    transform: translate3d(0, 0, 0) rotate(-4deg);
+    transform: translate3d(0, 0, 0) rotate(-10deg) scale(0.98);
   }
   50% {
-    transform: translate3d(10px, -14px, 0) rotate(2deg);
+    transform: translate3d(18px, -24px, 0) rotate(2deg) scale(1.02);
   }
   100% {
-    transform: translate3d(-6px, -24px, 0) rotate(5deg);
+    transform: translate3d(-14px, -42px, 0) rotate(12deg) scale(1.04);
   }
 }
 
-/* 2. Photorealistic Saturn with Ring System (Upper Left) */
+/* 2. Photorealistic Saturn with Ring System (Grand Orbital Drift) */
 .cosmos-planet-saturn {
-  top: 7%;
-  left: 6%;
-  width: 175px;
-  animation: planetDrift 16s ease-in-out infinite alternate;
-  filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.35));
+  top: 6%;
+  left: 5%;
+  width: 210px;
+  animation: saturnDrift 8.5s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 22px rgba(251, 191, 36, 0.35));
 }
 
-@keyframes planetDrift {
+@keyframes saturnDrift {
   0% {
-    transform: translate3d(0, 0, 0) rotate(0deg);
+    transform: translate3d(0, 0, 0) rotate(-3deg);
+  }
+  50% {
+    transform: translate3d(14px, -12px, 0) rotate(1deg);
   }
   100% {
-    transform: translate3d(8px, -10px, 0) rotate(2deg);
+    transform: translate3d(-8px, -22px, 0) rotate(4deg);
   }
 }
 
-/* 3. Photorealistic Crimson Mars (Upper Right) */
+/* 3. Photorealistic Crimson Mars (Atmospheric Orbital Wobble) */
 .cosmos-planet-mars {
-  top: 9%;
-  right: 7%;
-  width: 105px;
-  animation: marsFloat 13s ease-in-out infinite alternate;
-  filter: drop-shadow(0 0 18px rgba(239, 68, 68, 0.5));
+  top: 8%;
+  right: 6%;
+  width: 110px;
+  animation: marsFloat 7s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.5));
 }
 
 @keyframes marsFloat {
   0% {
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0) rotate(5deg);
+  }
+  50% {
+    transform: translate3d(-10px, -18px, 0) rotate(-1deg);
   }
   100% {
-    transform: translateY(-12px);
+    transform: translate3d(12px, -30px, 0) rotate(-6deg);
   }
 }
 
-/* 4. Photorealistic Exploration Cruiser Spaceship (Cruising Upper Right) */
+/* 4. Photorealistic Exploration Cruiser Spaceship (Active Cruising Trajectory) */
 .cosmos-spaceship {
   top: 28%;
-  right: 10%;
-  width: 145px;
-  animation: shipCruising 13s ease-in-out infinite alternate;
-  filter: drop-shadow(0 0 18px rgba(56, 189, 248, 0.45));
+  right: 9%;
+  width: 155px;
+  animation: shipCruising 7.5s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 18px rgba(56, 189, 248, 0.5));
 }
 
 @keyframes shipCruising {
   0% {
-    transform: translate3d(0, 0, 0) rotate(2deg);
+    transform: translate3d(0, 0, 0) rotate(3deg);
   }
   50% {
-    transform: translate3d(-14px, -10px, 0) rotate(-1deg);
+    transform: translate3d(-30px, -18px, 0) rotate(-3deg);
   }
   100% {
-    transform: translate3d(-28px, -4px, 0) rotate(1deg);
+    transform: translate3d(-60px, -8px, 0) rotate(4deg);
   }
 }
 
