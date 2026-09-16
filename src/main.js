@@ -1,4 +1,5 @@
 import { initLaunchIntro } from "./launchIntro.js";
+import { projects } from "./projectsData.js";
 
 const skillCategories = [
   { title: "Languages", icon: "{ }", skills: ["Java"] },
@@ -8,179 +9,6 @@ const skillCategories = [
   { title: "Testing", icon: "QA", skills: ["Selenium Automation Testing", "API Testing"] },
 ];
 
-const projects = [
-  {
-    title: "Nexus Subscription Center",
-    period: "July 2026",
-    category: "Backend API",
-    tags: ["Backend", "Data"],
-    description: "Built a Subscription Management Platform to track recurring subscriptions, renewal dates, pricing, billing cycles, and subscription status.",
-    highlights: [
-      "Developed RESTful APIs using Spring Boot with a layered Controller–Service–Repository architecture",
-      "Implemented complete subscription lifecycle management, including creation, updates, renewals, cancellation, soft deletion, and permanent deletion",
-      "Added dashboard analytics to track active subscriptions, upcoming renewals, expired subscriptions, and monthly and yearly spending",
-      "Implemented client-specific data isolation using anonymous client identification and request-level context handling",
-      "Added searching, filtering, sorting, and pagination to efficiently manage and explore subscription records"
-    ],
-    tech: ["Java 17", "Spring Boot", "Spring Data JPA", "Hibernate", "PostgreSQL", "React.js", "Maven"],
-    image: "./assets/project-nexus.jpg",
-    devImage: "./assets/project-nexus-dev.jpg",
-    github: "https://github.com/ashrithBalaji456/Nexus_Subscription_Center_Backend",
-    live: null,
-  },
-  {
-    title: "Referral Hub - Automated Job Outreach",
-    period: "July 2026",
-    category: "Backend API",
-    tags: ["Backend", "Data", "Docker"],
-    description:
-      "Full-stack job outreach and referral platform automating personalized email campaigns, managing HR contacts, templates, and resumes.",
-    highlights: [
-      "Designed RESTful APIs for contacts, templates, resume uploads, campaign config, and email history tracking",
-      "Integrated Spring Mail and Gmail SMTP to generate personalized MIME emails with resume attachments",
-      "Implemented automated campaign execution with Spring Scheduler cron expressions and timezone-aware scheduling",
-      "Designed a PostgreSQL data model with Spring Data JPA and Hibernate to manage relationships and history",
-      "Implemented recipient eligibility checks, duplicate-send prevention, cooldown rules, and batch processing",
-      "Structured with layered architecture (Controller, Service, Repository, DTO) and centralized logging (SLF4J)"
-    ],
-    tech: ["Java", "Spring Boot", "JPA", "Hibernate", "PostgreSQL", "React", "Maven", "SLF4J", "SMTP", "Postman", "Git"],
-    image: "./assets/project-referral-hub.jpg",
-    devImage: "./assets/project-referral-hub-dev.jpg",
-    github: "https://github.com/ashrithBalaji456/Referal_Hub_Backend",
-    live: "https://referal-hub-frontend.vercel.app/",
-  },
-  {
-    title: "Tasker - AHT Productivity Tracking System",
-    period: "May 2026",
-    category: "Backend API",
-    tags: ["Backend", "Data", "Docker"],
-    description:
-      "Full-stack productivity tracking system built at Ethara.ai for AHT analytics, attendance, tasker workflows, and admin reporting.",
-    highlights: [
-      "Engineered JWT authentication with role-based access control and BCrypt password encryption",
-      "Built punch-in and punch-out attendance flows with automatic 7 PM punch-out and smart day classification",
-      "Designed AHT validation that auto-flags tasks exceeding target handle time by 50%",
-      "Developed admin project catalog management, tasker history tracking, feedback, and daily productivity reports",
-      "Implemented leave requests, re-punch recovery, and missing project request workflows",
-      "Deployed Spring Boot on Render, React/Vite on Vercel, and PostgreSQL with Docker",
-    ],
-    tech: ["Java", "Spring Boot", "Spring Security", "JWT", "PostgreSQL", "React", "Vite", "Docker", "Render", "Vercel"],
-    image: "./assets/project-tasker.jpg",
-    devImage: "./assets/project-tasker-dev.jpg",
-    github: "https://lnkd.in/gwNQh9f8",
-    live: "https://lnkd.in/g4QSzmCK",
-  },
-  {
-    title: "Hospital Management System - Backend",
-    period: "Apr 2026",
-    category: "Backend API",
-    tags: ["Backend", "Data", "Docker"],
-    description: "Scalable Spring Boot backend for hospital operations, covering patients, doctors, appointments, and billing workflows.",
-    highlights: [
-      "Developed backend services for managing patients, doctors, appointments, and billing",
-      "Designed RESTful APIs with MVC architecture for CRUD operations and business logic",
-      "Integrated JPA and Hibernate for efficient database interaction and entity management",
-      "Enabled CORS configuration for secure client-server communication",
-      "Containerized the application with Docker for consistent deployment across environments",
-    ],
-    tech: ["Spring Boot", "REST APIs", "JPA", "Hibernate", "Docker", "MVC", "CORS"],
-    image: "./assets/project-hospital.jpg",
-    devImage: "./assets/project-hospital-dev.jpg",
-    github: "https://github.com/ashrithBalaji456/Hospital-Backend",
-    live: "https://hospital-frontend-aj7d0jqh4-srinus-projects-85b0e5b9.vercel.app/",
-  },
-  {
-    title: "Service Manager",
-    period: "Mar 2026",
-    category: "Backend API",
-    tags: ["Backend", "Data"],
-    description: "Vehicle Service Management System to manage vehicles, service records, mileage, and maintenance schedules.",
-    highlights: [
-      "Developed RESTful APIs using Spring Boot with a layered Controller–Service–Repository architecture",
-      "Implemented automatic service-status classification (Overdue, Due by Mileage, Due This Week, OK)",
-      "Added date-based and mileage-based maintenance tracking to identify vehicles requiring service",
-      "Implemented service history management, mileage updates, quick service completion, and dashboard analytics",
-      "Integrated PostgreSQL for persistent storage with optional H2 database support for local testing"
-    ],
-    tech: ["Java 17", "Spring Boot", "JPA", "Hibernate", "PostgreSQL", "H2", "Maven"],
-    image: "./assets/project-service-manager.jpg",
-    devImage: "./assets/project-service-manager-dev.jpg",
-    github: "https://github.com/ashrithBalaji456/Service_Manage_Backend",
-    live: null,
-  },
-  {
-    title: "PulseFit - Microservices Fitness Platform",
-    period: "Jan 2026",
-    category: "Microservices",
-    tags: ["Backend", "Microservices", "AI", "Data"],
-    description: "Built a microservices-based fitness tracking platform designed to manage user activity, workout progress, analytics, and AI-driven insights through independent services.",
-    highlights: [
-      "Implemented a secure authentication and authorization flow using Keycloak, OAuth2, PKCE, and JWT for protected access across the system",
-      "Designed an API Gateway + Eureka service discovery architecture to route requests cleanly and support independently deployable services",
-      "Developed event-driven communication using Apache Kafka so activity events could be published asynchronously and processed by downstream consumers",
-      "Used polyglot persistence with PostgreSQL for relational data and MongoDB for flexible activity documents based on service needs",
-      "Followed a monorepo microservices structure to keep all services in one repository while maintaining clear domain separation",
-      "Added Docker-based deployment support and designed the system for scalability, loose coupling, and independent service evolution"
-    ],
-    tech: ["Java 17", "Spring Boot", "Spring Cloud Gateway", "Eureka", "Keycloak", "OAuth2", "PKCE", "JWT", "Kafka", "PostgreSQL", "MongoDB", "Docker"],
-    image: "./assets/project-pulsefit.jpg",
-    devImage: "./assets/project-pulsefit-dev.jpg",
-    github: "https://github.com/ashrithBalaji456/FitNess_Tracker_Microservices",
-    live: null,
-  },
-  {
-    title: "MoodFlix - AI Movie Recommendations",
-    period: "Dec 2025",
-    category: "AI Backend",
-    tags: ["Backend", "AI", "Data"],
-    description: "AI-powered recommendation backend that maps user mood to personalized movie suggestions.",
-    highlights: [
-      "Built Spring Boot recommendation APIs with mood detection and trailer metadata support",
-      "Integrated Google Gemini API with focused prompt engineering",
-      "Used PostgreSQL persistence for recommendation history and service data",
-    ],
-    tech: ["Spring Boot", "PostgreSQL", "Google Gemini API", "REST API"],
-    image: "./assets/project-moodflix.jpg",
-    devImage: "./assets/project-moodflix-dev.jpg",
-    github: "https://github.com/ashrithBalaji456/MovieRecommendation-Backend",
-    live: "https://movie-recommendation-frontend-zeta.vercel.app/",
-  },
-  {
-    title: "Quiz Application - Microservices",
-    period: "Dec 2025",
-    category: "Microservices",
-    tags: ["Backend", "Microservices"],
-    description: "Scalable quiz platform designed with independent Spring Boot services and clear API boundaries.",
-    highlights: [
-      "Implemented independent Quiz and Question microservices with loose coupling",
-      "Integrated Eureka Service Discovery for dynamic service registration",
-      "Built an API Gateway for centralized routing and abstraction",
-      "Developed RESTful APIs with clear separation of concerns",
-    ],
-    tech: ["Java", "Spring Boot", "Spring Cloud", "Eureka", "API Gateway", "REST APIs"],
-    image: "./assets/project-quiz.jpg",
-    devImage: "./assets/project-quiz-dev.jpg",
-    github: "https://github.com/ashrithBalaji456/Quiz-MicroServices",
-    live: null,
-  },
-  {
-    title: "AI Email Reply Generator",
-    period: "Nov 2025",
-    category: "AI Backend",
-    tags: ["Backend", "AI"],
-    description: "Context-aware reply generation service powered by Google Gemini and Spring Boot.",
-    highlights: [
-      "Built resilient WebClient retry and timeout logic",
-      "Integrated Gemini API with secure environment-based routing",
-      "Configured CORS and API routing for stable client-server communication",
-    ],
-    tech: ["Spring Boot", "Google Gemini API", "REST API", "WebClient"],
-    image: "./assets/project-email-reply.jpg",
-    devImage: "./assets/project-email-reply-dev.jpg",
-    github: "https://github.com/ashrithBalaji456/email-reply-backend",
-    live: "https://email-reply-frontend.vercel.app/",
-  },
-];
 
 const experiences = [
   {
@@ -363,7 +191,7 @@ function renderProjects(activeFilter = "All") {
         : "";
 
       const imageHtml = project.image && project.devImage
-        ? `<div class="project-media" data-slide="0" title="Click to toggle between UI Preview & Problem Solved">
+        ? `<div class="project-media" data-slide="0" title="Click image or dots to toggle preview">
              <div class="project-media-slide active">
                <img src="${project.image}" alt="${project.title} UI Preview" class="project-media-img" loading="lazy" />
                <span class="media-slide-badge">UI Dashboard</span>
@@ -373,8 +201,8 @@ function renderProjects(activeFilter = "All") {
                <span class="media-slide-badge badge-dev">💡 Problem Solved</span>
              </div>
              <div class="media-slide-dots">
-               <span class="slide-dot active" data-target="0"></span>
-               <span class="slide-dot" data-target="1"></span>
+               <span class="slide-dot active" data-target="0" title="View UI Dashboard"></span>
+               <span class="slide-dot" data-target="1" title="View Problem Solved"></span>
              </div>
            </div>`
         : project.image
@@ -384,12 +212,15 @@ function renderProjects(activeFilter = "All") {
         : "";
 
       return `
-        <article class="project-card reveal-item ${hidden ? "hidden" : ""}" data-tags="${project.tags.join(",")}" style="--delay:${index * 55}ms">
+        <article class="project-card reveal-item ${hidden ? "hidden" : ""}" data-project-id="${project.id}" data-tags="${project.tags.join(",")}" style="--delay:${index * 55}ms" tabindex="0" role="link" aria-label="Open ${project.title} project details in new page">
           <div class="project-meta">
             <span>${project.period}</span>
-            <small class="project-tag">${project.category}</small>
+            <div class="project-meta-badges">
+              <small class="project-tag">${project.category}</small>
+              <span class="project-open-pill" title="Open full project page">Details ↗</span>
+            </div>
           </div>
-          <h3>${project.title}</h3>
+          <h3 class="project-title-linkable">${project.title}</h3>
           ${imageHtml}
           <p>${project.description}</p>
           ${chipList(project.tech)}
@@ -401,6 +232,9 @@ function renderProjects(activeFilter = "All") {
               <span class="icon icon-github" aria-hidden="true"></span> Code
             </a>
             ${liveLink}
+            <a class="button button-primary project-details-btn magnetic" href="./project.html?id=${project.id}" target="_blank" rel="noopener noreferrer" title="Open project in new page">
+              <span class="btn-icon">📖</span> Details ↗
+            </a>
             <button class="button button-ghost project-audio-btn magnetic" data-index="${index}" aria-label="Listen to project details">
               <span class="audio-btn-icon" style="display:inline-flex; align-items:center; margin-right:4px;">
                 <svg class="speaker-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -417,6 +251,38 @@ function renderProjects(activeFilter = "All") {
     .join("");
 
   setupProjectMediaCarousel();
+  setupProjectCardClick();
+}
+
+function setupProjectCardClick() {
+  const cards = document.querySelectorAll(".project-card[data-project-id]");
+  cards.forEach((card) => {
+    if (card._hasCardClickListener) return;
+    card._hasCardClickListener = true;
+
+    const projectId = card.dataset.projectId;
+    if (!projectId) return;
+
+    card.addEventListener("click", (e) => {
+      // If click was on child action button, link, media or dot, let its own handler execute
+      if (
+        e.target.closest("a") ||
+        e.target.closest(".project-audio-btn") ||
+        e.target.closest(".project-media") ||
+        e.target.closest(".slide-dot")
+      ) {
+        return;
+      }
+      window.open(`./project.html?id=${encodeURIComponent(projectId)}`, "_blank");
+    });
+
+    card.addEventListener("keydown", (e) => {
+      if ((e.key === "Enter" || e.key === " ") && !e.target.closest("a") && !e.target.closest("button")) {
+        e.preventDefault();
+        window.open(`./project.html?id=${encodeURIComponent(projectId)}`, "_blank");
+      }
+    });
+  });
 }
 
 function setupProjectMediaCarousel() {
@@ -432,7 +298,16 @@ function setupProjectMediaCarousel() {
     if (media._hasClickListener) return;
     media._hasClickListener = true;
 
-    media.addEventListener("click", () => {
+    media.addEventListener("click", (e) => {
+      e.stopPropagation(); // Don't trigger card navigation when flipping preview pictures
+
+      const dot = e.target.closest(".slide-dot");
+      if (dot) {
+        const target = parseInt(dot.dataset.target || "0", 10);
+        switchProjectMediaSlide(media, target);
+        return;
+      }
+
       const current = parseInt(media.dataset.slide || "0", 10);
       const next = current === 0 ? 1 : 0;
       switchProjectMediaSlide(media, next);

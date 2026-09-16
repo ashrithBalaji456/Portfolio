@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Detailed technical breakdown and visual architecture of backend engineering projects by Ashrith Balaji Gudla."
+    />
+    <title id="page-title">Project Details | Ashrith Balaji Gudla</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script>
+      (function () {
+        const savedTheme = localStorage.getItem("theme");
+        const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+        const theme = savedTheme ? savedTheme : (prefersLight ? "light" : "dark");
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script>
+  </head>
+  <body class="project-page-body">
+    <!-- Starfield canvas for atmospheric cosmic background -->
+    <canvas id="project-stars-canvas" class="project-stars-canvas" aria-hidden="true"></canvas>
+
+    <!-- TOP NAVIGATION BAR -->
+    <header class="project-nav-bar">
+      <div class="project-nav-inner">
+        <div class="project-nav-left">
+          <a href="./index.html#projects" class="project-nav-back magnetic" id="back-to-portfolio-btn">
+            <span class="icon-back">←</span>
+            <span>Portfolio</span>
+          </a>
+          <div class="project-breadcrumbs" aria-label="Breadcrumb">
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-item">Projects</span>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-current" id="breadcrumb-project-title">Project Details</span>
+          </div>
+        </div>
+
+        <div class="project-nav-right">
+          <!-- Project Switcher Dropdown -->
+          <div class="project-dropdown-wrapper">
+            <label for="project-select-dropdown" class="sr-only">Switch Project</label>
+            <select id="project-select-dropdown" class="project-select-dropdown" aria-label="Switch Project">
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+
+          <!-- Theme Toggle Button -->
+          <button id="theme-toggle-btn" class="project-theme-btn magnetic" type="button" aria-label="Toggle theme">
+            <span class="theme-icon-dark" aria-hidden="true">☀️</span>
+            <span class="theme-icon-light" aria-hidden="true">🌙</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN DYNAMIC SPLIT LAYOUT -->
+    <main class="project-detail-container" id="project-main-container">
+      <div class="project-detail-layout">
+        
+        <!-- LEFT PART: TEXT & ARCHITECTURE (Dynamically adjusted & sticky on desktop) -->
+        <section class="project-detail-left" id="project-text-column">
+          <!-- Meta tags / Badges -->
+          <div class="project-header-meta">
+            <span class="project-category-badge" id="project-category-badge">Backend API</span>
+            <span class="project-period-badge" id="project-period-badge">July 2026</span>
+            <span class="project-status-badge" id="project-status-badge">
+              <span class="status-pulse-dot"></span>
+              Verified Architecture
+            </span>
+          </div>
+
+          <!-- Title & Tagline -->
+          <h1 class="project-detail-title" id="project-detail-title">Loading Project...</h1>
+          <p class="project-detail-tagline" id="project-detail-tagline"></p>
+
+          <!-- Action Buttons Bar -->
+          <div class="project-detail-actions" id="project-detail-actions">
+            <!-- Dynamically populated: Live Demo, Source Code, Audio Walkthrough, Share -->
+          </div>
+
+          <!-- Problem Solved Highlight Card -->
+          <div class="problem-solved-card" id="problem-solved-section">
+            <div class="problem-card-header">
+              <div class="problem-icon-wrapper">
+                <span class="problem-bulb-icon">💡</span>
+              </div>
+              <div>
+                <h2 class="problem-card-title">Core Problem Solved</h2>
+                <p class="problem-card-subtitle">The Engineering Breakthrough</p>
+              </div>
+            </div>
+
+            <div class="problem-card-content">
+              <div class="problem-segment">
+                <div class="problem-segment-label">
+                  <span class="segment-dot challenge-dot"></span>
+                  <strong>The Real-World Challenge:</strong>
+                </div>
+                <p id="problem-challenge-text" class="problem-segment-desc"></p>
+              </div>
+
+              <div class="problem-segment">
+                <div class="problem-segment-label">
+                  <span class="segment-dot solution-dot"></span>
+                  <strong>The Engineered Solution:</strong>
+                </div>
+                <p id="problem-solution-text" class="problem-segment-desc"></p>
+              </div>
+
+              <div class="problem-segment problem-outcome-box">
+                <div class="problem-segment-label">
+                  <span class="segment-dot outcome-dot"></span>
+                  <strong>Key Measurable Outcome:</strong>
+                </div>
+                <p id="problem-outcome-text" class="problem-segment-desc highlight-outcome"></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Description Section -->
+          <div class="detail-section">
+            <h2 class="detail-section-title">Overview & Purpose</h2>
+            <p class="project-full-desc" id="project-full-desc"></p>
+          </div>
+
+          <!-- Key Engineering Architecture & Highlights -->
+          <div class="detail-section">
+            <h2 class="detail-section-title">Key Architectural Highlights</h2>
+            <ul class="project-highlights-list" id="project-highlights-list">
+              <!-- Dynamically populated -->
+            </ul>
+          </div>
+
+          <!-- System Specs Grid -->
+          <div class="detail-section">
+            <h2 class="detail-section-title">System Specifications</h2>
+            <div class="system-specs-grid" id="system-specs-grid">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Tech Stack Chips -->
+          <div class="detail-section">
+            <h2 class="detail-section-title">Technologies & Frameworks</h2>
+            <div class="project-tech-chips" id="project-tech-chips">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Navigation Prev / Next Footer -->
+          <div class="project-detail-pager" id="project-pager">
+            <button id="prev-project-btn" class="button button-ghost pager-btn magnetic" type="button">
+              <span>← Previous Project</span>
+            </button>
+            <button id="next-project-btn" class="button button-ghost pager-btn magnetic" type="button">
+              <span>Next Project →</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- RIGHT PART: PICTURES SCROLLING (Visual gallery stream) -->
+        <section class="project-detail-right" id="project-pictures-column">
+          <div class="pictures-scroll-header">
+            <span class="pictures-label">Visual Telemetry & Workstation</span>
+            <span class="pictures-count">2 High-Res Views</span>
+          </div>
+
+          <div class="pictures-scroll-stream" id="pictures-scroll-stream">
+            <!-- PICTURE 1: UI DASHBOARD PREVIEW -->
+            <article class="project-visual-card" id="visual-card-ui">
+              <div class="visual-card-badge-row">
+                <span class="visual-badge ui-badge">
+                  <span class="badge-icon">🖥️</span> UI & System Dashboard
+                </span>
+                <span class="visual-zoom-hint">Click image to expand 🔍</span>
+              </div>
+              <div class="visual-card-image-wrap" id="wrap-ui-img" title="Click to view full size">
+                <img
+                  id="project-ui-img"
+                  src=""
+                  alt="Production UI Dashboard Preview"
+                  class="project-detail-img"
+                  loading="eager"
+                />
+                <div class="visual-image-overlay">
+                  <span class="visual-expand-btn">🔍 View Fullscreen</span>
+                </div>
+              </div>
+              <div class="visual-card-footer">
+                <h3 class="visual-caption-title">Production Interface & Live Workflows</h3>
+                <p class="visual-caption-desc" id="ui-caption-desc">
+                  Interactive system interface displaying real-time operational metrics, multi-parameter search filters, dynamic state progression, and responsive data visualization components.
+                </p>
+              </div>
+            </article>
+
+            <!-- PICTURE 2: DEVELOPER PROBLEM-SOLVING SCENE -->
+            <article class="project-visual-card" id="visual-card-dev">
+              <div class="visual-card-badge-row">
+                <span class="visual-badge dev-badge">
+                  <span class="badge-icon">💡</span> Problem Solved • Dev In Action
+                </span>
+                <span class="visual-zoom-hint">Click image to expand 🔍</span>
+              </div>
+              <div class="visual-card-image-wrap" id="wrap-dev-img" title="Click to view full size">
+                <img
+                  id="project-dev-img"
+                  src=""
+                  alt="Developer Problem Solving Architecture Scene"
+                  class="project-detail-img"
+                  loading="lazy"
+                />
+                <div class="visual-image-overlay">
+                  <span class="visual-expand-btn">🔍 View Fullscreen</span>
+                </div>
+              </div>
+              <div class="visual-card-footer">
+                <h3 class="visual-caption-title">Architectural Solution & Idea Formulation</h3>
+                <p class="visual-caption-desc" id="dev-caption-desc">
+                  Developer workstation scene visualizing the illuminated idea symbol and holographic architecture HUD mapping out the exact solution to the underlying engineering bottleneck.
+                </p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- LIGHTBOX MODAL FOR FULLSCREEN IMAGE VIEW -->
+    <div id="lightbox-modal" class="lightbox-modal" aria-hidden="true" role="dialog" aria-label="Fullscreen Image View">
+      <div class="lightbox-backdrop" id="lightbox-backdrop"></div>
+      <div class="lightbox-dialog">
+        <button class="lightbox-close-btn" id="lightbox-close-btn" aria-label="Close Fullscreen View">✕</button>
+        <div class="lightbox-content">
+          <img id="lightbox-img" src="" alt="Full Resolution Project Preview" class="lightbox-full-img" />
+          <p id="lightbox-caption" class="lightbox-caption"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="project-toast" class="project-toast" aria-live="polite"></div>
+
+    <script type="module" src="./src/project.js"></script>
+  </body>
+</html>
