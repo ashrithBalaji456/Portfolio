@@ -8,6 +8,9 @@ let slideInterval = null;
 
 // Initialize on DOM load
 document.addEventListener("DOMContentLoaded", () => {
+  try {
+    sessionStorage.setItem("portfolio_launched", "true");
+  } catch (e) {}
   initTheme();
   initCanvas();
   loadProjectFromUrl();

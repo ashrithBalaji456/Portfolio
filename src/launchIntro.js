@@ -59,6 +59,46 @@ export class LaunchIntroController {
     this.resizeCanvas();
     window.addEventListener("resize", () => this.resizeCanvas());
 
+    this.bindEvents();
+
+    // Check if the user has already opened/launched the portfolio in this session,
+    // OR if navigating directly to a section anchor (e.g. #projects from project details page),
+    // OR if query parameter skipLaunch=true is present.
+    let alreadyLaunched = false;
+    try {
+      alreadyLaunched = sessionStorage.getItem("portfolio_launched") === "true";
+    } catch (e) {}
+
+    const hasHashTarget = Boolean(
+      window.location.hash &&
+      window.location.hash !== "#" &&
+      window.location.hash !== "#hero"
+    );
+    const skipParam = new URLSearchParams(window.location.search).get("skipLaunch") === "true";
+
+    if (alreadyLaunched || hasHashTarget || skipParam) {
+      this.isFinished = true;
+      try {
+        sessionStorage.setItem("portfolio_launched", "true");
+      } catch (e) {}
+      if (this.overlay) {
+        this.overlay.classList.remove("launch-active");
+        this.overlay.classList.add("launch-hidden");
+        this.overlay.style.display = "none";
+      }
+      document.body.style.overflow = "";
+
+      if (hasHashTarget) {
+        setTimeout(() => {
+          const target = document.querySelector(window.location.hash);
+          if (target) {
+            target.scrollIntoView({ behavior: "smooth" });
+          }
+        }, 150);
+      }
+      return;
+    }
+
     // Ensure initial visual state: Gate is visible, HUD and Rocket hidden until user clicks!
     if (this.gate) {
       this.gate.classList.remove("launch-gate-leaving", "launch-gate-hidden");
@@ -71,8 +111,6 @@ export class LaunchIntroController {
     }
 
     document.body.style.overflow = "hidden";
-
-    this.bindEvents();
     this.startParticleLoop();
   }
 
@@ -1445,6 +1483,10 @@ export class LaunchIntroController {
     if (this.isFinished) return;
     this.isFinished = true;
 
+    try {
+      sessionStorage.setItem("portfolio_launched", "true");
+    } catch (e) {}
+
     this.clearTimers();
     this.setRumble(0);
 
@@ -1458,6 +1500,7 @@ export class LaunchIntroController {
       setTimeout(() => {
         this.overlay.classList.remove("launch-active");
         this.overlay.classList.add("launch-hidden");
+        this.overlay.style.display = "none";
         document.body.style.overflow = "";
       }, 700);
     }
@@ -1481,6 +1524,7 @@ export class LaunchIntroController {
     }
 
     if (this.overlay) {
+      this.overlay.style.display = "";
       this.overlay.classList.remove("launch-hidden", "launch-dissolve");
       this.overlay.classList.add("launch-active");
     }
