@@ -81,45 +81,6 @@
             <!-- Dynamically populated: Live Demo, Source Code, Audio Walkthrough, Share -->
           </div>
 
-          <!-- Problem Solved Highlight Card -->
-          <div class="problem-solved-card" id="problem-solved-section">
-            <div class="problem-card-header">
-              <div class="problem-icon-wrapper">
-                <span class="problem-bulb-icon">💡</span>
-              </div>
-              <div>
-                <h2 class="problem-card-title">Core Problem Solved</h2>
-                <p class="problem-card-subtitle">The Engineering Breakthrough</p>
-              </div>
-            </div>
-
-            <div class="problem-card-content">
-              <div class="problem-segment">
-                <div class="problem-segment-label">
-                  <span class="segment-dot challenge-dot"></span>
-                  <strong>The Real-World Challenge:</strong>
-                </div>
-                <p id="problem-challenge-text" class="problem-segment-desc"></p>
-              </div>
-
-              <div class="problem-segment">
-                <div class="problem-segment-label">
-                  <span class="segment-dot solution-dot"></span>
-                  <strong>The Engineered Solution:</strong>
-                </div>
-                <p id="problem-solution-text" class="problem-segment-desc"></p>
-              </div>
-
-              <div class="problem-segment problem-outcome-box">
-                <div class="problem-segment-label">
-                  <span class="segment-dot outcome-dot"></span>
-                  <strong>Key Measurable Outcome:</strong>
-                </div>
-                <p id="problem-outcome-text" class="problem-segment-desc highlight-outcome"></p>
-              </div>
-            </div>
-          </div>
-
           <!-- Description Section -->
           <div class="detail-section">
             <h2 class="detail-section-title">Overview & Purpose</h2>
@@ -161,69 +122,92 @@
           </div>
         </section>
 
-        <!-- RIGHT PART: PICTURES SCROLLING (Visual gallery stream) -->
+        <!-- RIGHT PART: PICTURES SCROLLING SHOWCASE (Horizontal Smooth Scrolling Gallery) -->
         <section class="project-detail-right" id="project-pictures-column">
-          <div class="pictures-scroll-header">
-            <span class="pictures-label">Visual Telemetry & Workstation</span>
-            <span class="pictures-count">2 High-Res Views</span>
-          </div>
-
-          <div class="pictures-scroll-stream" id="pictures-scroll-stream">
-            <!-- PICTURE 1: UI DASHBOARD PREVIEW -->
-            <article class="project-visual-card" id="visual-card-ui">
-              <div class="visual-card-badge-row">
-                <span class="visual-badge ui-badge">
-                  <span class="badge-icon">🖥️</span> UI & System Dashboard
+          <div class="pictures-slider-showcase">
+            <!-- Slider Header Bar -->
+            <div class="pictures-slider-header">
+              <div class="slider-header-left">
+                <span class="slider-live-badge" id="slider-live-badge">
+                  <span class="badge-icon" id="slider-badge-icon">🖥️</span>
+                  <span id="slider-badge-text">Slide 1 / 2 • UI Dashboard Preview</span>
                 </span>
-                <span class="visual-zoom-hint">Click image to expand 🔍</span>
               </div>
-              <div class="visual-card-image-wrap" id="wrap-ui-img" title="Click to view full size">
-                <img
-                  id="project-ui-img"
-                  src=""
-                  alt="Production UI Dashboard Preview"
-                  class="project-detail-img"
-                  loading="eager"
-                />
-                <div class="visual-image-overlay">
-                  <span class="visual-expand-btn">🔍 View Fullscreen</span>
-                </div>
+              <div class="slider-header-controls">
+                <button class="slider-nav-btn slider-prev-btn" id="slider-prev-btn" type="button" aria-label="Previous Slide">
+                  ❮
+                </button>
+                <button class="slider-nav-btn slider-next-btn" id="slider-next-btn" type="button" aria-label="Next Slide">
+                  ❯
+                </button>
               </div>
-              <div class="visual-card-footer">
-                <h3 class="visual-caption-title">Production Interface & Live Workflows</h3>
-                <p class="visual-caption-desc" id="ui-caption-desc">
-                  Interactive system interface displaying real-time operational metrics, multi-parameter search filters, dynamic state progression, and responsive data visualization components.
-                </p>
-              </div>
-            </article>
+            </div>
 
-            <!-- PICTURE 2: DEVELOPER PROBLEM-SOLVING SCENE -->
-            <article class="project-visual-card" id="visual-card-dev">
-              <div class="visual-card-badge-row">
-                <span class="visual-badge dev-badge">
-                  <span class="badge-icon">💡</span> Problem Solved • Dev In Action
-                </span>
-                <span class="visual-zoom-hint">Click image to expand 🔍</span>
+            <!-- Horizontal Scroll Viewport -->
+            <div class="pictures-scroll-container" id="pictures-scroll-container">
+              <div class="pictures-scroll-track" id="pictures-scroll-track">
+                
+                <!-- SLIDE 1: UI DASHBOARD PREVIEW -->
+                <article class="picture-slide-item active" data-index="0" id="slide-item-ui">
+                  <div class="picture-slide-frame" id="wrap-ui-img" title="Click to view fullscreen">
+                    <img
+                      id="project-ui-img"
+                      src=""
+                      alt="Production UI Dashboard Preview"
+                      class="project-detail-img"
+                      loading="eager"
+                    />
+                    <div class="picture-zoom-overlay">
+                      <span class="zoom-pill">🔍 View Fullscreen</span>
+                    </div>
+                  </div>
+                  <div class="picture-slide-caption">
+                    <h3 class="slide-caption-title">🖥️ UI Dashboard & Operational Interface</h3>
+                    <p class="slide-caption-desc" id="ui-caption-desc">
+                      Interactive production interface demonstrating live telemetry, search filters, state workflows, and responsive visual components.
+                    </p>
+                  </div>
+                </article>
+
+                <!-- SLIDE 2: DEVELOPER PROBLEM-SOLVING SCENE -->
+                <article class="picture-slide-item" data-index="1" id="slide-item-dev">
+                  <div class="picture-slide-frame" id="wrap-dev-img" title="Click to view fullscreen">
+                    <img
+                      id="project-dev-img"
+                      src=""
+                      alt="Developer Problem Solving Architecture Scene"
+                      class="project-detail-img"
+                      loading="lazy"
+                    />
+                    <div class="picture-zoom-overlay">
+                      <span class="zoom-pill">🔍 View Fullscreen</span>
+                    </div>
+                  </div>
+                  <div class="picture-slide-caption">
+                    <h3 class="slide-caption-title">💡 Developer at Workstation & Problem Solved</h3>
+                    <p class="slide-caption-desc" id="dev-caption-desc">
+                      Developer workstation scene visualizing the illuminated idea symbol and holographic architecture HUD mapping out the exact problem solved.
+                    </p>
+                  </div>
+                </article>
+
               </div>
-              <div class="visual-card-image-wrap" id="wrap-dev-img" title="Click to view full size">
-                <img
-                  id="project-dev-img"
-                  src=""
-                  alt="Developer Problem Solving Architecture Scene"
-                  class="project-detail-img"
-                  loading="lazy"
-                />
-                <div class="visual-image-overlay">
-                  <span class="visual-expand-btn">🔍 View Fullscreen</span>
-                </div>
+            </div>
+
+            <!-- Slider Pagination Dots & Quick Selectors -->
+            <div class="slider-dots-wrapper">
+              <div class="slider-dots-tabs" id="slider-dots-tabs">
+                <button class="slider-tab-dot active" data-target="0" type="button" aria-label="View UI Dashboard">
+                  <span class="tab-dot-icon">🖥️</span>
+                  <span class="tab-dot-label">UI Dashboard</span>
+                </button>
+                <button class="slider-tab-dot" data-target="1" type="button" aria-label="View Problem Solved">
+                  <span class="tab-dot-icon">💡</span>
+                  <span class="tab-dot-label">Problem Solved</span>
+                </button>
               </div>
-              <div class="visual-card-footer">
-                <h3 class="visual-caption-title">Architectural Solution & Idea Formulation</h3>
-                <p class="visual-caption-desc" id="dev-caption-desc">
-                  Developer workstation scene visualizing the illuminated idea symbol and holographic architecture HUD mapping out the exact solution to the underlying engineering bottleneck.
-                </p>
-              </div>
-            </article>
+              <span class="slider-hint-text">Auto-scrolling • Swipe or use ❮ ❯</span>
+            </div>
           </div>
         </section>
 

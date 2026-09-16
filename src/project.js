@@ -2,7 +2,9 @@ import { projects } from "./projectsData.js";
 
 // State
 let currentProjectIndex = 0;
+let currentSlideIndex = 0;
 let isSpeaking = false;
+let slideInterval = null;
 
 // Initialize on DOM load
 document.addEventListener("DOMContentLoaded", () => {
@@ -11,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadProjectFromUrl();
   setupDropdown();
   setupEventListeners();
+  setupImageSlider();
   setupLightbox();
   setupSpeechSynthesis();
 });
@@ -95,17 +98,6 @@ function renderProject(index) {
 
   actionsContainer.innerHTML = `${liveBtn}${codeBtn}${audioBtn}${shareBtn}`;
 
-  // Problem Solved section
-  const prob = project.problemSolved || {
-    challenge: project.description,
-    solution: project.highlights.join(". "),
-    outcome: "High reliability and scalable architecture.",
-  };
-
-  document.getElementById("problem-challenge-text").textContent = prob.challenge;
-  document.getElementById("problem-solution-text").textContent = prob.solution;
-  document.getElementById("problem-outcome-text").textContent = prob.outcome;
-
   // Full Description
   document.getElementById("project-full-desc").textContent = project.description;
 
@@ -170,11 +162,17 @@ function renderProject(index) {
   devImg.alt = `${project.title} Developer Problem-Solving Scene`;
 
   // Dynamic Captions
+  const prob = project.problemSolved || {
+    challenge: project.description,
+    solution: project.highlights[0] || "",
+    outcome: "High reliability and scalable architecture.",
+  };
+
   document.getElementById("ui-caption-desc").textContent =
-    `Production dashboard for ${project.title}. Shows system workflows, active metrics, and user interaction components.`;
+    `Production dashboard for ${project.title}. Shows system workflows, active metrics, search filters, and user interaction components.`;
 
   document.getElementById("dev-caption-desc").textContent =
-    `Developer workstation scene for ${project.title}. Visualizes the idea symbol and holographic architecture resolving: "${prob.solution.slice(0, 100)}..."`;
+    `Workstation scene for ${project.title}. Visualizes the developer, illuminated idea symbol, and holographic architecture resolving: "${prob.solution.slice(0, 110)}..."`;
 
   // Update Dropdown selector value
   const dropdown = document.getElementById("project-select-dropdown");
@@ -189,6 +187,9 @@ function renderProject(index) {
   document.getElementById("prev-project-btn").innerHTML = `<span>← ${projects[prevIndex].title.split(" - ")[0]}</span>`;
   document.getElementById("next-project-btn").innerHTML = `<span>${projects[nextIndex].title.split(" - ")[0]} →</span>`;
 
+  // Reset image slider to first slide
+  goToSlide(0);
+
   // Attach dynamic button handlers
   const audioToggle = document.getElementById("project-audio-toggle");
   if (audioToggle) {
@@ -200,10 +201,118 @@ function renderProject(index) {
     shareBtnEl.addEventListener("click", copyShareLink);
   }
 
-  // Scroll to top of both containers on switch
+  // Scroll to top
   window.scrollTo({ top: 0, behavior: "smooth" });
   const textCol = document.getElementById("project-text-column");
   if (textCol) textCol.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function setupImageSlider() {
+  const container = document.getElementById("pictures-scroll-container");
+  const prevBtn = document.getElementById("slider-prev-btn");
+  const nextBtn = document.getElementById("slider-next-btn");
+  const tabDots = document.querySelectorAll(".slider-tab-dot");
+  const showcase = document.querySelector(".pictures-slider-showcase");
+
+  if (!container) return;
+
+  // Arrow clicks
+  if (prevBtn) {
+    prevBtn.addEventListener("click", () => {
+      goToSlide(currentSlideIndex === 0 ? 1 : 0);
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener("click", () => {
+      goToSlide(currentSlideIndex === 0 ? 1 : 0);
+    });
+  }
+
+  // Tab dots click
+  tabDots.forEach((dot) => {
+    dot.addEventListener("click", () => {
+      const target = parseInt(dot.dataset.target || "0", 10);
+      goToSlide(target);
+    });
+  });
+
+  // Track manual scroll / swipe
+  let scrollTimeout = null;
+  container.addEventListener("scroll", () => {
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      const scrollLeft = container.scrollLeft;
+      const width = container.clientWidth;
+      const activeIdx = Math.round(scrollLeft / width);
+      if (activeIdx !== currentSlideIndex && (activeIdx === 0 || activeIdx === 1)) {
+        updateSlideUI(activeIdx);
+      }
+    }, 80);
+  });
+
+  // Auto-scroll every 4.5 seconds (pauses on hover)
+  startAutoSlide();
+
+  if (showcase) {
+    showcase.addEventListener("mouseenter", stopAutoSlide);
+    showcase.addEventListener("mouseleave", startAutoSlide);
+  }
+}
+
+function startAutoSlide() {
+  stopAutoSlide();
+  slideInterval = setInterval(() => {
+    const next = currentSlideIndex === 0 ? 1 : 0;
+    goToSlide(next);
+  }, 4500);
+}
+
+function stopAutoSlide() {
+  if (slideInterval) {
+    clearInterval(slideInterval);
+    slideInterval = null;
+  }
+}
+
+function goToSlide(index) {
+  const container = document.getElementById("pictures-scroll-container");
+  if (!container) return;
+
+  const width = container.clientWidth;
+  container.scrollTo({
+    left: index * width,
+    behavior: "smooth",
+  });
+
+  updateSlideUI(index);
+}
+
+function updateSlideUI(index) {
+  currentSlideIndex = index;
+
+  // Update tabs
+  const tabDots = document.querySelectorAll(".slider-tab-dot");
+  tabDots.forEach((dot) => {
+    const target = parseInt(dot.dataset.target || "0", 10);
+    if (target === index) {
+      dot.classList.add("active");
+    } else {
+      dot.classList.remove("active");
+    }
+  });
+
+  // Update badge header
+  const badgeIcon = document.getElementById("slider-badge-icon");
+  const badgeText = document.getElementById("slider-badge-text");
+
+  if (index === 0) {
+    if (badgeIcon) badgeIcon.textContent = "🖥️";
+    if (badgeText) badgeText.textContent = "Slide 1 / 2 • UI Dashboard Preview";
+  } else {
+    if (badgeIcon) badgeIcon.textContent = "💡";
+    if (badgeText) badgeText.textContent = "Slide 2 / 2 • Problem Solved & Dev Workstation";
+  }
 }
 
 function setupDropdown() {
@@ -325,7 +434,6 @@ function showToast(message) {
 }
 
 function setupSpeechSynthesis() {
-  // Reset speech when leaving or switching
   window.addEventListener("beforeunload", () => {
     stopSpeech();
   });
@@ -348,7 +456,8 @@ function speakProject() {
   window.speechSynthesis.cancel();
 
   const project = projects[currentProjectIndex];
-  const text = `Project: ${project.title}. ${project.description}. The challenge: ${project.problemSolved.challenge}. The solution: ${project.problemSolved.solution}. Built with ${project.tech.slice(0, 4).join(", ")}.`;
+  const prob = project.problemSolved || { challenge: "", solution: "" };
+  const text = `Project: ${project.title}. ${project.description}. Highlights: ${project.highlights.slice(0, 3).join(". ")}. Technologies: ${project.tech.slice(0, 4).join(", ")}.`;
 
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.rate = 1.0;
