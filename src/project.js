@@ -19,7 +19,32 @@ document.addEventListener("DOMContentLoaded", () => {
   setupImageSlider();
   setupLightbox();
   setupSpeechSynthesis();
+  setupButtonRipples();
 });
+
+function setupButtonRipples() {
+  document.addEventListener("pointerdown", (e) => {
+    const target = e.target.closest(
+      "button, .button, a.button, .pager-btn, .project-nav-back, .slider-tab-dot, .slider-nav-btn, .dropdown-trigger-btn, .detail-action-btn"
+    );
+    if (!target) return;
+
+    const rect = target.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height) * 2;
+    const x = e.clientX - rect.left - size / 2;
+    const y = e.clientY - rect.top - size / 2;
+
+    const ripple = document.createElement("span");
+    ripple.className = "cosmic-btn-ripple";
+    ripple.style.width = `${size}px`;
+    ripple.style.height = `${size}px`;
+    ripple.style.left = `${x}px`;
+    ripple.style.top = `${y}px`;
+
+    target.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 550);
+  });
+}
 
 function getProjectFromUrl() {
   const params = new URLSearchParams(window.location.search);
@@ -50,175 +75,199 @@ function loadProjectFromUrl() {
   renderProject(currentProjectIndex);
 }
 
-function renderProject(index) {
+function renderProject(index, animate = false) {
   const project = projects[index];
   if (!project) return;
 
   currentProjectIndex = index;
 
-  // Update URL without full reload if user navigated via dropdown/pager
-  const newUrl = `${window.location.pathname}?id=${project.id}`;
-  window.history.replaceState({ projectId: project.id }, "", newUrl);
+  const leftCol = document.getElementById("project-text-column");
+  const rightCol = document.getElementById("pictures-slider-showcase");
 
-  // Update Page Title
-  document.getElementById("page-title").textContent = `${project.title} | Technical Architecture & Breakdown`;
-  document.getElementById("breadcrumb-project-title").textContent = project.title;
+  const executeRender = () => {
+    // Update URL without full reload if user navigated via dropdown/pager
+    const newUrl = `${window.location.pathname}?id=${project.id}`;
+    window.history.replaceState({ projectId: project.id }, "", newUrl);
 
-  // Header meta
-  document.getElementById("project-category-badge").textContent = project.category;
-  document.getElementById("project-period-badge").textContent = project.period;
+    // Update Page Title
+    document.getElementById("page-title").textContent = `${project.title} | Technical Architecture & Breakdown`;
+    document.getElementById("breadcrumb-project-title").textContent = project.title;
 
-  // Main title & tagline
-  document.getElementById("project-detail-title").textContent = project.title;
-  document.getElementById("project-detail-tagline").textContent = project.tagline || project.description;
+    // Header meta
+    document.getElementById("project-category-badge").textContent = project.category;
+    document.getElementById("project-period-badge").textContent = project.period;
 
-  // Actions Bar
-  const actionsContainer = document.getElementById("project-detail-actions");
-  const liveBtn = project.live
-    ? `<a href="${project.live}" target="_blank" rel="noopener noreferrer" class="button button-primary detail-action-btn magnetic">
-         <span class="btn-icon">🌐</span> Live Demo
-       </a>`
-    : "";
+    // Main title & tagline
+    document.getElementById("project-detail-title").textContent = project.title;
+    document.getElementById("project-detail-tagline").textContent = project.tagline || project.description;
 
-  const codeBtn = project.github
-    ? `<a href="${project.github}" target="_blank" rel="noopener noreferrer" class="button button-ghost detail-action-btn magnetic">
-         <span class="btn-icon">💻</span> View Code
-       </a>`
-    : "";
+    // Actions Bar
+    const actionsContainer = document.getElementById("project-detail-actions");
+    const liveBtn = project.live
+      ? `<a href="${project.live}" target="_blank" rel="noopener noreferrer" class="button button-primary detail-action-btn magnetic">
+           <span class="btn-icon">🌐</span> Live Demo
+         </a>`
+      : "";
 
-  const audioBtn = `
-    <button id="project-audio-toggle" class="button button-ghost detail-action-btn magnetic" type="button" aria-label="Listen to project overview">
-      <span class="audio-btn-icon">🔊</span>
-      <span class="audio-btn-text">Listen Overview</span>
-    </button>
-  `;
+    const codeBtn = project.github
+      ? `<a href="${project.github}" target="_blank" rel="noopener noreferrer" class="button button-ghost detail-action-btn magnetic">
+           <span class="btn-icon">💻</span> View Code
+         </a>`
+      : "";
 
-  const shareBtn = `
-    <button id="project-share-btn" class="button button-ghost detail-action-btn magnetic" type="button" aria-label="Copy share link">
-      <span class="btn-icon">🔗</span> Share
-    </button>
-  `;
+    const audioBtn = `
+      <button id="project-audio-toggle" class="button button-ghost detail-action-btn magnetic" type="button" aria-label="Listen to project overview">
+        <span class="audio-btn-icon">🔊</span>
+        <span class="audio-btn-text">Listen Overview</span>
+      </button>
+    `;
 
-  actionsContainer.innerHTML = `${liveBtn}${codeBtn}${audioBtn}${shareBtn}`;
+    const shareBtn = `
+      <button id="project-share-btn" class="button button-ghost detail-action-btn magnetic" type="button" aria-label="Copy share link">
+        <span class="btn-icon">🔗</span> Share
+      </button>
+    `;
 
-  // Full Description
-  document.getElementById("project-full-desc").textContent = project.description;
+    actionsContainer.innerHTML = `${liveBtn}${codeBtn}${audioBtn}${shareBtn}`;
 
-  // Highlights List
-  const highlightsList = document.getElementById("project-highlights-list");
-  highlightsList.innerHTML = project.highlights
-    .map(
-      (item) => `
-        <li class="highlight-item">
-          <span class="highlight-icon">✓</span>
-          <span class="highlight-text">${item}</span>
-        </li>
-      `
-    )
-    .join("");
+    // Full Description
+    document.getElementById("project-full-desc").textContent = project.description;
 
-  // System Specs Grid
-  const specsGrid = document.getElementById("system-specs-grid");
-  const specs = project.systemSpecs || {
-    architecture: "Spring Boot Microservice Pattern",
-    persistence: "PostgreSQL with Spring Data JPA",
-    security: "Stateless Security & Input Sanitization",
-    features: "Dynamic Search, Real-Time Processing",
-  };
+    // Highlights List
+    const highlightsList = document.getElementById("project-highlights-list");
+    highlightsList.innerHTML = project.highlights
+      .map(
+        (item) => `
+          <li class="highlight-item">
+            <span class="highlight-icon">✓</span>
+            <span class="highlight-text">${item}</span>
+          </li>
+        `
+      )
+      .join("");
 
-  specsGrid.innerHTML = `
-    <div class="spec-card">
-      <div class="spec-icon">🏛️</div>
-      <div class="spec-title">Architecture</div>
-      <div class="spec-value">${specs.architecture}</div>
-    </div>
-    <div class="spec-card">
-      <div class="spec-icon">💾</div>
-      <div class="spec-title">Persistence</div>
-      <div class="spec-value">${specs.persistence}</div>
-    </div>
-    <div class="spec-card">
-      <div class="spec-icon">🛡️</div>
-      <div class="spec-title">Security</div>
-      <div class="spec-value">${specs.security}</div>
-    </div>
-    <div class="spec-card">
-      <div class="spec-icon">⚡</div>
-      <div class="spec-title">Key Capability</div>
-      <div class="spec-value">${specs.features}</div>
-    </div>
-  `;
+    // System Specs Grid
+    const specsGrid = document.getElementById("system-specs-grid");
+    const specs = project.systemSpecs || {
+      architecture: "Spring Boot Microservice Pattern",
+      persistence: "PostgreSQL with Spring Data JPA",
+      security: "Stateless Security & Input Sanitization",
+      features: "Dynamic Search, Real-Time Processing",
+    };
 
-  // Tech Stack Chips
-  const techContainer = document.getElementById("project-tech-chips");
-  techContainer.innerHTML = project.tech
-    .map((tech) => `<span class="project-tech-badge">${tech}</span>`)
-    .join("");
+    specsGrid.innerHTML = `
+      <div class="spec-card">
+        <div class="spec-icon">🏛️</div>
+        <div class="spec-title">Architecture</div>
+        <div class="spec-value">${specs.architecture}</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-icon">💾</div>
+        <div class="spec-title">Persistence</div>
+        <div class="spec-value">${specs.persistence}</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-icon">🛡️</div>
+        <div class="spec-title">Security</div>
+        <div class="spec-value">${specs.security}</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-icon">⚡</div>
+        <div class="spec-title">Key Capability</div>
+        <div class="spec-value">${specs.features}</div>
+      </div>
+    `;
 
-  // Images on Right Column
-  const uiImg = document.getElementById("project-ui-img");
-  uiImg.src = project.image;
-  uiImg.alt = `${project.title} UI Dashboard Preview`;
+    // Tech Stack Chips
+    const techContainer = document.getElementById("project-tech-chips");
+    techContainer.innerHTML = project.tech
+      .map((tech) => `<span class="project-tech-badge">${tech}</span>`)
+      .join("");
 
-  const devImg = document.getElementById("project-dev-img");
-  devImg.src = project.devImage;
-  devImg.alt = `${project.title} Developer Problem-Solving Scene`;
+    // Images on Right Column
+    const uiImg = document.getElementById("project-ui-img");
+    uiImg.src = project.image;
+    uiImg.alt = `${project.title} UI Dashboard Preview`;
 
-  // Dynamic Captions
-  const prob = project.problemSolved || {
-    challenge: project.description,
-    solution: project.highlights[0] || "",
-    outcome: "High reliability and scalable architecture.",
-  };
+    const devImg = document.getElementById("project-dev-img");
+    devImg.src = project.devImage;
+    devImg.alt = `${project.title} Developer Problem-Solving Scene`;
 
-  document.getElementById("ui-caption-desc").textContent =
-    `Production dashboard for ${project.title}. Shows system workflows, active metrics, search filters, and user interaction components.`;
+    // Dynamic Captions
+    const prob = project.problemSolved || {
+      challenge: project.description,
+      solution: project.highlights[0] || "",
+      outcome: "High reliability and scalable architecture.",
+    };
 
-  document.getElementById("dev-caption-desc").textContent =
-    `Workstation scene for ${project.title}. Visualizes the developer, illuminated idea symbol, and holographic architecture resolving: "${prob.solution.slice(0, 110)}..."`;
+    document.getElementById("ui-caption-desc").textContent =
+      `Production dashboard for ${project.title}. Shows system workflows, active metrics, search filters, and user interaction components.`;
 
-  // Update Custom Dropdown trigger label & active items
-  const triggerLabel = document.getElementById("dropdown-trigger-label");
-  if (triggerLabel) {
-    triggerLabel.textContent = `${index + 1}. ${project.title.split(" - ")[0]}`;
-  }
-  const allItems = document.querySelectorAll(".dropdown-item");
-  allItems.forEach((item) => {
-    const itemIdx = parseInt(item.dataset.index, 10);
-    if (itemIdx === index) {
-      item.classList.add("active");
-      item.setAttribute("aria-selected", "true");
-    } else {
-      item.classList.remove("active");
-      item.setAttribute("aria-selected", "false");
+    document.getElementById("dev-caption-desc").textContent =
+      `Workstation scene for ${project.title}. Visualizes the developer, illuminated idea symbol, and holographic architecture resolving: "${prob.solution.slice(0, 110)}..."`;
+
+    // Update Custom Dropdown trigger label & active items
+    const triggerLabel = document.getElementById("dropdown-trigger-label");
+    if (triggerLabel) {
+      triggerLabel.textContent = `${index + 1}. ${project.title.split(" - ")[0]}`;
     }
-  });
+    const allItems = document.querySelectorAll(".dropdown-item");
+    allItems.forEach((item) => {
+      const itemIdx = parseInt(item.dataset.index, 10);
+      if (itemIdx === index) {
+        item.classList.add("active");
+        item.setAttribute("aria-selected", "true");
+      } else {
+        item.classList.remove("active");
+        item.setAttribute("aria-selected", "false");
+      }
+    });
 
-  // Update Pager Button Labels
-  const prevIndex = (index - 1 + projects.length) % projects.length;
-  const nextIndex = (index + 1) % projects.length;
+    // Update Pager Button Labels
+    const prevIndex = (index - 1 + projects.length) % projects.length;
+    const nextIndex = (index + 1) % projects.length;
 
-  document.getElementById("prev-project-btn").innerHTML = `<span>← ${projects[prevIndex].title.split(" - ")[0]}</span>`;
-  document.getElementById("next-project-btn").innerHTML = `<span>${projects[nextIndex].title.split(" - ")[0]} →</span>`;
+    document.getElementById("prev-project-btn").innerHTML = `<span>← ${projects[prevIndex].title.split(" - ")[0]}</span>`;
+    document.getElementById("next-project-btn").innerHTML = `<span>${projects[nextIndex].title.split(" - ")[0]} →</span>`;
 
-  // Reset image slider to first slide
-  goToSlide(0);
+    // Reset image slider to first slide
+    goToSlide(0);
 
-  // Attach dynamic button handlers
-  const audioToggle = document.getElementById("project-audio-toggle");
-  if (audioToggle) {
-    audioToggle.addEventListener("click", toggleAudio);
+    // Attach dynamic button handlers
+    const audioToggle = document.getElementById("project-audio-toggle");
+    if (audioToggle) {
+      audioToggle.addEventListener("click", toggleAudio);
+    }
+
+    const shareBtnEl = document.getElementById("project-share-btn");
+    if (shareBtnEl) {
+      shareBtnEl.addEventListener("click", copyShareLink);
+    }
+
+    // Scroll to top smoothly
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (leftCol) leftCol.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  if (animate && leftCol && rightCol) {
+    leftCol.classList.add("project-content-fade-out");
+    rightCol.classList.add("project-content-fade-out");
+
+    setTimeout(() => {
+      executeRender();
+      leftCol.classList.remove("project-content-fade-out");
+      leftCol.classList.add("project-content-fade-in");
+      rightCol.classList.remove("project-content-fade-out");
+      rightCol.classList.add("project-content-fade-in");
+
+      setTimeout(() => {
+        leftCol.classList.remove("project-content-fade-in");
+        rightCol.classList.remove("project-content-fade-in");
+      }, 350);
+    }, 160);
+  } else {
+    executeRender();
   }
-
-  const shareBtnEl = document.getElementById("project-share-btn");
-  if (shareBtnEl) {
-    shareBtnEl.addEventListener("click", copyShareLink);
-  }
-
-  // Scroll to top
-  window.scrollTo({ top: 0, behavior: "smooth" });
-  const textCol = document.getElementById("project-text-column");
-  if (textCol) textCol.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function setupImageSlider() {
@@ -400,7 +449,7 @@ function setupDropdown() {
     const targetIdx = parseInt(itemBtn.dataset.index, 10);
     if (!isNaN(targetIdx) && targetIdx !== currentProjectIndex) {
       stopSpeech();
-      renderProject(targetIdx);
+      renderProject(targetIdx, true);
     }
     toggleMenu(true);
   });
@@ -422,29 +471,42 @@ function setupDropdown() {
 }
 
 function setupEventListeners() {
-  // Pager buttons
+  // Back to Portfolio smooth exit transition
+  const backBtn = document.getElementById("back-to-portfolio-btn");
+  if (backBtn) {
+    backBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      stopSpeech();
+      document.body.classList.add("page-transition-exit");
+      setTimeout(() => {
+        window.location.href = backBtn.getAttribute("href") || "./index.html#projects";
+      }, 260);
+    });
+  }
+
+  // Pager buttons with smooth animated transition
   document.getElementById("prev-project-btn").addEventListener("click", () => {
     stopSpeech();
     const prevIndex = (currentProjectIndex - 1 + projects.length) % projects.length;
-    renderProject(prevIndex);
+    renderProject(prevIndex, true);
   });
 
   document.getElementById("next-project-btn").addEventListener("click", () => {
     stopSpeech();
     const nextIndex = (currentProjectIndex + 1) % projects.length;
-    renderProject(nextIndex);
+    renderProject(nextIndex, true);
   });
 
-  // Keyboard navigation
+  // Keyboard navigation with smooth animated transition
   window.addEventListener("keydown", (e) => {
     if (e.key === "ArrowLeft") {
       stopSpeech();
       const prevIndex = (currentProjectIndex - 1 + projects.length) % projects.length;
-      renderProject(prevIndex);
+      renderProject(prevIndex, true);
     } else if (e.key === "ArrowRight") {
       stopSpeech();
       const nextIndex = (currentProjectIndex + 1) % projects.length;
-      renderProject(nextIndex);
+      renderProject(nextIndex, true);
     }
   });
 
@@ -455,7 +517,6 @@ function setupEventListeners() {
       const current = document.documentElement.getAttribute("data-theme") || "dark";
       const next = current === "dark" ? "light" : "dark";
       document.documentElement.setAttribute("data-theme", next);
-      localStorage.setItem("theme", next);
     });
   }
 }

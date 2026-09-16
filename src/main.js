@@ -2003,6 +2003,53 @@ function boot() {
   setupTalkingPortrait();
   setupProjectAudio();
   initLaunchIntro();
+  setupSmoothAnchorScroll();
+  setupButtonRipples();
+}
+
+function setupSmoothAnchorScroll() {
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener("click", (e) => {
+      const href = anchor.getAttribute("href");
+      if (!href || href === "#") return;
+      const target = document.querySelector(href);
+      if (target) {
+        e.preventDefault();
+        const topNav = document.querySelector(".topbar");
+        const navHeight = topNav ? topNav.offsetHeight : 74;
+        const targetTop = target.getBoundingClientRect().top + window.pageYOffset - navHeight - 16;
+        window.scrollTo({
+          top: Math.max(0, targetTop),
+          behavior: "smooth",
+        });
+        window.history.pushState(null, "", href);
+      }
+    });
+  });
+}
+
+function setupButtonRipples() {
+  document.addEventListener("pointerdown", (e) => {
+    const target = e.target.closest(
+      "button, .button, a.button, .contact-card, .pager-btn, .project-nav-back, .slider-tab-dot, .slider-nav-btn, .dropdown-trigger-btn, .filter-button, .detail-action-btn, .project-open-pill, .trigger-rocket-launch, .theme-toggle, .nav-toggle, .skip-link"
+    );
+    if (!target) return;
+
+    const rect = target.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height) * 2;
+    const x = e.clientX - rect.left - size / 2;
+    const y = e.clientY - rect.top - size / 2;
+
+    const ripple = document.createElement("span");
+    ripple.className = "cosmic-btn-ripple";
+    ripple.style.width = `${size}px`;
+    ripple.style.height = `${size}px`;
+    ripple.style.left = `${x}px`;
+    ripple.style.top = `${y}px`;
+
+    target.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 550);
+  });
 }
 
 document.addEventListener("DOMContentLoaded", boot);
