@@ -81,6 +81,7 @@ const projects = [
       "Containerized the application with Docker for consistent deployment across environments",
     ],
     tech: ["Spring Boot", "REST APIs", "JPA", "Hibernate", "Docker", "MVC", "CORS"],
+    image: "./assets/project-hospital.jpg",
     github: "https://github.com/ashrithBalaji456/Hospital-Backend",
     live: "https://hospital-frontend-aj7d0jqh4-srinus-projects-85b0e5b9.vercel.app/",
   },
@@ -98,6 +99,7 @@ const projects = [
       "Integrated PostgreSQL for persistent storage with optional H2 database support for local testing"
     ],
     tech: ["Java 17", "Spring Boot", "JPA", "Hibernate", "PostgreSQL", "H2", "Maven"],
+    image: "./assets/project-service-manager.jpg",
     github: "https://github.com/ashrithBalaji456/Service_Manage_Backend",
     live: null,
   },
@@ -116,6 +118,7 @@ const projects = [
       "Added Docker-based deployment support and designed the system for scalability, loose coupling, and independent service evolution"
     ],
     tech: ["Java 17", "Spring Boot", "Spring Cloud Gateway", "Eureka", "Keycloak", "OAuth2", "PKCE", "JWT", "Kafka", "PostgreSQL", "MongoDB", "Docker"],
+    image: "./assets/project-pulsefit.jpg",
     github: "https://github.com/ashrithBalaji456/FitNess_Tracker_Microservices",
     live: null,
   },
