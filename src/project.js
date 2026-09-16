@@ -375,10 +375,12 @@ function setupDropdown() {
     } else {
       container.classList.add("open");
       triggerBtn.setAttribute("aria-expanded", "true");
-      // Scroll active item into view
+      // Scroll active item smoothly into view
       const activeEl = itemsScroller.querySelector(".dropdown-item.active");
       if (activeEl) {
-        activeEl.scrollIntoView({ block: "nearest" });
+        requestAnimationFrame(() => {
+          activeEl.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        });
       }
     }
   }
