@@ -24,6 +24,7 @@ const projects = [
     ],
     tech: ["Java 17", "Spring Boot", "Spring Data JPA", "Hibernate", "PostgreSQL", "React.js", "Maven"],
     image: "./assets/project-nexus.jpg",
+    devImage: "./assets/project-nexus-dev.jpg",
     github: "https://github.com/ashrithBalaji456/Nexus_Subscription_Center_Backend",
     live: null,
   },
@@ -44,6 +45,7 @@ const projects = [
     ],
     tech: ["Java", "Spring Boot", "JPA", "Hibernate", "PostgreSQL", "React", "Maven", "SLF4J", "SMTP", "Postman", "Git"],
     image: "./assets/project-referral-hub.jpg",
+    devImage: "./assets/project-referral-hub-dev.jpg",
     github: "https://github.com/ashrithBalaji456/Referal_Hub_Backend",
     live: "https://referal-hub-frontend.vercel.app/",
   },
@@ -64,6 +66,7 @@ const projects = [
     ],
     tech: ["Java", "Spring Boot", "Spring Security", "JWT", "PostgreSQL", "React", "Vite", "Docker", "Render", "Vercel"],
     image: "./assets/project-tasker.jpg",
+    devImage: "./assets/project-tasker-dev.jpg",
     github: "https://lnkd.in/gwNQh9f8",
     live: "https://lnkd.in/g4QSzmCK",
   },
@@ -82,6 +85,7 @@ const projects = [
     ],
     tech: ["Spring Boot", "REST APIs", "JPA", "Hibernate", "Docker", "MVC", "CORS"],
     image: "./assets/project-hospital.jpg",
+    devImage: "./assets/project-hospital-dev.jpg",
     github: "https://github.com/ashrithBalaji456/Hospital-Backend",
     live: "https://hospital-frontend-aj7d0jqh4-srinus-projects-85b0e5b9.vercel.app/",
   },
@@ -100,6 +104,7 @@ const projects = [
     ],
     tech: ["Java 17", "Spring Boot", "JPA", "Hibernate", "PostgreSQL", "H2", "Maven"],
     image: "./assets/project-service-manager.jpg",
+    devImage: "./assets/project-service-manager-dev.jpg",
     github: "https://github.com/ashrithBalaji456/Service_Manage_Backend",
     live: null,
   },
@@ -119,6 +124,7 @@ const projects = [
     ],
     tech: ["Java 17", "Spring Boot", "Spring Cloud Gateway", "Eureka", "Keycloak", "OAuth2", "PKCE", "JWT", "Kafka", "PostgreSQL", "MongoDB", "Docker"],
     image: "./assets/project-pulsefit.jpg",
+    devImage: "./assets/project-pulsefit-dev.jpg",
     github: "https://github.com/ashrithBalaji456/FitNess_Tracker_Microservices",
     live: null,
   },
@@ -135,6 +141,7 @@ const projects = [
     ],
     tech: ["Spring Boot", "PostgreSQL", "Google Gemini API", "REST API"],
     image: "./assets/project-moodflix.jpg",
+    devImage: "./assets/project-moodflix-dev.jpg",
     github: "https://github.com/ashrithBalaji456/MovieRecommendation-Backend",
     live: "https://movie-recommendation-frontend-zeta.vercel.app/",
   },
@@ -152,6 +159,7 @@ const projects = [
     ],
     tech: ["Java", "Spring Boot", "Spring Cloud", "Eureka", "API Gateway", "REST APIs"],
     image: "./assets/project-quiz.jpg",
+    devImage: "./assets/project-quiz-dev.jpg",
     github: "https://github.com/ashrithBalaji456/Quiz-MicroServices",
     live: null,
   },
@@ -168,6 +176,7 @@ const projects = [
     ],
     tech: ["Spring Boot", "Google Gemini API", "REST API", "WebClient"],
     image: "./assets/project-email-reply.jpg",
+    devImage: "./assets/project-email-reply-dev.jpg",
     github: "https://github.com/ashrithBalaji456/email-reply-backend",
     live: "https://email-reply-frontend.vercel.app/",
   },
@@ -353,7 +362,22 @@ function renderProjects(activeFilter = "All") {
            </a>`
         : "";
 
-      const imageHtml = project.image
+      const imageHtml = project.image && project.devImage
+        ? `<div class="project-media" data-slide="0" title="Click to toggle between UI Preview & Problem Solved">
+             <div class="project-media-slide active">
+               <img src="${project.image}" alt="${project.title} UI Preview" class="project-media-img" loading="lazy" />
+               <span class="media-slide-badge">UI Dashboard</span>
+             </div>
+             <div class="project-media-slide">
+               <img src="${project.devImage}" alt="${project.title} Problem Solved" class="project-media-img" loading="lazy" />
+               <span class="media-slide-badge badge-dev">💡 Problem Solved</span>
+             </div>
+             <div class="media-slide-dots">
+               <span class="slide-dot active" data-target="0"></span>
+               <span class="slide-dot" data-target="1"></span>
+             </div>
+           </div>`
+        : project.image
         ? `<div class="project-media">
              <img src="${project.image}" alt="${project.title} Preview" class="project-media-img" loading="lazy" />
            </div>`
@@ -391,6 +415,66 @@ function renderProjects(activeFilter = "All") {
       `;
     })
     .join("");
+
+  setupProjectMediaCarousel();
+}
+
+function setupProjectMediaCarousel() {
+  if (window.projectMediaInterval) {
+    clearInterval(window.projectMediaInterval);
+  }
+
+  const mediaContainers = document.querySelectorAll(".project-media[data-slide]");
+  if (!mediaContainers.length) return;
+
+  // Click on media container or dots to immediately toggle between the 2 pictures
+  mediaContainers.forEach((media) => {
+    if (media._hasClickListener) return;
+    media._hasClickListener = true;
+
+    media.addEventListener("click", () => {
+      const current = parseInt(media.dataset.slide || "0", 10);
+      const next = current === 0 ? 1 : 0;
+      switchProjectMediaSlide(media, next);
+    });
+  });
+
+  // Staggered automatic smooth cross-fade transition every ~4.5s
+  window.projectMediaInterval = setInterval(() => {
+    mediaContainers.forEach((media, idx) => {
+      // Don't auto-switch if user is currently hovering on the card
+      if (media.closest(".project-card:hover")) return;
+
+      // Small staggered delay across cards so they transition in an organic wave
+      setTimeout(() => {
+        const current = parseInt(media.dataset.slide || "0", 10);
+        const next = current === 0 ? 1 : 0;
+        switchProjectMediaSlide(media, next);
+      }, (idx % 3) * 350);
+    });
+  }, 4500);
+}
+
+function switchProjectMediaSlide(media, targetIndex) {
+  media.dataset.slide = targetIndex.toString();
+  const slides = media.querySelectorAll(".project-media-slide");
+  const dots = media.querySelectorAll(".slide-dot");
+
+  slides.forEach((slide, idx) => {
+    if (idx === targetIndex) {
+      slide.classList.add("active");
+    } else {
+      slide.classList.remove("active");
+    }
+  });
+
+  dots.forEach((dot, idx) => {
+    if (idx === targetIndex) {
+      dot.classList.add("active");
+    } else {
+      dot.classList.remove("active");
+    }
+  });
 }
 
 function setupProjectAudio() {
