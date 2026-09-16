@@ -39,12 +39,28 @@
         </div>
 
         <div class="project-nav-right">
-          <!-- Project Switcher Dropdown -->
-          <div class="project-dropdown-wrapper">
-            <label for="project-select-dropdown" class="sr-only">Switch Project</label>
-            <select id="project-select-dropdown" class="project-select-dropdown" aria-label="Switch Project">
-              <!-- Dynamically populated -->
-            </select>
+          <!-- Custom Glassmorphic Project Dropdown -->
+          <div class="custom-project-dropdown" id="custom-project-dropdown">
+            <button
+              class="dropdown-trigger-btn"
+              id="dropdown-trigger-btn"
+              type="button"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              aria-label="Switch Project"
+            >
+              <span class="dropdown-trigger-icon">🚀</span>
+              <span class="dropdown-trigger-label" id="dropdown-trigger-label">Switch Project</span>
+              <span class="dropdown-chevron" aria-hidden="true">▾</span>
+            </button>
+            <div class="dropdown-menu-list" id="dropdown-menu-list" role="listbox" aria-label="Projects list">
+              <div class="dropdown-menu-header">
+                <span>Select Project (9 Total)</span>
+              </div>
+              <div class="dropdown-items-scroller" id="dropdown-items-scroller">
+                <!-- Dynamically populated by JS -->
+              </div>
+            </div>
           </div>
 
           <!-- Theme Toggle Button -->

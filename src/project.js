@@ -174,11 +174,22 @@ function renderProject(index) {
   document.getElementById("dev-caption-desc").textContent =
     `Workstation scene for ${project.title}. Visualizes the developer, illuminated idea symbol, and holographic architecture resolving: "${prob.solution.slice(0, 110)}..."`;
 
-  // Update Dropdown selector value
-  const dropdown = document.getElementById("project-select-dropdown");
-  if (dropdown) {
-    dropdown.value = index;
+  // Update Custom Dropdown trigger label & active items
+  const triggerLabel = document.getElementById("dropdown-trigger-label");
+  if (triggerLabel) {
+    triggerLabel.textContent = `${index + 1}. ${project.title.split(" - ")[0]}`;
   }
+  const allItems = document.querySelectorAll(".dropdown-item");
+  allItems.forEach((item) => {
+    const itemIdx = parseInt(item.dataset.index, 10);
+    if (itemIdx === index) {
+      item.classList.add("active");
+      item.setAttribute("aria-selected", "true");
+    } else {
+      item.classList.remove("active");
+      item.setAttribute("aria-selected", "false");
+    }
+  });
 
   // Update Pager Button Labels
   const prevIndex = (index - 1 + projects.length) % projects.length;
@@ -316,22 +327,92 @@ function updateSlideUI(index) {
 }
 
 function setupDropdown() {
-  const dropdown = document.getElementById("project-select-dropdown");
-  if (!dropdown) return;
+  const container = document.getElementById("custom-project-dropdown");
+  const triggerBtn = document.getElementById("dropdown-trigger-btn");
+  const triggerLabel = document.getElementById("dropdown-trigger-label");
+  const menuList = document.getElementById("dropdown-menu-list");
+  const itemsScroller = document.getElementById("dropdown-items-scroller");
 
-  dropdown.innerHTML = projects
-    .map(
-      (p, i) => `
-      <option value="${i}" ${i === currentProjectIndex ? "selected" : ""}>
-        ${i + 1}. ${p.title}
-      </option>
-    `
-    )
+  if (!container || !triggerBtn || !menuList || !itemsScroller) return;
+
+  // Build items list
+  itemsScroller.innerHTML = projects
+    .map((p, i) => {
+      const shortTitle = p.title.split(" - ")[0];
+      const category = p.category || "Full-Stack Project";
+      const num = String(i + 1).padStart(2, "0");
+      const isActive = i === currentProjectIndex;
+      return `
+        <button
+          type="button"
+          class="dropdown-item ${isActive ? "active" : ""}"
+          data-index="${i}"
+          role="option"
+          aria-selected="${isActive ? "true" : "false"}"
+        >
+          <span class="item-num">${num}</span>
+          <div class="item-content">
+            <span class="item-title">${shortTitle}</span>
+            <span class="item-category">${category}</span>
+          </div>
+          <span class="item-check" aria-hidden="true">✓</span>
+        </button>
+      `;
+    })
     .join("");
 
-  dropdown.addEventListener("change", (e) => {
-    stopSpeech();
-    renderProject(parseInt(e.target.value, 10));
+  // Set initial trigger label
+  if (projects[currentProjectIndex]) {
+    triggerLabel.textContent = `${currentProjectIndex + 1}. ${projects[currentProjectIndex].title.split(" - ")[0]}`;
+  }
+
+  // Toggle open/close
+  function toggleMenu(forceClose = false) {
+    const isOpen = container.classList.contains("open");
+    if (forceClose || isOpen) {
+      container.classList.remove("open");
+      triggerBtn.setAttribute("aria-expanded", "false");
+    } else {
+      container.classList.add("open");
+      triggerBtn.setAttribute("aria-expanded", "true");
+      // Scroll active item into view
+      const activeEl = itemsScroller.querySelector(".dropdown-item.active");
+      if (activeEl) {
+        activeEl.scrollIntoView({ block: "nearest" });
+      }
+    }
+  }
+
+  triggerBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggleMenu();
+  });
+
+  // Handle item click
+  itemsScroller.addEventListener("click", (e) => {
+    const itemBtn = e.target.closest(".dropdown-item");
+    if (!itemBtn) return;
+    const targetIdx = parseInt(itemBtn.dataset.index, 10);
+    if (!isNaN(targetIdx) && targetIdx !== currentProjectIndex) {
+      stopSpeech();
+      renderProject(targetIdx);
+    }
+    toggleMenu(true);
+  });
+
+  // Close on outside click
+  document.addEventListener("click", (e) => {
+    if (!container.contains(e.target)) {
+      toggleMenu(true);
+    }
+  });
+
+  // Close on Escape key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && container.classList.contains("open")) {
+      toggleMenu(true);
+      triggerBtn.focus();
+    }
   });
 }
 
