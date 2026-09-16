@@ -23,6 +23,7 @@ const projects = [
       "Added searching, filtering, sorting, and pagination to efficiently manage and explore subscription records"
     ],
     tech: ["Java 17", "Spring Boot", "Spring Data JPA", "Hibernate", "PostgreSQL", "React.js", "Maven"],
+    image: "./assets/project-nexus.jpg",
     github: "https://github.com/ashrithBalaji456/Nexus_Subscription_Center_Backend",
     live: null,
   },
@@ -42,6 +43,7 @@ const projects = [
       "Structured with layered architecture (Controller, Service, Repository, DTO) and centralized logging (SLF4J)"
     ],
     tech: ["Java", "Spring Boot", "JPA", "Hibernate", "PostgreSQL", "React", "Maven", "SLF4J", "SMTP", "Postman", "Git"],
+    image: "./assets/project-referral-hub.jpg",
     github: "https://github.com/ashrithBalaji456/Referal_Hub_Backend",
     live: "https://referal-hub-frontend.vercel.app/",
   },
@@ -61,6 +63,7 @@ const projects = [
       "Deployed Spring Boot on Render, React/Vite on Vercel, and PostgreSQL with Docker",
     ],
     tech: ["Java", "Spring Boot", "Spring Security", "JWT", "PostgreSQL", "React", "Vite", "Docker", "Render", "Vercel"],
+    image: "./assets/project-tasker.jpg",
     github: "https://lnkd.in/gwNQh9f8",
     live: "https://lnkd.in/g4QSzmCK",
   },
@@ -344,6 +347,12 @@ function renderProjects(activeFilter = "All") {
            </a>`
         : "";
 
+      const imageHtml = project.image
+        ? `<div class="project-media">
+             <img src="${project.image}" alt="${project.title} Preview" class="project-media-img" loading="lazy" />
+           </div>`
+        : "";
+
       return `
         <article class="project-card reveal-item ${hidden ? "hidden" : ""}" data-tags="${project.tags.join(",")}" style="--delay:${index * 55}ms">
           <div class="project-meta">
@@ -351,6 +360,7 @@ function renderProjects(activeFilter = "All") {
             <small class="project-tag">${project.category}</small>
           </div>
           <h3>${project.title}</h3>
+          ${imageHtml}
           <p>${project.description}</p>
           ${chipList(project.tech)}
           <ul>
