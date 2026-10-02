@@ -24,23 +24,23 @@ export const freelanceProjects = [
   },
   {
     id: "kamal-portfolio",
-    title: "Kamal - Full Stack Developer Portfolio",
-    client: "Kamal",
+    title: "Kamal Nath - Backend & AI Systems Portfolio",
+    client: "Kamal Nath",
     period: "2026",
     category: "Freelance Portfolio",
-    tags: ["Freelance", "Portfolio", "React", "Vercel", "UI/UX"],
-    description: "Built and deployed a modern, ultra-responsive developer portfolio website for Kamal featuring dynamic project galleries, interactive skill pills, and seamless Vercel cloud deployment.",
+    tags: ["Freelance", "Portfolio", "React", "Java", "Spring Boot", "Vercel"],
+    description: "Designed and engineered a high-performance portfolio for Kamal Nath, Java & Spring Boot engineer specializing in REST APIs, resilient microservices, and LLM evaluation pipelines.",
     problemSolved: {
-      challenge: "Building a fast, sleek, mobile-first portfolio web app to present software engineering projects and technical stack with smooth transitions.",
-      solution: "Engineered a lightweight React component structure deployed on Vercel CDN with optimized performance, glass aesthetics, and instant contact routing.",
-      outcome: "Created an engaging personal portfolio with 100% lighthouse score and sub-second load times."
+      challenge: "Presenting complex backend engineering depth, DSA problem achievements (400+ solved), and LLM evaluation workflows with high-impact visual design.",
+      solution: "Built an interactive cosmic glassmorphic portfolio featuring custom portrait badges, audio intros, project showcases, and seamless Vercel cloud deployment.",
+      outcome: "Delivered an authoritative developer portfolio with 100% lighthouse performance, responsive layout, and instant contact routing."
     },
     highlights: [
-      "Modern dark theme layout with custom hero typography and interactive project navigation",
-      "Fully responsive mobile layout with optimized image loading and dynamic project modals",
-      "Deployed on Vercel continuous deployment pipeline for high availability and fast edge delivery"
+      "Cosmic glassmorphic layout featuring interactive coding proof telemetry (400+ DSA problems)",
+      "Integrated audio self-introduction, Spring Boot backend skills matrix, and project showcases",
+      "Deployed on Vercel edge deployment for high availability, fast response, and mobile optimization"
     ],
-    tech: ["React.js", "JavaScript", "CSS3", "Vite", "Vercel"],
+    tech: ["Java", "Spring Boot", "React.js", "JavaScript", "CSS3", "LLM Evaluation", "Vercel"],
     image: "./assets/project-kamal-portfolio.png",
     github: "https://github.com/ashrithBalaji456/kamal_Portfolio",
     live: "https://kamal-portfolio-alpha.vercel.app/"
