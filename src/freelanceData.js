@@ -67,5 +67,28 @@ export const freelanceProjects = [
     image: "./assets/project-venkatesh-portfolio.png",
     github: "https://github.com/ashrithBalaji456/Venkatesh_portfolio",
     live: "https://venkateshportfolio-chi.vercel.app/"
+  },
+  {
+    id: "sairam-portfolio",
+    title: "Moogala Sairam - Creative Developer Portfolio",
+    client: "Moogala Sairam",
+    period: "2026",
+    category: "Freelance Portfolio",
+    tags: ["Freelance", "Portfolio", "3D Web", "React", "Creative Dev", "Vercel"],
+    description: "Designed and built an immersive creative developer portfolio for Moogala Sairam, featuring custom 3D avatar hero visuals, interactive work showcases, certifications, and smooth modern dark aesthetics.",
+    problemSolved: {
+      challenge: "Creating a standout creative engineering portfolio with interactive 3D character visuals while maintaining high performance and mobile fluid layout.",
+      solution: "Developed a React/Three.js-powered creative web portfolio with custom 3D avatar animations, quick-access navigation, resume viewer, and Vercel edge deployment.",
+      outcome: "Delivered an eye-catching 3D developer experience that engages recruiters and clients with memorable visual identity."
+    },
+    highlights: [
+      "Immersive 3D animated character avatar hero with dynamic lighting and purple ambient glow",
+      "Interactive showcase for creative engineering work, education, certifications, and contact",
+      "Deployed on Vercel with smooth framerates, fast initial load, and cross-browser responsiveness"
+    ],
+    tech: ["React.js", "Three.js", "JavaScript", "CSS3", "3D Graphics", "Vercel"],
+    image: "./assets/project-sairam-portfolio.png",
+    github: "https://github.com/ashrithBalaji456/Sai_Ram_Portfolio",
+    live: "https://sai-ram-portfolio.vercel.app/"
   }
 ];
