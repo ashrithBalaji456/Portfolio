@@ -807,6 +807,8 @@ function setupRevealObserver() {
     return;
   }
 
+  const isMobile = window.innerWidth <= 768 || "ontouchstart" in window;
+
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -816,10 +818,22 @@ function setupRevealObserver() {
         }
       });
     },
-    { rootMargin: "0px 0px -12% 0px", threshold: 0.12 }
+    {
+      rootMargin: isMobile ? "80px 0px 80px 0px" : "60px 0px 60px 0px",
+      threshold: isMobile ? 0.01 : 0.04,
+    }
   );
 
-  revealTargets.forEach((target) => observer.observe(target));
+  revealTargets.forEach((target) => {
+    if (target.classList.contains("is-visible")) return;
+
+    const rect = target.getBoundingClientRect();
+    if (rect.top <= (window.innerHeight || document.documentElement.clientHeight) + 50 && rect.bottom >= -50) {
+      target.classList.add("is-visible");
+    } else {
+      observer.observe(target);
+    }
+  });
 }
 
 function setupProjectFilters() {
