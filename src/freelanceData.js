@@ -1,23 +1,23 @@
 export const freelanceProjects = [
   {
     id: "shashank-portfolio",
-    title: "Shashank Kudha - Developer Portfolio",
+    title: "Shashank Kudha - Java Backend Developer Portfolio",
     client: "Shashank Kudha",
     period: "2026",
     category: "Freelance Portfolio",
-    tags: ["Freelance", "Portfolio", "React", "CSS3", "UI/UX"],
-    description: "Designed and engineered a high-performance, dark-themed developer portfolio for Java Backend Engineer Shashank Kudha with glassmorphic cards, telemetry badges, and interactive project showcases.",
+    tags: ["Freelance", "Portfolio", "Java", "Spring Boot", "PostgreSQL"],
+    description: "Designed and engineered a high-performance developer portfolio for Java Backend Engineer Shashank Kudha, showcasing RESTful APIs, Spring Data JPA, Hibernate, PostgreSQL databases, and layered architecture.",
     problemSolved: {
-      challenge: "Creating a distinct, professional personal brand portfolio that highlights Java & Spring Boot backend skills with modern interactive UI components.",
-      solution: "Built a customized glassmorphic web application with interactive mission control telemetry, project modal details, resume downloads, and responsive mobile architecture.",
-      outcome: "Delivered a state-of-the-art interactive portfolio that showcases backend engineering depth with high visual impact."
+      challenge: "Creating a distinct, professional personal brand portfolio that highlights Java, Spring Boot, and PostgreSQL backend expertise with interactive UI components.",
+      solution: "Built a customized glassmorphic web application featuring mission control telemetry, database & REST API status badges, project showcases, and responsive layout.",
+      outcome: "Delivered an authoritative backend developer portfolio with instant resume access, high performance, and smooth responsiveness."
     },
     highlights: [
-      "Designed sleek cosmic glassmorphic UI with animated telemetry badges & status indicators",
-      "Built responsive project showcases, skills cards, and instant contact modal integration",
-      "Optimized for high-speed page loads, smooth scroll animations, and cross-device compatibility"
+      "Cosmic glassmorphic layout featuring Java, Spring Boot & PostgreSQL telemetry badges",
+      "Showcases layered MVC architecture, JPA/Hibernate mappings, and Postman API testing",
+      "Optimized for high-speed page loads, smooth scroll animations, and cross-device responsiveness"
     ],
-    tech: ["HTML5", "CSS3", "JavaScript", "React", "Vite", "Glassmorphic UI"],
+    tech: ["Java", "Spring Boot", "Spring Data JPA", "Hibernate", "PostgreSQL", "REST APIs", "Postman"],
     image: "./assets/project-shashank-portfolio.png",
     github: "https://github.com/ashrithBalaji456/Shashank_Portfolio",
     live: "https://ashrithbalaji456.github.io/Shashank_Portfolio/"
