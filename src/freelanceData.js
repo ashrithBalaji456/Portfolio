@@ -44,5 +44,28 @@ export const freelanceProjects = [
     image: "./assets/project-kamal-portfolio.png",
     github: "https://github.com/ashrithBalaji456/kamal_Portfolio",
     live: "https://kamal-portfolio-alpha.vercel.app/"
+  },
+  {
+    id: "venkatesh-portfolio",
+    title: "Venkatesh (Venkateswarlu) - Backend & Spring Boot Systems Portfolio",
+    client: "Venkateswarlu",
+    period: "2026",
+    category: "Freelance Portfolio",
+    tags: ["Freelance", "Portfolio", "Java", "Spring Boot", "PostgreSQL", "Vercel"],
+    description: "Designed and developed a sleek, modern portfolio for Java Backend & Spring Boot Systems Developer Venkateswarlu, highlighting robust REST APIs, layered microservices architectures, and high-performance database solutions with PostgreSQL & Spring Data JPA.",
+    problemSolved: {
+      challenge: "Creating a focused, minimalist yet modern portfolio to highlight backend systems architecture, layered microservice design, and PostgreSQL database performance.",
+      solution: "Engineered a responsive web application featuring custom hero audio integration, instant project navigation, resume downloads, and continuous deployment on Vercel.",
+      outcome: "Delivered an elegant, high-converting portfolio with smooth transitions and sub-second load times."
+    },
+    highlights: [
+      "Minimalist modern design with interactive audio self-introduction and clean typography",
+      "Showcases Java, Spring Boot, layered microservices architectures, and PostgreSQL database solutions",
+      "Deployed on Vercel with mobile-first responsiveness and instant resume access"
+    ],
+    tech: ["Java", "Spring Boot", "Spring Data JPA", "PostgreSQL", "REST APIs", "React", "Vercel"],
+    image: "./assets/project-venkatesh-portfolio.png",
+    github: "https://github.com/ashrithBalaji456/Venkatesh_portfolio",
+    live: "https://venkateshportfolio-chi.vercel.app/"
   }
 ];
