@@ -6575,3 +6575,123 @@ body.page-transition-exit {
     transform: translateY(0) scale(1);
   }
 }
+
+/* ==========================================================================
+   FREELANCING SECTION STYLING
+   ========================================================================== */
+.freelance-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  width: 100%;
+}
+
+.freelance-empty-card {
+  grid-column: 1 / -1;
+  padding: clamp(32px, 5vw, 48px);
+  border-radius: 16px;
+  border: 1px solid rgba(89, 234, 210, 0.22);
+  background:
+    radial-gradient(ellipse at top right, rgba(89, 234, 210, 0.08), transparent 60%),
+    radial-gradient(ellipse at bottom left, rgba(138, 180, 255, 0.08), transparent 60%),
+    rgba(255, 255, 255, 0.025);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.28);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="light"] .freelance-empty-card {
+  border-color: rgba(2, 132, 199, 0.25);
+  background:
+    radial-gradient(ellipse at top right, rgba(2, 132, 199, 0.06), transparent 60%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 246, 255, 0.85));
+}
+
+.freelance-empty-badge-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.freelance-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--aqua);
+  border: 1px solid rgba(89, 234, 210, 0.35);
+  background: rgba(89, 234, 210, 0.08);
+}
+
+.freelance-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--aqua);
+  box-shadow: 0 0 10px var(--aqua);
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.freelance-empty-icon-wrap {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: rgba(89, 234, 210, 0.12);
+  border: 1px solid rgba(89, 234, 210, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.freelance-icon {
+  font-size: 1.8rem;
+}
+
+.freelance-empty-body h3 {
+  font-size: 1.45rem;
+  font-weight: 700;
+  margin: 0 0 12px;
+  color: var(--text);
+}
+
+.freelance-empty-body p {
+  max-width: 620px;
+  margin: 0 auto 24px;
+  color: var(--muted);
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+
+.freelance-features-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.freelance-cta-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.freelance-client-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: rgba(255, 211, 107, 0.15);
+  color: var(--amber);
+  border: 1px solid rgba(255, 211, 107, 0.3);
+}
+

@@ -1,5 +1,6 @@
 import { initLaunchIntro } from "./launchIntro.js";
 import { projects } from "./projectsData.js";
+import { freelanceProjects } from "./freelanceData.js";
 
 const skillCategories = [
   { title: "Languages", icon: "{ }", skills: ["Java"] },
@@ -252,6 +253,89 @@ function renderProjects(activeFilter = "All") {
 
   setupProjectMediaCarousel();
   setupProjectCardClick();
+}
+
+function renderFreelance() {
+  const grid = document.querySelector("#freelance-grid");
+  if (!grid) return;
+
+  if (!freelanceProjects || freelanceProjects.length === 0) {
+    grid.innerHTML = `
+      <div class="freelance-empty-card glass-depth" data-reveal style="--delay:100ms">
+        <div class="freelance-empty-badge-row">
+          <span class="freelance-status-pill">
+            <span class="freelance-status-dot"></span>
+            AVAILABLE FOR FREELANCE &amp; CLIENT WORK
+          </span>
+        </div>
+        <div class="freelance-empty-body">
+          <div class="freelance-empty-icon-wrap">
+            <span class="freelance-icon">💼</span>
+          </div>
+          <h3>Client Portfolios &amp; Custom Web Applications</h3>
+          <p>
+            I build tailored responsive websites, personal portfolios, landing pages, and web applications for clients with fast performance, clean architecture, and modern UX design.
+          </p>
+          <div class="freelance-features-chips">
+            <span class="chip">🎨 Custom UI/UX</span>
+            <span class="chip">⚡ High Performance</span>
+            <span class="chip">📱 Mobile Responsive</span>
+            <span class="chip">🚀 SEO &amp; Fast Load</span>
+            <span class="chip">🔒 Full Stack Backend</span>
+          </div>
+          <div class="freelance-cta-row">
+            <a class="button button-primary magnetic" href="#contact">
+              <span class="icon icon-mail" aria-hidden="true"></span> Hire / Inquiry
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = freelanceProjects
+    .map((project, index) => {
+      const liveLink = project.live
+        ? `<a class="button button-primary magnetic" href="${project.live}" ${externalAttrs(project.live)}>
+             <span class="icon icon-external" aria-hidden="true"></span> Live Site ↗
+           </a>`
+        : "";
+
+      const githubLink = project.github
+        ? `<a class="button button-ghost magnetic" href="${project.github}" ${externalAttrs(project.github)}>
+             <span class="icon icon-github" aria-hidden="true"></span> Code
+           </a>`
+        : "";
+
+      const imageHtml = project.image
+        ? `<div class="project-media">
+             <img src="${project.image}" alt="${project.title} Preview" class="project-media-img" loading="lazy" />
+           </div>`
+        : "";
+
+      return `
+        <article class="project-card freelance-card reveal-item" data-project-id="${project.id}" style="--delay:${index * 60}ms" tabindex="0">
+          <div class="project-meta">
+            <span>${project.period || "Freelance"}</span>
+            <div class="project-meta-badges">
+              <small class="project-tag">${project.category || "Freelance Project"}</small>
+              ${project.client ? `<span class="freelance-client-badge">👤 ${project.client}</span>` : ""}
+            </div>
+          </div>
+          <h3 class="project-title-linkable">${project.title}</h3>
+          ${imageHtml}
+          <p>${project.description}</p>
+          ${project.tech ? chipList(project.tech) : ""}
+          ${project.highlights ? `<ul>${project.highlights.map((h) => `<li>${h}</li>`).join("")}</ul>` : ""}
+          <div class="project-links">
+            ${githubLink}
+            ${liveLink}
+          </div>
+        </article>
+      `;
+    })
+    .join("");
 }
 
 function setupProjectCardClick() {
@@ -1985,6 +2069,7 @@ function boot() {
   renderSkills();
   renderFilters();
   renderProjects();
+  renderFreelance();
   renderExperience();
   renderEducation();
   renderPublications();
