@@ -18,7 +18,7 @@ export const freelanceProjects = [
       "Optimized for high-speed page loads, smooth scroll animations, and cross-device compatibility"
     ],
     tech: ["HTML5", "CSS3", "JavaScript", "React", "Vite", "Glassmorphic UI"],
-    image: "./assets/project-shashank-portfolio.jpg",
+    image: "./assets/project-shashank-portfolio.png",
     github: "https://github.com/ashrithBalaji456/Shashank_Portfolio",
     live: "https://ashrithbalaji456.github.io/Shashank_Portfolio/"
   },
