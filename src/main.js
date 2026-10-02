@@ -308,10 +308,41 @@ function renderFreelance() {
            </a>`
         : "";
 
-      const imageHtml = project.image
-        ? `<div class="project-media">
-             <img src="${project.image}" alt="${project.title} Preview" class="project-media-img" loading="lazy" />
-           </div>`
+      let imageHtml = "";
+      if (Array.isArray(project.images) && project.images.length > 1) {
+        imageHtml = `
+          <div class="project-media" data-slide="0" title="Click dots or image to switch preview">
+            ${project.images
+              .map(
+                (img, imgIdx) => `
+                <div class="project-media-slide ${imgIdx === 0 ? "active" : ""}">
+                  <img src="${img}" alt="${project.title} Preview ${imgIdx + 1}" class="project-media-img" loading="lazy" />
+                  <span class="media-slide-badge">${project.imageLabels?.[imgIdx] || `Preview ${imgIdx + 1}`}</span>
+                </div>
+              `
+              )
+              .join("")}
+            <div class="media-slide-dots">
+              ${project.images
+                .map(
+                  (_, imgIdx) => `
+                <span class="slide-dot ${imgIdx === 0 ? "active" : ""}" data-target="${imgIdx}" title="View image ${imgIdx + 1}"></span>
+              `
+                )
+                .join("")}
+            </div>
+          </div>
+        `;
+      } else if (project.image) {
+        imageHtml = `
+          <div class="project-media">
+            <img src="${project.image}" alt="${project.title} Preview" class="project-media-img" loading="lazy" />
+          </div>
+        `;
+      }
+
+      const statusBadge = project.statusBadge
+        ? `<span class="freelance-status-active">⚡ ${project.statusBadge}</span>`
         : "";
 
       return `
@@ -320,6 +351,7 @@ function renderFreelance() {
             <span>${project.period || "Freelance"}</span>
             <div class="project-meta-badges">
               <small class="project-tag">${project.category || "Freelance Project"}</small>
+              ${statusBadge}
               ${project.client ? `<span class="freelance-client-badge">👤 ${project.client}</span>` : ""}
             </div>
           </div>
@@ -336,6 +368,8 @@ function renderFreelance() {
       `;
     })
     .join("");
+
+  setupProjectMediaCarousel();
 }
 
 function setupProjectCardClick() {
@@ -377,7 +411,7 @@ function setupProjectMediaCarousel() {
   const mediaContainers = document.querySelectorAll(".project-media[data-slide]");
   if (!mediaContainers.length) return;
 
-  // Click on media container or dots to immediately toggle between the 2 pictures
+  // Click on media container or dots to immediately toggle between the pictures
   mediaContainers.forEach((media) => {
     if (media._hasClickListener) return;
     media._hasClickListener = true;
@@ -393,7 +427,8 @@ function setupProjectMediaCarousel() {
       }
 
       const current = parseInt(media.dataset.slide || "0", 10);
-      const next = current === 0 ? 1 : 0;
+      const totalSlides = media.querySelectorAll(".project-media-slide").length || 2;
+      const next = (current + 1) % totalSlides;
       switchProjectMediaSlide(media, next);
     });
   });
@@ -407,7 +442,8 @@ function setupProjectMediaCarousel() {
       // Small staggered delay across cards so they transition in an organic wave
       setTimeout(() => {
         const current = parseInt(media.dataset.slide || "0", 10);
-        const next = current === 0 ? 1 : 0;
+        const totalSlides = media.querySelectorAll(".project-media-slide").length || 2;
+        const next = (current + 1) % totalSlides;
         switchProjectMediaSlide(media, next);
       }, (idx % 3) * 350);
     });

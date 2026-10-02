@@ -1,5 +1,39 @@
 export const freelanceProjects = [
   {
+    id: "3d-knowledge-library",
+    title: "3D Interactive Digital Knowledge Library",
+    client: "Ashrith Balaji (Continuous Integration)",
+    period: "2026 - Present",
+    statusBadge: "Continuous Dev & CI/CD",
+    category: "3D Web Application",
+    tags: ["Freelance", "3D Web", "Three.js", "React 19", "TypeScript", "Tailwind CSS v4"],
+    description: "Architected an interactive 3D digital virtual library in the browser built with React 19, Three.js, React Three Fiber, and Zustand, featuring client-side PDF document parsing and ZIP archive handling without a backend.",
+    problemSolved: {
+      challenge: "Providing an immersive spatial exploration experience for digital documents and learning resources while handling heavy PDF rendering and archive unpacking entirely client-side without costly server infrastructure.",
+      solution: "Engineered a high-performance 3D scene with Three.js, React Three Fiber, and Drei, integrated PDF.js and JSZip for offline document reading and archive unpacking, and orchestrated state with Zustand on a Vite + TypeScript foundation with Oxlint code quality validation.",
+      outcome: "Delivered a zero-latency, 100% client-driven 3D virtual knowledge repository capable of opening documents and archives directly in the browser."
+    },
+    highlights: [
+      "Built a 3D interactive digital library using React, TypeScript, Three.js and React Three Fiber, letting users explore a virtual library in the browser",
+      "Added in-browser PDF and archive handling with PDF.js and JSZip, so users can open and process documents without a backend",
+      "Managed app state with Zustand and built a responsive UI with Tailwind CSS v4, on a Vite + TypeScript setup with Oxlint for code quality"
+    ],
+    tech: ["React 19", "TypeScript", "Three.js", "React Three Fiber", "@react-three/drei", "Zustand", "Tailwind CSS v4", "PDF.js", "JSZip", "Lucide React", "Vite", "Oxlint"],
+    image: "./assets/project-3d-library-1.jpg",
+    images: [
+      "./assets/project-3d-library-1.jpg",
+      "./assets/project-3d-library-2.jpg",
+      "./assets/project-3d-library-3.jpg"
+    ],
+    imageLabels: [
+      "3D Virtual Library",
+      "Interactive 3D Bookshelf",
+      "PDF & JSZip Doc Reader"
+    ],
+    github: "https://github.com/ashrithBalaji456/Knowledge_Library",
+    live: null
+  },
+  {
     id: "shashank-portfolio",
     title: "Shashank Kudha - Java Backend Developer Portfolio",
     client: "Shashank Kudha",

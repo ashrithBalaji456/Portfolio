@@ -6721,3 +6721,18 @@ body.page-transition-exit {
   border: 1px solid rgba(255, 211, 107, 0.3);
 }
 
+.freelance-status-active {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: rgba(89, 234, 210, 0.15);
+  color: var(--aqua);
+  border: 1px solid rgba(89, 234, 210, 0.35);
+  box-shadow: 0 0 10px rgba(89, 234, 210, 0.15);
+}
+
+
