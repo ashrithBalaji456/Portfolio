@@ -97,6 +97,56 @@ export const projects = [
     live: null,
   },
   {
+    id: "ledgerflow-loan-management",
+    title: "LedgerFlow: Full-Stack Multi-Tenant Loan & Debt Management System",
+    tagline: "Enterprise Loan Lifecycle, High-Precision Amortization Engine & Multi-Tenant Financial Ledger",
+    period: "Aug 2026",
+    category: "Full-Stack & FinTech",
+    tags: ["Backend", "Data", "Docker"],
+    description: "Full-stack multi-tenant loan and debt management platform engineered with Spring Boot 3.3 and React 19, featuring high-precision BigDecimal amortization engines, isolated tenant data schemas, optimized JPQL ORM access, and automated client-side PDF statements.",
+    problemSolved: {
+      challenge: "Small lenders and peer-to-peer debt administrators face critical accounting discrepancies from floating-point rounding errors, sluggish reporting due to Hibernate N+1 query bottlenecks, and high risk of cross-tenant data leakage in shared databases.",
+      solution: "Engineered a high-precision computation engine using Java's BigDecimal with penny-rounding reconciliation, eliminated N+1 query overhead by over 60% via JPQL JOIN FETCH across four relational tiers, and enforced strict tenant isolation via stateless Spring Security 6 with JWT.",
+      outcome: "Guaranteed zero-discrepancy monthly repayment amortization schedules, sub-100ms multi-table financial query times, and 100% data privacy between independent lenders."
+    },
+    systemSpecs: {
+      architecture: "Two-Tier Layered Architecture (Spring Boot 3.3 on Render + React 19 on Vercel)",
+      persistence: "PostgreSQL with Spring Data JPA, Hibernate, JPQL JOIN FETCH & HikariCP",
+      security: "Stateless Spring Security 6, JJWT (HMAC SHA-256) & BCrypt Hashing",
+      features: "BigDecimal Amortization Engine, N+1 Query Elimination, jsPDF Statements, Keystroke Loan Preview"
+    },
+    highlights: [
+      "Engineered High-Precision Financial Computation Engine: Architected financial calculation algorithms supporting Simple Interest, Fixed Interest, and Interest-Only loans using Java's BigDecimal and automated penny-rounding reconciliation, generating zero-discrepancy monthly repayment amortization schedules",
+      "Secured Multi-Tenant Architecture & Data Isolation: Implemented stateless Spring Security 6 with JWT (HMAC SHA-256) authentication and BCrypt password encryption; designed tenant-scoped relational database schemas ensuring 100% data privacy between independent lenders",
+      "Optimized High-Performance Database Access (ORM): Eliminated the Hibernate N+1 query performance bottleneck across multi-table relationships (Users → Borrowers → Loans → Installments) utilizing custom JPQL JOIN FETCH queries, decreasing database query overhead by over 60%",
+      "Interactive Real-Time Frontend & PDF Reporting: Built a responsive, dark-mode glassmorphic interface with React 19 & Tailwind CSS v4, featuring live keystroke loan preview calculations, custom click-outside calendar pickers, and automated client-side account statement generation via jsPDF / AutoTable"
+    ],
+    tech: [
+      "Java 17",
+      "Spring Boot 3.3",
+      "Spring Security 6",
+      "Spring Data JPA",
+      "Hibernate",
+      "PostgreSQL",
+      "JPQL",
+      "HikariCP",
+      "JWT",
+      "React 19",
+      "React Router v7",
+      "Tailwind CSS v4",
+      "Docker",
+      "Swagger / OpenAPI 3.0",
+      "jsPDF",
+      "Render",
+      "Vercel",
+      "Maven"
+    ],
+    image: "./assets/project-ledgerflow.jpg",
+    devImage: "./assets/project-ledgerflow-dev.jpg",
+    github: "https://github.com/ashrithBalaji456/Money_Ledging_Backend",
+    live: "https://money-ledging-frontend.vercel.app/",
+  },
+  {
     id: "tour-expense-tracker",
     title: "Tour Expense Tracker & Debt Settlement Platform",
     tagline: "Multi-Tenant Travel Finance Platform with Greedy Debt Minimization & Glassmorphic Analytics",
