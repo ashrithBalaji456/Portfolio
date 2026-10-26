@@ -385,7 +385,9 @@ function setupDropdown() {
   const menuList = document.getElementById("dropdown-menu-list");
   const itemsScroller = document.getElementById("dropdown-items-scroller");
 
-  if (!container || !triggerBtn || !menuList || !itemsScroller) return;
+  // Update header count dynamically
+  const headerSpan = menuList.querySelector(".dropdown-menu-header span");
+  if (headerSpan) headerSpan.textContent = `Select Project (${projects.length} Total)`;
 
   // Build items list
   itemsScroller.innerHTML = projects

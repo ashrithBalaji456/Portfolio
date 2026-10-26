@@ -1,5 +1,55 @@
 export const projects = [
   {
+    id: "railway-live-tracker",
+    title: "Indian Railway Live Tracker & RailAI Assistant",
+    tagline: "Cross-Platform Real-Time Railway Telemetry, Android App & Gemini AI Assistant",
+    period: "Oct 2026",
+    category: "Full-Stack & AI",
+    tags: ["Backend", "AI", "Data", "Docker"],
+    description: "Full-stack two-repo production platform deployed on Vercel and Render, delivering live train tracking, Leaflet route maps, Redis caching, Gemini-powered RailAI assistant, and an Android app via Capacitor.",
+    problemSolved: {
+      challenge: "Indian Railway passengers often struggle with fragmented portals, delayed live train running statuses, platform confusion, and sluggish response times during peak travel queries.",
+      solution: "Architected a dual-repo micro-architecture integrating RailRadar live train telemetry and Google Gemini LLM via reactive Spring WebClient, accelerated by Redis 7 caching and containerized PostgreSQL with automated Docker health checks.",
+      outcome: "Sub-second live train tracking and intelligent journey advisory, unified across web and native Android from a single shared Vite-Capacitor codebase."
+    },
+    systemSpecs: {
+      architecture: "Two-Repo Full-Stack Architecture (Render Backend + Vercel Frontend + Capacitor Android)",
+      persistence: "PostgreSQL 16 Relational Storage & Redis 7 In-Memory Cache",
+      security: "Stateless Spring Security, JJWT Token Auth & Environment Variable Isolation",
+      features: "RailRadar Live Telemetry, Google Gemini RailAI, Leaflet Map Tracking, Actuator Health Endpoints"
+    },
+    highlights: [
+      "Full-stack, two-repo system deployed in production: Built and deployed a React 19 + TypeScript frontend on Vercel and a Spring Boot REST API on Render, connected through a configurable API base URL",
+      "Secure backend with Spring Security and JWT: Implemented stateless token authentication, Bean Validation, and environment-based CORS in Java 17 / Spring Boot 3.3.2, with secrets securely isolated in environment variables",
+      "Third-party API integration with AI: Integrated RailRadar API for real-time Indian Railways data and Google Gemini for the RailAI assistant using Spring WebClient with server-side API key management",
+      "Production-minded infrastructure: Configured Docker Compose running Spring Boot, PostgreSQL 16, and Redis 7 with health checks, alongside Swagger/OpenAPI documentation and Spring Boot Actuator monitoring endpoints",
+      "One codebase, web and Android: Packaged the Vite build with Capacitor into an Android app sharing a single codebase, featuring React 19, Tailwind CSS 4, React Router, Axios, and Leaflet for interactive maps"
+    ],
+    tech: [
+      "Java 17",
+      "Spring Boot 3.3.2",
+      "React 19",
+      "TypeScript",
+      "Vite",
+      "Capacitor",
+      "Tailwind CSS 4",
+      "Spring Security",
+      "JWT",
+      "PostgreSQL 16",
+      "Redis 7",
+      "RailRadar API",
+      "Google Gemini API",
+      "Docker Compose",
+      "Leaflet",
+      "Swagger UI",
+      "Actuator"
+    ],
+    image: "./assets/project-railway-tracker.jpg",
+    devImage: "./assets/project-railway-tracker-dev.jpg",
+    github: "https://github.com/ashrithBalaji456/Railway_Tracking_Backend",
+    live: "https://railway-tracking-frontend.vercel.app/",
+  },
+  {
     id: "nexus-subscription-center",
     title: "Nexus Subscription Center",
     tagline: "Enterprise Subscription Lifecycle & Recurring Revenue Management Platform",
