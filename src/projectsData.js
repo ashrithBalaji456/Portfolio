@@ -97,6 +97,53 @@ export const projects = [
     live: null,
   },
   {
+    id: "tour-expense-tracker",
+    title: "Tour Expense Tracker & Debt Settlement Platform",
+    tagline: "Multi-Tenant Travel Finance Platform with Greedy Debt Minimization & Glassmorphic Analytics",
+    period: "Aug 2026",
+    category: "Full-Stack API",
+    tags: ["Backend", "Data", "Docker"],
+    description: "Full-stack multi-tenant travel expense tracking platform built with Spring Boot 3 and React 18, featuring greedy debt minimization algorithms, dual-phase pre-trip & live expense tracking, and dark glassmorphic financial analytics.",
+    problemSolved: {
+      challenge: "Group travel finances frequently devolve into messy circular debts, untracked advance pre-trip bookings (flights/hotels), data leakage across separate traveling groups, and container crash loops during cold starts.",
+      solution: "Architected an O(N log N) Greedy Bilateral Debt Settlement algorithm to minimize circular transfers, enforced group tenancy via custom X-Trip-Group-Id request headers with JWT RBAC, and engineered a zero-dependency /health controller eliminating container restart loops.",
+      outcome: "Instant mathematically minimal debt settlements, complete multi-tenant trip isolation with creator privileges, and sub-second containerized zero-downtime health monitoring on Render and Vercel."
+    },
+    systemSpecs: {
+      architecture: "Multi-Tenant Layered MVC Architecture with Custom Header Scoping (X-Trip-Group-Id)",
+      persistence: "PostgreSQL via Spring Data JPA with @Transactional Cascade Workflows & HikariCP",
+      security: "Stateless JWT Authentication (HMAC-SHA256), BCrypt Password Hashing & Strict RBAC",
+      features: "O(N log N) Greedy Debt Minimizer, Glassmorphic Recharts Analytics, Draggable Quick Calculator"
+    },
+    highlights: [
+      "Full-Stack Multi-Tenant Architecture & Secure Role-Based Access Control: Architected a full-stack, multi-tenant travel expense platform using Spring Boot 3 (Java 17) and React 18 (Vite); implemented stateless JWT authentication (HMAC-SHA256) and automated group isolation via custom HTTP headers (X-Trip-Group-Id), enforcing strict RBAC where trip creators retain administrative controls while members receive isolated real-time dashboards",
+      "Greedy Bilateral Debt Settlement Algorithm & Real-Time Financial Aggregation: Designed and implemented an optimal O(N log N) Greedy Bilateral Debt Minimization Algorithm to eliminate circular peer-to-peer debts into minimal monetary transfers; consolidated dual-phase finances by unifying advance pre-trip bookings with live on-trip outflows while filtering non-expense settlement transactions",
+      "High-Performance Data Layer & Zero-Downtime Resilience: Built a resilient persistence layer using Spring Data JPA & PostgreSQL, utilizing @Transactional cascade operations for clean deletion workflows across foreign-key dependencies; engineered a sub-millisecond, zero-dependency /health controller to decouple container orchestrator health checks from DB connections, eliminating cold-start container restart loops",
+      "Tactile Glassmorphic UI with Interactive Analytics & Micro-Interactions: Crafted a responsive, dark glassmorphism interface using Tailwind CSS, Framer Motion, and Recharts, featuring interactive financial donut and timeline charts, a floating draggable keyboard-accessible on-spot calculator with regex-validated math parsing, debounced live user verification, and tactile 1-tap micro-purchase logging with canvas confetti bursts"
+    ],
+    tech: [
+      "Java 17",
+      "Spring Boot 3.2.5",
+      "React 18",
+      "Vite",
+      "Spring Security 6",
+      "JWT",
+      "PostgreSQL",
+      "Spring Data JPA",
+      "Hibernate",
+      "Tailwind CSS",
+      "Framer Motion",
+      "Recharts",
+      "Docker",
+      "Render",
+      "Vercel"
+    ],
+    image: "./assets/project-tour-tracker.jpg",
+    devImage: "./assets/project-tour-tracker-dev.jpg",
+    github: "https://github.com/ashrithBalaji456/Tour_Expence_Tracker_Backend",
+    live: "https://tour-expence-tracker-frontend.vercel.app/",
+  },
+  {
     id: "nexus-subscription-center",
     title: "Nexus Subscription Center",
     tagline: "Enterprise Subscription Lifecycle & Recurring Revenue Management Platform",
