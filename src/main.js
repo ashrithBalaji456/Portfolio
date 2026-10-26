@@ -129,9 +129,10 @@ const contactInfo = [
   },
 ];
 
-const filters = ["All", "Backend", "Microservices", "AI", "Data", "Docker"];
+const filters = ["All", "Backend", "Microservices", "Mobile", "AI", "Data", "Docker"];
 const assistantPrompts = [
   "Tell me about the railway tracker",
+  "Tell me about the smart sleep timer",
   "What roles is Ashrith looking for?",
   "Tell me about the hospital project",
   "Summarize the internship experience",
@@ -1151,7 +1152,7 @@ function setupAssistant() {
     }
 
     if (/(project|portfolio|work)/.test(text)) {
-      return "Highlighted backend projects include Indian Railway Live Tracker & RailAI Assistant, Nexus Subscription Center, Referral Hub Automated Job Outreach, Tasker AHT Productivity Tracking System, Hospital Management System, Service Manager, Fitness Tracker Microservices, Quiz Microservices, and MoodFlix recommendation backend.\nAsk me about a specific one like railway, railai, nexus, referral hub, tasker, hospital, service manager, fitness, quiz, or startup.";
+      return "Highlighted engineering projects include Indian Railway Live Tracker & RailAI Assistant, Smart Sleep Timer Android Engine, Nexus Subscription Center, Referral Hub Automated Job Outreach, Tasker AHT Productivity Tracking System, Hospital Management System, Service Manager, Fitness Tracker Microservices, Quiz Microservices, and MoodFlix recommendation backend.\nAsk me about a specific one like railway, sleep timer, nexus, referral hub, tasker, hospital, service manager, fitness, quiz, or startup.";
     }
 
     if (/(experience|intern|ethara|llm)/.test(text)) {

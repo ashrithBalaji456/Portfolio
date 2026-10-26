@@ -5,7 +5,7 @@ export const projects = [
     tagline: "Cross-Platform Real-Time Railway Telemetry, Android App & Gemini AI Assistant",
     period: "Oct 2026",
     category: "Full-Stack & AI",
-    tags: ["Backend", "AI", "Data", "Docker"],
+    tags: ["Backend", "AI", "Data", "Docker", "Mobile"],
     description: "Full-stack two-repo production platform deployed on Vercel and Render, delivering live train tracking, Leaflet route maps, Redis caching, Gemini-powered RailAI assistant, and an Android app via Capacitor.",
     problemSolved: {
       challenge: "Indian Railway passengers often struggle with fragmented portals, delayed live train running statuses, platform confusion, and sluggish response times during peak travel queries.",
@@ -48,6 +48,53 @@ export const projects = [
     devImage: "./assets/project-railway-tracker-dev.jpg",
     github: "https://github.com/ashrithBalaji456/Railway_Tracking_Backend",
     live: "https://railway-tracking-frontend.vercel.app/",
+  },
+  {
+    id: "smart-sleep-timer",
+    title: "Smart Sleep Timer - Android Media & Sleep Engine",
+    tagline: "Resilient Android Background Countdown Engine & Universal Media Session Controller",
+    period: "Sep 2026",
+    category: "Android & Systems",
+    tags: ["Mobile", "Backend"],
+    description: "Architected a lifecycle-aware Android sleep timer app with millisecond-accurate background countdowns, custom Canvas CircularTimerView, and non-intrusive universal media playback control across Spotify, YouTube Music, and streaming players.",
+    problemSolved: {
+      challenge: "Android Doze mode, app standby buckets, and background execution limits frequently kill or desynchronize timer services, while third-party media apps ignore pause signals or trigger false-positive confirmations under DRM constraints.",
+      solution: "Engineered a Foreground Service with AlarmManager.setExactAndAllowWhileIdle() for zero-drift countdowns, and a session arbitrator using MediaSessionManager and asynchronous MediaController.Callback observers to verify playback state transitions truthful to DRM policies.",
+      outcome: "Guaranteed millisecond-accurate sleep countdowns surviving process death, paired with 100% reliable pause dispatch across major audio and video streaming platforms without root or accessibility hacks."
+    },
+    systemSpecs: {
+      architecture: "Clean MVVM with Unidirectional Data Flow (UDF) & Separation of Concerns",
+      persistence: "SharedPreferences for Atomic Session State Persistence Across Process Death",
+      security: "Non-Intrusive MediaSession API (No Accessibility Abuse / No Root Permissions)",
+      features: "Custom 2D Canvas CircularTimerView, AlarmManager Exact Alarms, Universal Media Controls"
+    },
+    highlights: [
+      "Engineered Resilient Background Countdown & Sleep Engine: Architected a lifecycle-aware Android Foreground Service coupled with AlarmManager.setExactAndAllowWhileIdle() to guarantee millisecond-accurate timer countdowns across Doze mode and process recreation",
+      "Implemented Universal Third-Party Media Playback Control: Built intelligent media detection and pause dispatch using Android's MediaSessionManager and MediaController.TransportControls, enabling non-intrusive control across Spotify, YouTube Music, SoundCloud, and streaming video players",
+      "Session Capability Inspection & Truthful Playback Verification: Designed a session arbitrator inspecting playback action bitmasks (ACTION_PAUSE, ACTION_PLAY_PAUSE, ACTION_STOP) with asynchronous MediaController.Callback observers to prevent false-positives on DRM-restricted apps",
+      "Reactive Architecture & Unidirectional Data Flow (UDF): Structured the codebase following clean MVVM architecture using Jetpack ViewModel, LiveData, and StateFlow primitives to decouple the timer state machine, media controller listeners, and real-time custom UI components",
+      "Custom Canvas UI & Strict Test-Driven Reliability: Developed an interactive custom CircularTimerView using low-overhead 2D Canvas drawing and smooth property animations, backed by comprehensive JUnit unit tests covering candidate selection and state transitions"
+    ],
+    tech: [
+      "Java 17",
+      "Android SDK (API 26-34)",
+      "MVVM",
+      "MediaSessionManager",
+      "MediaController",
+      "Foreground Service",
+      "AlarmManager",
+      "Custom Canvas 2D",
+      "ViewModel",
+      "LiveData",
+      "NotificationCompat",
+      "SharedPreferences",
+      "JUnit 4",
+      "Gradle"
+    ],
+    image: "./assets/project-sleep-timer.jpg",
+    devImage: "./assets/project-sleep-timer-dev.jpg",
+    github: "https://github.com/ashrithBalaji456/Smart_Sleep-_Timer",
+    live: null,
   },
   {
     id: "nexus-subscription-center",
