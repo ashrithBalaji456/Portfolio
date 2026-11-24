@@ -19,11 +19,11 @@ export const freelanceProjects = [
       "Managed app state with Zustand and built a responsive UI with Tailwind CSS v4, on a Vite + TypeScript setup with Oxlint for code quality"
     ],
     tech: ["React 19", "TypeScript", "Three.js", "React Three Fiber", "@react-three/drei", "Zustand", "Tailwind CSS v4", "PDF.js", "JSZip", "Lucide React", "Vite", "Oxlint"],
-    image: "./assets/project-3d-library-1.jpg",
+    image: "./assets/project-3d-library-1.webp",
     images: [
-      "./assets/project-3d-library-1.jpg",
-      "./assets/project-3d-library-2.jpg",
-      "./assets/project-3d-library-3.jpg"
+      "./assets/project-3d-library-1.webp",
+      "./assets/project-3d-library-2.webp",
+      "./assets/project-3d-library-3.webp"
     ],
     imageLabels: [
       "3D Virtual Library",
@@ -52,7 +52,7 @@ export const freelanceProjects = [
       "Optimized for high-speed page loads, smooth scroll animations, and cross-device responsiveness"
     ],
     tech: ["Java", "Spring Boot", "Spring Data JPA", "Hibernate", "PostgreSQL", "REST APIs", "Postman"],
-    image: "./assets/project-shashank-portfolio.png",
+    image: "./assets/project-shashank-portfolio.webp",
     github: "https://github.com/ashrithBalaji456/Shashank_Portfolio",
     live: "https://ashrithbalaji456.github.io/Shashank_Portfolio/"
   },
@@ -75,7 +75,7 @@ export const freelanceProjects = [
       "Deployed on Vercel edge deployment for high availability, fast response, and mobile optimization"
     ],
     tech: ["Java", "Spring Boot", "React.js", "JavaScript", "CSS3", "LLM Evaluation", "Vercel"],
-    image: "./assets/project-kamal-portfolio.png",
+    image: "./assets/project-kamal-portfolio.webp",
     github: "https://github.com/ashrithBalaji456/kamal_Portfolio",
     live: "https://kamal-portfolio-alpha.vercel.app/"
   },
@@ -98,7 +98,7 @@ export const freelanceProjects = [
       "Deployed on Vercel with mobile-first responsiveness and instant resume access"
     ],
     tech: ["Java", "Spring Boot", "Spring Data JPA", "PostgreSQL", "REST APIs", "React", "Vercel"],
-    image: "./assets/project-venkatesh-portfolio.png",
+    image: "./assets/project-venkatesh-portfolio.webp",
     github: "https://github.com/ashrithBalaji456/Venkatesh_portfolio",
     live: "https://venkateshportfolio-chi.vercel.app/"
   },
@@ -121,7 +121,7 @@ export const freelanceProjects = [
       "Deployed on Vercel with smooth framerates, fast initial load, and cross-browser responsiveness"
     ],
     tech: ["React.js", "Three.js", "JavaScript", "CSS3", "3D Graphics", "Vercel"],
-    image: "./assets/project-sairam-portfolio.png",
+    image: "./assets/project-sairam-portfolio.webp",
     github: "https://github.com/ashrithBalaji456/Sai_Ram_Portfolio",
     live: "https://sai-ram-portfolio.vercel.app/"
   }

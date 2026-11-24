@@ -198,11 +198,11 @@ function renderProjects(activeFilter = "All") {
       const imageHtml = project.image && project.devImage
         ? `<div class="project-media" data-slide="0" title="Click image or dots to toggle preview">
              <div class="project-media-slide active">
-               <img src="${project.image}" alt="${project.title} UI Preview" class="project-media-img" loading="lazy" />
+               <img src="${project.image}" alt="${project.title} UI Preview" class="project-media-img" loading="${index < 6 ? "eager" : "lazy"}" decoding="async" ${index < 3 ? 'fetchpriority="high"' : ""} />
                <span class="media-slide-badge">UI Dashboard</span>
              </div>
              <div class="project-media-slide">
-               <img src="${project.devImage}" alt="${project.title} Problem Solved" class="project-media-img" loading="lazy" />
+               <img src="${project.devImage}" alt="${project.title} Problem Solved" class="project-media-img" loading="eager" decoding="async" />
                <span class="media-slide-badge badge-dev">💡 Problem Solved</span>
              </div>
              <div class="media-slide-dots">
@@ -212,7 +212,7 @@ function renderProjects(activeFilter = "All") {
            </div>`
         : project.image
         ? `<div class="project-media">
-             <img src="${project.image}" alt="${project.title} Preview" class="project-media-img" loading="lazy" />
+             <img src="${project.image}" alt="${project.title} Preview" class="project-media-img" loading="${index < 6 ? "eager" : "lazy"}" decoding="async" ${index < 3 ? 'fetchpriority="high"' : ""} />
            </div>`
         : "";
 
@@ -320,7 +320,7 @@ function renderFreelance() {
               .map(
                 (img, imgIdx) => `
                 <div class="project-media-slide ${imgIdx === 0 ? "active" : ""}">
-                  <img src="${img}" alt="${project.title} Preview ${imgIdx + 1}" class="project-media-img" loading="lazy" />
+                  <img src="${img}" alt="${project.title} Preview ${imgIdx + 1}" class="project-media-img" loading="${index < 2 ? "eager" : "lazy"}" decoding="async" />
                   <span class="media-slide-badge">${project.imageLabels?.[imgIdx] || `Preview ${imgIdx + 1}`}</span>
                 </div>
               `
@@ -340,7 +340,7 @@ function renderFreelance() {
       } else if (project.image) {
         imageHtml = `
           <div class="project-media">
-            <img src="${project.image}" alt="${project.title} Preview" class="project-media-img" loading="lazy" />
+            <img src="${project.image}" alt="${project.title} Preview" class="project-media-img" loading="${index < 2 ? "eager" : "lazy"}" decoding="async" />
           </div>
         `;
       }
@@ -455,25 +455,29 @@ function setupProjectMediaCarousel() {
 }
 
 function switchProjectMediaSlide(media, targetIndex) {
-  media.dataset.slide = targetIndex.toString();
   const slides = media.querySelectorAll(".project-media-slide");
   const dots = media.querySelectorAll(".slide-dot");
+  const targetSlide = slides[targetIndex];
+  if (!targetSlide) return;
 
-  slides.forEach((slide, idx) => {
-    if (idx === targetIndex) {
-      slide.classList.add("active");
-    } else {
-      slide.classList.remove("active");
-    }
-  });
+  const targetImg = targetSlide.querySelector("img");
+  const applySwitch = () => {
+    media.dataset.slide = targetIndex.toString();
+    slides.forEach((slide, idx) => {
+      slide.classList.toggle("active", idx === targetIndex);
+    });
+    dots.forEach((dot, idx) => {
+      dot.classList.toggle("active", idx === targetIndex);
+    });
+  };
 
-  dots.forEach((dot, idx) => {
-    if (idx === targetIndex) {
-      dot.classList.add("active");
-    } else {
-      dot.classList.remove("active");
-    }
-  });
+  // If image is still downloading, don't show a blank box; switch once loaded
+  if (targetImg && !targetImg.complete) {
+    targetImg.onload = applySwitch;
+    return;
+  }
+
+  applySwitch();
 }
 
 function setupProjectAudio() {
