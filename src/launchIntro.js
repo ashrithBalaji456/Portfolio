@@ -61,18 +61,16 @@ export class LaunchIntroController {
 
     this.bindEvents();
 
-    // Check if the user specifically requested launch via query parameter,
-    // or if navigating directly to a section anchor (e.g. #projects from project details page).
-    // By default, the portfolio loads immediately for the best viewing experience,
-    // and the full rocket launch experience can be triggered anytime via the "🚀 Launch" button.
-    const launchParam = new URLSearchParams(window.location.search).get("launch") === "true";
+    // Check if navigating directly to a section anchor (e.g. #projects from project details page),
+    // or if query parameter skipLaunch=true is present.
     const hasHashTarget = Boolean(
       window.location.hash &&
       window.location.hash !== "#" &&
       window.location.hash !== "#hero"
     );
+    const skipParam = new URLSearchParams(window.location.search).get("skipLaunch") === "true";
 
-    if (!launchParam) {
+    if (hasHashTarget || skipParam) {
       this.isFinished = true;
       try {
         sessionStorage.setItem("portfolio_launched", "true");
@@ -104,6 +102,13 @@ export class LaunchIntroController {
     }
     if (this.rocketContainer) {
       this.rocketContainer.style.display = "none";
+      this.rocketContainer.className = "launch-rocket-container rocket-prelaunch";
+    }
+
+    if (this.overlay) {
+      this.overlay.style.display = "";
+      this.overlay.classList.remove("launch-hidden", "launch-dissolve");
+      this.overlay.classList.add("launch-active");
     }
 
     document.body.style.overflow = "hidden";
@@ -533,6 +538,17 @@ export class LaunchIntroController {
       });
     }
 
+    // Clicking anywhere on the launch overlay when gate is visible also launches
+    if (this.overlay) {
+      this.overlay.addEventListener("click", (e) => {
+        if (e.target.closest(".launch-top-controls")) return;
+        if (!this.isGateOpen && !this.isFinished) {
+          unlockAudio();
+          this.triggerGateOpen(e);
+        }
+      });
+    }
+
     const skipBtn = document.querySelector("#launch-skip-btn");
     if (skipBtn) {
       skipBtn.addEventListener("click", (e) => {
@@ -558,7 +574,7 @@ export class LaunchIntroController {
       });
     }
 
-    // Attach replay handlers to buttons across the portfolio
+    // Attach replay handlers to buttons across the portfolio + delegated click listener
     document.querySelectorAll(".trigger-rocket-launch").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         e.preventDefault();
@@ -566,6 +582,68 @@ export class LaunchIntroController {
         this.replayLaunch();
       });
     });
+
+    document.addEventListener("click", (e) => {
+      const launchBtn = e.target.closest(".trigger-rocket-launch");
+      if (launchBtn) {
+        e.preventDefault();
+        unlockAudio();
+        this.replayLaunch();
+      }
+    });
+
+    // Keyboard support: Enter / Space / ArrowDown to launch; Escape to skip
+    window.addEventListener("keydown", (e) => {
+      if (this.overlay && !this.overlay.classList.contains("launch-hidden") && !this.isFinished) {
+        if (e.key === "Escape") {
+          this.skipLaunch();
+        } else if ((e.key === "Enter" || e.key === " " || e.key === "ArrowDown") && !this.isGateOpen) {
+          unlockAudio();
+          this.triggerGateOpen();
+        }
+      }
+    });
+
+    // Natural wheel / scroll gesture on the gate screen opens the gate
+    window.addEventListener(
+      "wheel",
+      (e) => {
+        if (this.overlay && !this.overlay.classList.contains("launch-hidden") && !this.isGateOpen && !this.isFinished) {
+          if (e.deltaY > 20) {
+            unlockAudio();
+            this.triggerGateOpen(e);
+          }
+        }
+      },
+      { passive: true }
+    );
+
+    // Touch swipe gesture on mobile
+    let touchStartY = 0;
+    window.addEventListener(
+      "touchstart",
+      (e) => {
+        if (e.touches && e.touches[0]) {
+          touchStartY = e.touches[0].clientY;
+        }
+      },
+      { passive: true }
+    );
+    window.addEventListener(
+      "touchend",
+      (e) => {
+        if (this.overlay && !this.overlay.classList.contains("launch-hidden") && !this.isGateOpen && !this.isFinished) {
+          if (e.changedTouches && e.changedTouches[0]) {
+            const deltaY = touchStartY - e.changedTouches[0].clientY;
+            if (deltaY > 40) {
+              unlockAudio();
+              this.triggerGateOpen();
+            }
+          }
+        }
+      },
+      { passive: true }
+    );
   }
 
   // Web Audio Synthesizer
@@ -1495,7 +1573,9 @@ export class LaunchIntroController {
 
     this.isFinished = false;
     this.isGateOpen = false;
+    this.countdownValue = 7;
     this.clearTimers();
+    this.setRumble(0);
     this.bubbles = [];
     this.particles = [];
     this.tailStars = [];
@@ -1520,6 +1600,12 @@ export class LaunchIntroController {
     if (this.hud) {
       this.hud.style.display = "none";
     }
+
+    const countdownEl = document.querySelector("#launch-countdown-num");
+    if (countdownEl) countdownEl.textContent = "7";
+    const statusTextEl = document.querySelector("#launch-status-text");
+    if (statusTextEl) statusTextEl.textContent = "SYSTEMS PRECHECK • AWAITING MANUAL IGNITION";
+
     if (this.rocketContainer) {
       this.rocketContainer.style.display = "none";
       this.rocketContainer.className = "launch-rocket-container rocket-prelaunch";
