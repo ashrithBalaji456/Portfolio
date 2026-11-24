@@ -73,7 +73,7 @@ const certifications = [
 const publications = [
   {
     title: "Detecting Fraudulent Transactions in FASTag Systems",
-    authors: "Gudla Ashrith Balaji, Ms. B. Shirisha, Kudha Shashank, Akula Vamshi Krishna",
+    authors: "Ashrith Balaji, Ms. B. Shirisha, Kudha Shashank, Akula Vamshi Krishna",
     institution: "Advanced Research Society for Science and Sociology",
     department: "Published research paper",
     abstract:

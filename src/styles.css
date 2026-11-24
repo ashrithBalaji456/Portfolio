@@ -271,7 +271,7 @@ canvas {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: min(1120px, calc(100% - 28px));
+  width: min(1440px, calc(100% - 28px));
   min-height: 58px;
   padding: 8px 10px;
   border: 1px solid var(--line);
@@ -558,9 +558,9 @@ canvas {
 .hero-content {
   position: relative;
   z-index: 2;
-  width: min(650px, calc(100% - 410px));
+  width: min(720px, calc(100% - 410px));
   align-self: center;
-  margin: 0 auto 0 max(24px, calc((100vw - 1120px) / 2));
+  margin: 0 auto 0 max(24px, calc((100vw - 1440px) / 2));
   text-align: left;
   animation: heroTextIn 720ms ease both;
 }
@@ -582,7 +582,7 @@ canvas {
 .hero-portrait {
   position: absolute;
   top: clamp(128px, 17vh, 170px);
-  right: max(24px, calc((100vw - 1120px) / 2));
+  right: max(24px, calc((100vw - 1440px) / 2));
   z-index: 2;
   width: clamp(232px, 24vw, 318px);
   aspect-ratio: 1;
@@ -1152,7 +1152,7 @@ h1 {
 
 .section {
   position: relative;
-  width: min(1120px, calc(100% - 32px));
+  width: min(1440px, calc(100% - 32px));
   margin: 0 auto;
   padding: 88px 0;
 }
@@ -1161,7 +1161,7 @@ h1 {
   position: absolute;
   top: 36px;
   left: 50%;
-  width: min(720px, 72vw);
+  width: min(960px, 80vw);
   height: 1px;
   content: "";
   background: linear-gradient(90deg, transparent, rgba(89, 234, 210, 0.3), rgba(255, 120, 151, 0.22), transparent);
@@ -1170,7 +1170,7 @@ h1 {
 }
 
 .section-heading {
-  max-width: 780px;
+  max-width: 880px;
   margin: 0 auto 34px;
   text-align: center;
 }
@@ -2384,7 +2384,7 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 32px;
-  width: min(1120px, calc(100% - 32px));
+  width: min(1440px, calc(100% - 32px));
   margin: 60px auto 0;
   padding: 40px 0 48px;
   border-top: 1px solid var(--line);
@@ -2939,7 +2939,7 @@ h1 {
   }
 
   .section {
-    width: min(100% - 24px, 1120px);
+    width: min(100% - 24px, 1440px);
     padding: 70px 0;
   }
 
