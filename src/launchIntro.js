@@ -61,22 +61,18 @@ export class LaunchIntroController {
 
     this.bindEvents();
 
-    // Check if the user has already opened/launched the portfolio in this session,
-    // OR if navigating directly to a section anchor (e.g. #projects from project details page),
-    // OR if query parameter skipLaunch=true is present.
-    let alreadyLaunched = false;
-    try {
-      alreadyLaunched = sessionStorage.getItem("portfolio_launched") === "true";
-    } catch (e) {}
-
+    // Check if the user specifically requested launch via query parameter,
+    // or if navigating directly to a section anchor (e.g. #projects from project details page).
+    // By default, the portfolio loads immediately for the best viewing experience,
+    // and the full rocket launch experience can be triggered anytime via the "🚀 Launch" button.
+    const launchParam = new URLSearchParams(window.location.search).get("launch") === "true";
     const hasHashTarget = Boolean(
       window.location.hash &&
       window.location.hash !== "#" &&
       window.location.hash !== "#hero"
     );
-    const skipParam = new URLSearchParams(window.location.search).get("skipLaunch") === "true";
 
-    if (alreadyLaunched || hasHashTarget || skipParam) {
+    if (!launchParam) {
       this.isFinished = true;
       try {
         sessionStorage.setItem("portfolio_launched", "true");
@@ -287,17 +283,7 @@ export class LaunchIntroController {
 
   // Realistic Small-to-Medium Fire Blast on Earth's Surface
   spawnCometBlast(impactX, impactY, theme, impactAngle) {
-    // 1. Subtle camera shockwave vibration
-    if (this.overlay) {
-      this.overlay.classList.remove("rumble-light");
-      void this.overlay.offsetWidth; // Trigger reflow
-      this.overlay.classList.add("rumble-light");
-      setTimeout(() => {
-        if (this.overlay) this.overlay.classList.remove("rumble-light");
-      }, 180);
-    }
-
-    // 2. Play punchy impact sound
+    // 1. Play punchy impact sound
     this.playCometImpactBoom();
 
     // 3. Fiery Surface Shockwave Ring (Skimming flatly along Earth's curvature)
@@ -794,18 +780,15 @@ export class LaunchIntroController {
   setRumble(level) {
     this.screenRumbleLevel = level;
 
-    const targets = [
-      this.hud,
-      this.rocketContainer,
-      document.querySelector(".launch-profile-card")
-    ].filter(Boolean);
+    const rocketWrapper = document.querySelector(".rocket-wrapper");
+    if (!rocketWrapper) return;
 
-    targets.forEach((el) => {
-      el.classList.remove("rumble-light", "rumble-heavy", "rumble-extreme");
-      if (level === 1) el.classList.add("rumble-light");
-      if (level === 2) el.classList.add("rumble-heavy");
-      if (level === 3) el.classList.add("rumble-extreme");
-    });
+    rocketWrapper.classList.remove("engine-rumble-light", "engine-rumble-heavy");
+    if (level === 1 || level === 2) {
+      rocketWrapper.classList.add("engine-rumble-light");
+    } else if (level >= 3) {
+      rocketWrapper.classList.add("engine-rumble-heavy");
+    }
   }
 
   /**
@@ -1201,8 +1184,8 @@ export class LaunchIntroController {
         const perpX = -uy;
         const perpY = ux;
 
-        // 1. Broad Ethereal Curved Dust Tail (Multi-pass continuous vapor puffs - NO hard polygon edges!)
-        const steps = 38;
+        // 1. Broad Ethereal Curved Dust Tail (Smooth lightweight vapor puffs)
+        const steps = 10;
         for (let s = steps; s >= 1; s--) {
           const t = s / steps;
           const dist = t * c.tailLen;
@@ -1495,14 +1478,15 @@ export class LaunchIntroController {
       this.animFrameId = null;
     }
 
+    document.body.style.overflow = "";
+
     if (this.overlay) {
       this.overlay.classList.add("launch-dissolve");
       setTimeout(() => {
         this.overlay.classList.remove("launch-active");
         this.overlay.classList.add("launch-hidden");
         this.overlay.style.display = "none";
-        document.body.style.overflow = "";
-      }, 700);
+      }, 500);
     }
   }
 

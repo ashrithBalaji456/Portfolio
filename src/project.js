@@ -690,6 +690,9 @@ function initCanvas() {
   }
   window.addEventListener("resize", resize);
 
+  let isVisible = true;
+  let rafId = null;
+
   function animate() {
     ctx.clearRect(0, 0, width, height);
 
@@ -708,7 +711,23 @@ function initCanvas() {
       ctx.fill();
     });
 
-    requestAnimationFrame(animate);
+    if (isVisible) {
+      rafId = requestAnimationFrame(animate);
+    } else {
+      rafId = null;
+    }
+  }
+
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        isVisible = entry.isIntersecting;
+        if (isVisible && !rafId) {
+          rafId = requestAnimationFrame(animate);
+        }
+      });
+    }, { threshold: 0.05 });
+    observer.observe(canvas);
   }
 
   animate();

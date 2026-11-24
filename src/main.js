@@ -928,15 +928,28 @@ function setupNav() {
 
 function setupScrollProgress() {
   const progress = document.querySelector(".scroll-progress");
+  if (!progress) return;
+  let ticking = false;
+
   const update = () => {
     const scrollTop = window.scrollY || document.documentElement.scrollTop;
     const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
     const value = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
     progress.style.width = `${value}%`;
+    ticking = false;
   };
 
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (!ticking) {
+        requestAnimationFrame(update);
+        ticking = true;
+      }
+    },
+    { passive: true }
+  );
   update();
-  window.addEventListener("scroll", update, { passive: true });
 }
 
 function setupMagnetic() {
@@ -946,16 +959,23 @@ function setupMagnetic() {
     if (element.dataset.magneticReady) return;
     element.dataset.magneticReady = "true";
 
+    let rect = null;
+
+    element.addEventListener("pointerenter", () => {
+      rect = element.getBoundingClientRect();
+    }, { passive: true });
+
     element.addEventListener("pointermove", (event) => {
-      const rect = element.getBoundingClientRect();
+      if (!rect) rect = element.getBoundingClientRect();
       const x = (event.clientX - rect.left - rect.width / 2) * 0.12;
       const y = (event.clientY - rect.top - rect.height / 2) * 0.12;
       element.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-    });
+    }, { passive: true });
 
     element.addEventListener("pointerleave", () => {
+      rect = null;
       element.style.transform = "";
-    });
+    }, { passive: true });
   });
 }
 
@@ -973,8 +993,6 @@ function setupCursorAura() {
     (event) => {
       targetX = event.clientX;
       targetY = event.clientY;
-      document.body.style.setProperty("--mx", `${event.clientX}px`);
-      document.body.style.setProperty("--my", `${event.clientY}px`);
     },
     { passive: true }
   );
@@ -1049,8 +1067,14 @@ function setupTiltCards() {
     if (card.dataset.tiltReady) return;
     card.dataset.tiltReady = "true";
 
+    let rect = null;
+
+    card.addEventListener("pointerenter", () => {
+      rect = card.getBoundingClientRect();
+    }, { passive: true });
+
     card.addEventListener("pointermove", (event) => {
-      const rect = card.getBoundingClientRect();
+      if (!rect) rect = card.getBoundingClientRect();
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
       const rotateY = ((x / rect.width) - 0.5) * 8;
@@ -1059,13 +1083,14 @@ function setupTiltCards() {
       card.style.setProperty("--shine-x", `${(x / rect.width) * 100}%`);
       card.style.setProperty("--shine-y", `${(y / rect.height) * 100}%`);
       card.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
-    });
+    }, { passive: true });
 
     card.addEventListener("pointerleave", () => {
+      rect = null;
       card.style.transform = "";
       card.style.removeProperty("--shine-x");
       card.style.removeProperty("--shine-y");
-    });
+    }, { passive: true });
   });
 }
 
@@ -1390,7 +1415,29 @@ function setupCanvas() {
     drawLinks(time, isLight);
     nodes.forEach((node, index) => drawNode(node, time, index, isLight));
 
-    requestAnimationFrame(draw);
+    if (isCanvasVisible) {
+      rafId = requestAnimationFrame(draw);
+    } else {
+      rafId = null;
+    }
+  }
+
+  let isCanvasVisible = true;
+  let rafId = null;
+
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isCanvasVisible = entry.isIntersecting;
+          if (isCanvasVisible && !rafId) {
+            rafId = requestAnimationFrame(draw);
+          }
+        });
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(canvas);
   }
 
   function roundRect(context, x, y, w, h, r) {
